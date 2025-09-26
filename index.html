@@ -2601,7 +2601,7 @@
         </div>
         <div class="stat-card stat-trend">
           <canvas id="trend-chart" width="120" height="40"></canvas>
-          <div class="stat-label">7-Day Trend</div>
+          <div class="stat-label">30-Day Trend</div>
         </div>
       </div>
     </div>
@@ -2653,14 +2653,14 @@
       <div class="section">
         <h2 class="ops-heading">⏱️ Time Window</h2>
         <div class="chips" role="group" aria-label="Quick time windows">
-          <button class="chip active" data-window="7">7d</button>
-          <button class="chip" data-window="30">30d</button>
+          <button class="chip" data-window="7">7d</button>
+          <button class="chip active" data-window="30">30d</button>
           <button class="chip" data-window="90">90d</button>
           <button class="chip" data-window="365">365d</button>
         </div>
         <label for="dateRange">Filter by days</label>
-        <input id="dateRange" type="range" min="1" max="365" value="7" step="1" aria-valuemin="1" aria-valuemax="365" aria-valuenow="7" />
-        <div class="muted" id="dateRangeLabel">Showing last 7 days</div>
+        <input id="dateRange" type="range" min="1" max="365" value="30" step="1" aria-valuemin="1" aria-valuemax="365" aria-valuenow="30" />
+        <div class="muted" id="dateRangeLabel">Showing last 30 days</div>
       </div>
 
       <div class="section">
@@ -2807,7 +2807,7 @@
     const AI_CONFIG = {
       // OpenRouter API (recommended - best free models)
       OPENROUTER_API_URL: 'https://openrouter.ai/api/v1/chat/completions',
-      OPENROUTER_API_KEY: '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', // OpenRouter API key
+      OPENROUTER_API_KEY: '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', // OpenRouter API key
 
       // Best free models on OpenRouter (ordered by recommendation):
       FREE_MODELS: [
@@ -3982,7 +3982,7 @@
     function updateStatistics(incidents) {
       const now = new Date();
       const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
-      const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+      const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000);
 
       // Active incidents
       const activeCount = incidents.filter(i => i.incident.status === 'active').length;
@@ -4050,9 +4050,18 @@
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
-      // Calculate daily counts for last 7 days
+      // Calculate daily counts for the active window (up to 30 days)
+      const trendDays = Math.min(activeDays(), 30);
+      if (canvas.parentElement) {
+        const trendLabelEl = canvas.parentElement.querySelector('.stat-label');
+        if (trendLabelEl) {
+          trendLabelEl.textContent = `${trendDays}-Day Trend`;
+        }
+      }
+      const dayBuckets = Math.max(trendDays, 1);
+      const denominator = Math.max(dayBuckets - 1, 1);
       const dailyCounts = [];
-      for (let i = 6; i >= 0; i--) {
+      for (let i = dayBuckets - 1; i >= 0; i--) {
         const dayStart = new Date();
         dayStart.setDate(dayStart.getDate() - i);
         dayStart.setHours(0, 0, 0, 0);
@@ -4078,7 +4087,7 @@
 
       ctx.beginPath();
       dailyCounts.forEach((count, i) => {
-        const x = (i / 6) * (width - 10) + 5;
+        const x = (i / denominator) * (width - 10) + 5;
         const y = height - (count / maxCount) * (height - 10) - 5;
 
         if (i === 0) {
@@ -4097,7 +4106,7 @@
       // Draw line on top
       ctx.beginPath();
       dailyCounts.forEach((count, i) => {
-        const x = (i / 6) * (width - 10) + 5;
+        const x = (i / denominator) * (width - 10) + 5;
         const y = height - (count / maxCount) * (height - 10) - 5;
 
         if (i === 0) {
@@ -4111,7 +4120,7 @@
       // Draw dots
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
       dailyCounts.forEach((count, i) => {
-        const x = (i / 6) * (width - 10) + 5;
+        const x = (i / denominator) * (width - 10) + 5;
         const y = height - (count / maxCount) * (height - 10) - 5;
 
         ctx.beginPath();
