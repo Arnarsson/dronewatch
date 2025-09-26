@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.349014,
+          48.864716
+        ]
+      },
+      "properties": {
+        "name": "Paris CDG Airport",
+        "asset_type": "airport",
+        "iata": "CDG"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.461941,
+          51.47002
+        ]
+      },
+      "properties": {
+        "name": "London Heathrow",
+        "asset_type": "airport",
+        "iata": "LHR"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.287808,
+          52.559686
+        ]
+      },
+      "properties": {
+        "name": "Berlin Brandenburg",
+        "asset_type": "airport",
+        "iata": "BER"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          12.238889,
+          45.505556
+        ]
+      },
+      "properties": {
+        "name": "Venice Port",
+        "asset_type": "harbour",
+        "type": "commercial"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.890444,
+          52.371667
+        ]
+      },
+      "properties": {
+        "name": "Amsterdam Port",
+        "asset_type": "harbour",
+        "type": "commercial"
+      }
+    }
+  ],
+  "metadata": {
+    "source": "fallback_dataset",
+    "purpose": "minimal_testing_data",
+    "count": 5
+  }
+}
