@@ -1,0 +1,62 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]: UNCLASSIFIED // FOR OFFICIAL USE ONLY
+  - generic [ref=e5]: LIVE DATA FEED
+  - application "DroneWatch Operations Center" [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e11]: SURVEILLANCE NETWORK
+        - generic [ref=e14]: DATA INGESTION
+        - generic [ref=e17]: THREAT ASSESSMENT
+      - generic [ref=e18]:
+        - generic [ref=e19]: DEFCON-5
+        - generic [ref=e20]: 21:11:50Z
+    - banner [ref=e21]:
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - heading "DroneWatch" [level=1] [ref=e24]:
+            - generic [ref=e25]: DroneWatch
+          - generic [ref=e26]: Real-Time Drone Threat Monitoring
+        - button [ref=e27] [cursor=pointer]
+      - generic [ref=e28]:
+        - generic [ref=e29] [cursor=pointer]: LIVE
+        - generic [ref=e30] [cursor=pointer]: Real-time
+    - region "Incident map" [ref=e33]:
+      - generic:
+        - generic [ref=e34]:
+          - button "Zoom in" [ref=e35] [cursor=pointer]:
+            - generic [ref=e36] [cursor=pointer]: +
+          - button "Zoom out" [ref=e37] [cursor=pointer]:
+            - generic [ref=e38] [cursor=pointer]: −
+        - generic:
+          - button "Layers" [ref=e40] [cursor=pointer]
+          - generic [ref=e41]: NO DATA
+        - generic [ref=e42]:
+          - link "Leaflet" [ref=e43] [cursor=pointer]:
+            - /url: https://leafletjs.com
+            - img [ref=e44] [cursor=pointer]
+            - text: Leaflet
+          - generic [ref=e48]: "|"
+          - text: "Basemap © Esri — Sources: Esri, i-cubed, USDA, USGS, AeroGRID, IGN, IGP"
+  - navigation [ref=e49]:
+    - generic [ref=e50]:
+      - link "🗺️ Map" [ref=e51] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e52] [cursor=pointer]: 🗺️
+        - generic [ref=e53] [cursor=pointer]: Map
+      - link "🚨 Incidents" [ref=e54] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e55] [cursor=pointer]: 🚨
+        - generic [ref=e56] [cursor=pointer]: Incidents
+      - link "⚙️ Filters" [ref=e57] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e58] [cursor=pointer]: ⚙️
+        - generic [ref=e59] [cursor=pointer]: Filters
+      - link "📊 Stats" [ref=e60] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e61] [cursor=pointer]: 📊
+        - generic [ref=e62] [cursor=pointer]: Stats
+  - button "Open mobile menu" [ref=e63] [cursor=pointer]: ⚡
+```
