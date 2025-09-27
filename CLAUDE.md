@@ -1,145 +1,212 @@
-# DroneWatch - Professional Drone Incident Monitoring System
+# CLAUDE.md - DroneWatch Context Engineering Guide
 
-## 🎯 Project Overview
+This file provides comprehensive context engineering for Claude Code (claude.ai/code) when working with the DroneWatch repository.
 
-**DroneWatch** is a professional operations center application for monitoring drone incidents across European airspace. Built as a single-page application with real-time data visualization, proximity filtering, and AI-powered news integration.
+## Project Awareness
 
-## 🚀 Key Features
+**Before starting any task:**
+- Read `INITIAL.md` if working on a new feature
+- Check `TASK.md` for current objectives
+- Review `examples/` folder for code patterns
+- Understand the incident data schema (core to everything)
 
-### Core Functionality
-- **Real-time Incident Mapping**: Interactive Leaflet map with marker clustering
-- **Professional Operations UI**: Glassmorphism design with operations center aesthetics
-- **Proximity Filtering**: Filter incidents by proximity to airports, harbours, and military bases
-- **AI News Integration**: OpenRouter API integration for real-time drone incident news
-- **Mobile-First Design**: Responsive layout optimized for both desktop and mobile
-- **Data Persistence**: Incident data with evidence tracking and severity scoring
+**Project Philosophy:**
+- Single-page application with zero build process
+- Real-time monitoring with operational efficiency
+- Professional operations center aesthetics
+- Mobile-first responsive design
 
-### Technical Highlights
-- **Single HTML File**: Zero-build deployment, runs anywhere with a web server
-- **Professional Design**: Monospace fonts, glassmorphism effects, operations center styling
-- **Advanced Filtering**: Date range, status, evidence strength, proximity, and text search
-- **Infrastructure Data**: 14K+ harbours, 3K+ airports for proximity analysis
-- **Performance Optimized**: Marker clustering, efficient rendering, caching strategies
+## Code Structure & Conventions
 
-## 🏗️ Architecture
+### File Organization
+- **Main app**: `index.html` - Single file containing all UI code
+- **Live version**: `index-live.html` - WebSocket-enabled version
+- **Automation**: `automation/` - Node.js services for data collection
+- **Tools**: `tools/` - Python utilities for infrastructure data
+- **Data**: `data/assets/` - GeoJSON infrastructure files
 
-### Technology Stack
-- **Frontend**: Vanilla JavaScript, HTML5, CSS3
-- **Mapping**: Leaflet.js with marker clustering
-- **Data Format**: GeoJSON for geographic features
-- **AI Integration**: OpenRouter API with multiple free models
-- **Build Process**: None - pure static deployment
-
-### File Structure
-```
-dronez/
-├── index.html              # Main application (single-page app)
-├── incidents.json          # Sample incident data
-├── data/
-│   └── assets/
-│       ├── harbours.geojson      # 14,217 European harbours
-│       ├── airports_wikidata.geojson  # 3,632 airports
-│       ├── military.geojson      # Military installations
-│       └── fallback.geojson      # Fallback test data
-├── tools/
-│   ├── download_manager.py      # Infrastructure data downloader
-│   ├── alternative_sources.py   # Backup data sources
-│   └── cached_downloads.py      # Smart caching system
-└── CLAUDE.md               # This documentation
-```
-
-### Data Architecture
+### JavaScript Patterns
 ```javascript
-// Incident Data Structure
+// State management pattern
+const state = {
+  map: null,           // Leaflet map instance
+  markers: null,       // MarkerClusterGroup
+  incidents: [],       // Current incidents
+  filters: {},         // Active filters
+  dataLoaded: {}       // Loading status
+};
+
+// Function naming convention
+function renderIncidents() { }      // UI rendering
+function applyFilters() { }         // Data filtering
+function handleFilterChange() { }   // Event handlers
+function fetchIncidentData() { }    // Data fetching
+```
+
+### CSS Architecture
+- Custom properties for theming
+- Glassmorphism effects with backdrop-filter
+- Mobile-first breakpoints at 768px
+- Operations center aesthetic with monospace fonts
+
+## Testing & Validation
+
+### Before Any Change
+1. Verify current functionality works
+2. Check browser console for existing errors
+3. Test on mobile viewport (375px width)
+4. Ensure map loads and incidents display
+
+### After Implementation
+```bash
+# Run test suites
+npm test
+
+# Check specific functionality
+npm run test:scraper     # RSS scraper
+npm run test:enhanced    # Enhanced features
+npm run test:final       # Coverage tests
+
+# Manual verification
+- Open browser console (no errors)
+- Test all filters work
+- Verify mobile responsiveness
+- Check map clustering at 100+ incidents
+```
+
+### Validation Gates
+- ✅ No console errors
+- ✅ Incidents display within date range
+- ✅ All filters functional
+- ✅ Mobile responsive
+- ✅ Map loads correctly
+- ✅ WebSocket connects (if using live version)
+
+## Development Workflow
+
+### Starting Development
+```bash
+# Install dependencies
+npm install
+
+# Start dev server with live updates
+npm run dev              # Port 8081
+
+# Or simple static server
+python3 -m http.server 8081
+```
+
+### Making UI Changes
+1. Locate section in `index.html` (search for comments)
+2. Use existing CSS custom properties
+3. Follow glassmorphism design pattern
+4. Test at 375px, 768px, and 1920px widths
+
+### Adding Data Sources
+1. Create scraper in `automation/scrapers/`
+2. Register in `comprehensive-aggregator.js`
+3. Update `incident-generator.js` for new format
+4. Add evidence classification rules
+
+### Updating Infrastructure Data
+```bash
+# Download fresh data
+python3 tools/download_manager.py
+
+# Check cache first
+python3 tools/cached_downloads.py
+
+# Build optimized bundles
+npm run build-assets
+```
+
+## Critical Data Structures
+
+### Incident Schema (NEVER CHANGE WITHOUT UPDATING ALL CONSUMERS)
+```javascript
 {
-  "id": "rss-eddf-2025-09-25-vf7h5z",
-  "first_seen_utc": "2025-09-25T19:35:00.000Z",
+  "id": "rss-{location}-{date}-{hash}",     // Unique identifier pattern
+  "first_seen_utc": "2025-09-25T19:35:00Z", // ISO8601 timestamp
   "asset": {
-    "type": "airport",
+    "type": "airport|harbour|military|city",
     "name": "Frankfurt Airport",
-    "iata": "FRA", "icao": "EDDF",
-    "lat": 50.0264, "lon": 8.5431
+    "iata": "FRA",                          // For airports
+    "icao": "EDDF",                         // For airports
+    "lat": 50.0264,                         // WGS84 decimal
+    "lon": 8.5431                           // WGS84 decimal
   },
   "incident": {
-    "category": "sighting|closure|breach",
+    "category": "sighting|closure|breach|threat",
     "status": "active|resolved|unconfirmed",
     "duration_min": 103,
-    "narrative": "Human-readable description"
+    "narrative": "Drone sighting caused temporary closure..."
   },
   "evidence": {
-    "strength": 0-3,  // 0=unconfirmed, 3=official
-    "sources": [...]
+    "strength": 2,                          // 0-3 scale (0=unconfirmed, 3=official)
+    "attribution": "confirmed|suspected|alleged",
+    "sources": [
+      {
+        "name": "Reuters",
+        "url": "https://...",
+        "timestamp": "2025-09-25T19:40:00Z"
+      }
+    ]
   },
   "scores": {
-    "severity": 1-10,
-    "risk_radius_m": 4500
+    "severity": 3,                          // 1-10 scale
+    "risk_radius_m": 4500                   // Affected area in meters
   }
 }
 ```
 
-## 🛠️ Development Guide
-
-### Quick Start
-```bash
-# Clone and serve
-git clone <repository-url>
-cd dronewatch
-python3 -m http.server 8081
-
-# Or use any static server
-npx serve -p 8081
+### Filter State Structure
+```javascript
+{
+  dateRange: 7,              // Days to show
+  status: ["active"],        // Status filters
+  evidence: [0, 1, 2, 3],    // Evidence strength
+  proximity: {
+    enabled: false,
+    types: ["airports", "harbours", "military"],
+    radius: 10000            // Meters
+  },
+  search: ""                 // Text search
+}
 ```
 
-### Local Development
-1. **No Build Process**: Edit `index.html` directly
-2. **Live Reload**: Use VS Code Live Server or similar
-3. **Testing**: Open browser dev tools for console debugging
-4. **Data Updates**: Replace `incidents.json` with new data
+## Performance Considerations
 
-### Adding New Features
-1. **UI Components**: Add HTML in the appropriate section
-2. **Styling**: Use existing CSS custom properties for consistency
-3. **JavaScript**: Add functions in logical sections (data, rendering, UI)
-4. **State Management**: Use the global `state` object
+### Critical Thresholds
+- **Marker clustering**: Activates at 100+ incidents
+- **Debounce delays**: 10 seconds on filter changes
+- **Rate limits**: 30-45 second delays between API calls
+- **Cache TTL**: 24 hours for incidents, 7 days for infrastructure
 
-### Debugging Tips
-- Console logging is comprehensive - check browser dev tools
-- Use `state.dataLoaded` to track data loading status
-- Filter debugging shows which incidents are filtered out and why
-- Network tab shows data loading status
+### Optimization Patterns
+```javascript
+// Debounce pattern for filters
+let filterTimeout;
+function handleFilterChange() {
+  clearTimeout(filterTimeout);
+  filterTimeout = setTimeout(() => {
+    applyFilters();
+  }, 1000);
+}
 
-## 🎨 UI Design System
-
-### Color Palette
-```css
---primary: #1a1a2e        /* Dark navy background */
---secondary: #16213e      /* Darker sections */
---accent: #0f3460         /* Blue accents */
---focus: #e94560          /* Red alerts/focus */
---text: #eee              /* Light text */
---muted: #999             /* Secondary text */
---success: #27ae60        /* Success states */
---warning: #f39c12        /* Warning states */
+// Lazy loading for infrastructure
+function loadInfrastructureLayer(type) {
+  if (state.dataLoaded[type]) return;
+  // Load only when needed
+}
 ```
 
-### Typography
-- **Primary Font**: `'Fira Code', 'SF Mono', monospace` - Operations center feel
-- **Headings**: Military-style all caps with tracking
-- **Body**: Clear, readable monospace for data displays
+## Configuration Points
 
-### Components
-- **Glassmorphism Cards**: `backdrop-filter: blur(10px)` with transparency
-- **Operations Badges**: Status indicators with real-time updates
-- **Professional Inputs**: Consistent form styling across all controls
-- **Mobile Navigation**: Slide-up panels with smooth animations
-
-## 🔧 Configuration
-
-### API Integration
+### API Integration (index.html ~line 3000)
 ```javascript
 const AI_CONFIG = {
   OPENROUTER_API_URL: 'https://openrouter.ai/api/v1/chat/completions',
-  OPENROUTER_API_KEY: 'your-api-key-here',
+  OPENROUTER_API_KEY: 'sk-or-v1-...',  // User must add
   FREE_MODELS: [
     'x-ai/grok-4-fast:free',
     'microsoft/phi-3-mini-128k-instruct:free',
@@ -148,181 +215,153 @@ const AI_CONFIG = {
 };
 ```
 
-### Map Configuration
+### Map Configuration (index.html ~line 2800)
 ```javascript
 const DEFAULT_CENTER = [54.5, 15.0];  // Central Europe
 const DEFAULT_ZOOM = 6;
-const CLUSTER_RADIUS = 80;
-const MAX_CLUSTER_RADIUS = 120;
+const CLUSTER_RADIUS = 80;            // Pixel radius for clustering
+const MAX_CLUSTER_RADIUS = 120;       // Maximum cluster size
 ```
 
-### Filtering Options
-- **Date Range**: 1-365 days (default: 7 days)
-- **Status**: active, resolved, unconfirmed
-- **Evidence**: 0-3 strength levels
-- **Proximity**: 10km radius around infrastructure
-
-## 📊 Data Sources
-
-### Infrastructure Data
-- **Harbours**: 14,217 European ports and harbours
-- **Airports**: 3,632 airports from Wikidata
-- **Military**: Military installations (data source dependent)
-
-### Incident Data
-- **Real News**: RSS feeds from major news sources
-- **AI Enhanced**: OpenRouter API for real-time incident discovery
-- **Manual**: JSON format for custom incident data
-
-### Download Tools
-```bash
-# Download fresh infrastructure data
-python3 tools/download_manager.py
-
-# Use alternative sources
-python3 tools/alternative_sources.py
-
-# Check cache status
-python3 tools/cached_downloads.py
-```
-
-## 🚀 Deployment
-
-### Static Hosting
-- **Vercel**: `vercel --prod`
-- **Netlify**: Drag & drop deployment
-- **GitHub Pages**: Enable in repository settings
-- **AWS S3**: Static website hosting
-
-### Requirements
-- Any web server capable of serving static files
-- HTTPS recommended for geolocation features
-- CORS headers for external API calls
-
-### Performance Optimization
-- Gzip compression enabled by default
-- CDN integration for static assets
-- Browser caching for incident data
-- Marker clustering for large datasets
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-**"No data" displayed**
-- Check browser console for fetch errors
-- Verify `incidents.json` is accessible
-- Ensure web server is serving files correctly
-
-**Incidents not appearing**
-- Check date range filter (default: 7 days)
-- Verify status and evidence filters
-- Check console for filter debugging output
-
-**Map not loading**
-- Ensure internet connection (Leaflet tiles)
-- Check for JavaScript errors in console
-- Verify map container has dimensions
-
-**AI integration not working**
-- Check OpenRouter API key validity
-- Verify CORS headers and HTTPS
-- Check rate limits and model availability
-
-### Debug Mode
-Set `DEBUG = true` in the JavaScript for verbose logging:
+### Automation Settings (automation/config.js)
 ```javascript
-const DEBUG = true;  // Enable comprehensive logging
+{
+  UPDATE_INTERVAL: 5 * 60 * 1000,     // 5 minutes (dev)
+  PRODUCTION_INTERVAL: 30 * 60 * 1000, // 30 minutes (prod)
+  RATE_LIMIT_DELAY: 30000,            // 30 seconds
+  MAX_RETRIES: 3,
+  CACHE_TTL: 24 * 60 * 60 * 1000      // 24 hours
+}
 ```
 
-## 🛡️ Security Considerations
+## Common Patterns & Solutions
 
-### API Key Protection
-- API keys visible in client-side code
-- Use environment variables for server deployments
-- Consider proxy server for production use
+### Adding a New Filter
+```javascript
+// 1. Add to filter state
+state.filters.newFilter = defaultValue;
 
-### Data Privacy
-- No user tracking or analytics
-- Incident data may contain sensitive information
-- Review data sources for compliance requirements
+// 2. Add UI control
+<div class="filter-control">
+  <label>New Filter</label>
+  <input type="..." id="new-filter" />
+</div>
 
-### Content Security Policy
-```html
-<meta http-equiv="Content-Security-Policy"
-      content="default-src 'self'; connect-src 'self' https://openrouter.ai https://*.tile.openstreetmap.org;">
+// 3. Add to applyFilters()
+filtered = filtered.filter(incident => {
+  // Filter logic
+});
+
+// 4. Add event listener
+document.getElementById('new-filter').addEventListener('change', handleFilterChange);
 ```
 
-## 📈 Future Enhancements
+### Adding a New Data Source
+```javascript
+// 1. Create scraper in automation/scrapers/
+export class NewSourceScraper {
+  async scrape() {
+    // Fetch and parse data
+    return incidents;
+  }
+}
 
-### Planned Features
-- **Real-time WebSocket Updates**: Live incident streaming
-- **Historical Analysis**: Trend analysis and reporting
-- **Advanced Filtering**: Machine learning-based classification
-- **Multi-language Support**: International operations support
-- **API Integration**: Additional news sources and official feeds
+// 2. Register in comprehensive-aggregator.js
+import { NewSourceScraper } from './new-source-scraper.js';
+this.scrapers.push(new NewSourceScraper());
 
-### Technical Improvements
-- **Progressive Web App**: Offline capability and caching
-- **Performance Monitoring**: Real user monitoring integration
-- **Advanced Security**: Content Security Policy hardening
-- **Accessibility**: WCAG 2.1 AA compliance improvements
+// 3. Map to incident schema in incident-generator.js
+```
 
-## 📝 Contributing
+## Error Handling
 
-### Development Workflow
-1. Create feature branch from main
-2. Test thoroughly with local data
-3. Ensure mobile responsiveness
-4. Update documentation if needed
-5. Submit pull request with description
+### Common Issues & Fixes
 
-### Code Standards
-- ES6+ JavaScript features
-- Consistent indentation (2 spaces)
-- Descriptive variable and function names
-- Comments for complex logic
-- Performance-conscious implementations
+**No incidents displayed:**
+```javascript
+// Check console for errors
+console.log('Incidents loaded:', state.incidents.length);
+console.log('Date filter:', state.filters.dateRange);
+// Verify incidents.json exists and is valid
+```
 
-### Testing Checklist
-- [x] Desktop responsive (1920x1080, 1366x768)
-- [x] Mobile responsive (375x667, 414x896)
-- [ ] Cross-browser compatibility (Chrome, Firefox, Safari)
-- [x] Console error-free (map initialization fixed)
-- [x] Map interactions working (Leaflet map displays incidents)
-- [x] Filters functioning correctly
-- [ ] AI integration operational
+**Map not loading:**
+```javascript
+// Ensure container has dimensions
+#map { height: 100vh; width: 100%; }
+// Check Leaflet tiles loading in Network tab
+```
 
-## 🎯 Recent UI Redesign (September 2025)
+**WebSocket disconnection:**
+```javascript
+// Exponential backoff reconnection
+let reconnectDelay = 1000;
+function reconnect() {
+  setTimeout(() => {
+    connectWebSocket();
+    reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+  }, reconnectDelay);
+}
+```
 
-### Major Transformation Completed
-**From**: Military neon theme with complex styling
-**To**: Clean minimalist professional interface
+## Deployment Checklist
 
-### Key Improvements
-- **Color Palette**: Cool-toned blue (#2563EB) and charcoal (#111827)
-- **Modular Panels**: Collapsible sidebar system for better organization
-- **Map Fix**: Resolved JavaScript errors and HTML structure issues
-- **Animation Removal**: Eliminated all pulsating/flashing effects
-- **Typography**: Clean Inter font for professional readability
-- **Button System**: Uniform primary/secondary button styling
+### Pre-deployment
+- [ ] Run all tests: `npm test`
+- [ ] Check browser console for errors
+- [ ] Test mobile responsiveness
+- [ ] Verify date filters work
+- [ ] Ensure map loads correctly
 
-### Technical Fixes Applied
-- Fixed `map.on` reference error (changed to `window.map.on`)
-- Converted `<main id="map">` to clean `<div id="map">` for Leaflet
-- Added global CSS animation disable for performance
-- Updated mobile meta tags for PWA compatibility
+### Build & Deploy
+```bash
+# Build for production
+npm run build              # Creates dist/ folder
 
-### Performance Optimizations
-- Disabled CPU-intensive animations
-- Simplified DOM structure
-- Streamlined CSS with custom properties
-- Maintained zero-build deployment
+# Deploy to Vercel
+npm run vercel-build
+vercel --prod
 
-**Status**: ✅ **PRODUCTION READY** - Full minimalist transformation complete
+# Or deploy dist/ to any static host
+```
 
-For detailed progress report, see: `UI_REDESIGN_PROGRESS.md`
+### Post-deployment
+- [ ] Verify HTTPS enabled
+- [ ] Check CORS headers for API calls
+- [ ] Test WebSocket connection
+- [ ] Monitor error logs
+
+## AI Interaction Guidelines
+
+### When Working on This Project
+1. **Always check existing patterns** before creating new ones
+2. **Never modify the incident schema** without updating all consumers
+3. **Test mobile first** - most users are on mobile devices
+4. **Preserve glassmorphism aesthetic** - it's core to the brand
+5. **Keep everything in index.html** for UI changes - no separate files
+
+### Before Making Changes
+- Read this entire file
+- Check `examples/` for patterns
+- Verify current functionality
+- Understand the data flow
+
+### After Implementation
+- Run tests
+- Check browser console
+- Test mobile viewport
+- Verify filters work
+- Ensure map displays correctly
+
+## Project-Specific Gotchas
+
+1. **Single-file constraint**: All UI code must stay in index.html
+2. **No build process**: Cannot use modern JS modules in browser
+3. **Rate limiting**: External APIs have strict limits - respect delays
+4. **Large datasets**: Infrastructure files are 10+ MB each
+5. **Mobile performance**: Marker clustering essential for mobile devices
+6. **WebSocket reconnection**: Must handle network interruptions gracefully
 
 ---
 
-**DroneWatch** - Professional drone incident monitoring for European airspace operations.
+Remember: DroneWatch is a professional operations center application. Every change should maintain or enhance the operational efficiency and professional aesthetic.

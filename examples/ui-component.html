@@ -1,0 +1,442 @@
+<!-- UI Component Pattern Examples for DroneWatch -->
+<!-- These patterns maintain the glassmorphism operations center aesthetic -->
+
+<!-- 1. GLASSMORPHISM PANEL COMPONENT -->
+<div class="glass-panel">
+  <div class="panel-header">
+    <h3 class="panel-title">PANEL TITLE</h3>
+    <button class="panel-close">&times;</button>
+  </div>
+  <div class="panel-content">
+    <!-- Content here -->
+  </div>
+</div>
+
+<style>
+.glass-panel {
+  background: rgba(19, 22, 31, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.panel-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #60a5fa;
+}
+</style>
+
+<!-- 2. STATUS INDICATOR COMPONENT -->
+<div class="status-indicator" data-status="active">
+  <span class="status-dot"></span>
+  <span class="status-text">ACTIVE</span>
+</div>
+
+<style>
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-indicator[data-status="active"] .status-dot {
+  background: #dc2626;
+}
+
+.status-indicator[data-status="resolved"] .status-dot {
+  background: #16a34a;
+}
+
+.status-indicator[data-status="unconfirmed"] .status-dot {
+  background: #d97706;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+</style>
+
+<!-- 3. FILTER CONTROL COMPONENT -->
+<div class="filter-group">
+  <label class="filter-label">
+    Date Range
+    <span class="filter-badge">7 days</span>
+  </label>
+  <input
+    type="range"
+    class="filter-slider"
+    min="1"
+    max="365"
+    value="7"
+  />
+</div>
+
+<style>
+.filter-group {
+  margin-bottom: 20px;
+}
+
+.filter-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.filter-badge {
+  background: rgba(96, 165, 250, 0.2);
+  color: #60a5fa;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.filter-slider {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.filter-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #60a5fa;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+}
+</style>
+
+<!-- 4. INCIDENT CARD COMPONENT -->
+<div class="incident-card" data-severity="high">
+  <div class="incident-header">
+    <div class="incident-location">
+      <svg class="location-icon" width="16" height="16"><!-- Icon --></svg>
+      <span>Frankfurt Airport (FRA)</span>
+    </div>
+    <div class="incident-time">2 hours ago</div>
+  </div>
+
+  <div class="incident-body">
+    <p class="incident-narrative">
+      Drone sighting caused temporary runway closure. Air traffic diverted for 45 minutes.
+    </p>
+  </div>
+
+  <div class="incident-footer">
+    <div class="incident-tags">
+      <span class="tag tag-category">CLOSURE</span>
+      <span class="tag tag-evidence">CONFIRMED</span>
+    </div>
+    <div class="incident-severity">
+      <div class="severity-bar" style="--severity: 7"></div>
+      <span class="severity-text">7/10</span>
+    </div>
+  </div>
+</div>
+
+<style>
+.incident-card {
+  background: rgba(36, 41, 54, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.incident-card:hover {
+  background: rgba(36, 41, 54, 0.9);
+  transform: translateX(4px);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.incident-card[data-severity="critical"] {
+  border-left: 3px solid #dc2626;
+}
+
+.incident-card[data-severity="high"] {
+  border-left: 3px solid #ea580c;
+}
+
+.incident-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.incident-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.incident-time {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.incident-narrative {
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.incident-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.tag-category {
+  background: rgba(234, 88, 12, 0.2);
+  color: #fb923c;
+}
+
+.tag-evidence {
+  background: rgba(22, 163, 74, 0.2);
+  color: #4ade80;
+}
+
+.severity-bar {
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    #16a34a 0%,
+    #d97706 50%,
+    #dc2626 100%
+  );
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.severity-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(var(--severity) * 10%);
+  background: rgba(255, 255, 255, 0.9);
+}
+</style>
+
+<!-- 5. MOBILE RESPONSIVE DRAWER -->
+<div class="mobile-drawer" id="filter-drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-content">
+    <!-- Filters here -->
+  </div>
+</div>
+
+<style>
+/* Mobile drawer that slides up from bottom */
+@media (max-width: 767px) {
+  .mobile-drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(19, 22, 31, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px 20px 0 0;
+    transform: translateY(calc(100% - 60px));
+    transition: transform 0.3s ease;
+    z-index: 1000;
+  }
+
+  .mobile-drawer.expanded {
+    transform: translateY(0);
+  }
+
+  .drawer-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    margin: 12px auto;
+  }
+
+  .drawer-content {
+    padding: 0 20px 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+</style>
+
+<!-- 6. LOADING SKELETON -->
+<div class="skeleton-card">
+  <div class="skeleton skeleton-header"></div>
+  <div class="skeleton skeleton-text"></div>
+  <div class="skeleton skeleton-text" style="width: 80%"></div>
+  <div class="skeleton-footer">
+    <div class="skeleton skeleton-tag"></div>
+    <div class="skeleton skeleton-tag"></div>
+  </div>
+</div>
+
+<style>
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-header {
+  height: 20px;
+  width: 60%;
+  margin-bottom: 12px;
+}
+
+.skeleton-text {
+  height: 14px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.skeleton-tag {
+  height: 20px;
+  width: 60px;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+</style>
+
+<!-- 7. OPERATIONAL METRICS DISPLAY -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-value">147</div>
+    <div class="metric-label">Active Incidents</div>
+    <div class="metric-change positive">+12%</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-value">23</div>
+    <div class="metric-label">Critical Threats</div>
+    <div class="metric-change negative">-5%</div>
+  </div>
+</div>
+
+<style>
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.metric-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #60a5fa;
+  font-family: 'Fira Code', monospace;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 8px 0;
+}
+
+.metric-change {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.metric-change.positive {
+  color: #4ade80;
+}
+
+.metric-change.negative {
+  color: #f87171;
+}
+</style>
+
+<!-- IMPLEMENTATION NOTES -->
+<!--
+1. All components use glassmorphism effects (backdrop-filter)
+2. Consistent color palette from CSS variables
+3. Mobile-first responsive design
+4. Smooth transitions for better UX
+5. Accessibility considerations (proper contrast, focus states)
+6. Performance optimized (GPU-accelerated animations)
+7. Professional operations center aesthetic maintained
+-->
