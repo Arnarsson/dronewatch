@@ -2,133 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>DroneWatch — Real-Time Threat Monitoring</title>
-  <!-- Force deployment update 2025-09-25 -->
-  <!-- Second deployment fix 19:30 -->
-  <!-- Asset layer fix 19:53 -->
-  <!-- Mobile UI fix 23:37 -->
+  <title>DroneWatch — Minimal Threat Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <link rel="manifest" href="/manifest.json" />
   <link rel="apple-touch-icon" href="/icon-192.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#3b82f6" />
+  <meta name="theme-color" content="#2563EB" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Modern 2025 Color System */
-      --bg: #0a0d14;
-      --bg-gradient: linear-gradient(135deg, #0a0d14 0%, #0f1419 100%);
-
-      /* Glassmorphism surfaces */
-      --glass-panel: rgba(19, 22, 31, 0.8);
-      --glass-surface: rgba(26, 31, 43, 0.6);
-      --glass-card: rgba(36, 41, 54, 0.7);
-      --glass-backdrop: rgba(255, 255, 255, 0.03);
-
-      /* Traditional surfaces for fallback */
-      --panel: #13161f;
-      --surface: #1a1f2b;
-      --card: #242936;
-
-      /* Enhanced text colors */
-      --text: #f8fafc;
-      --text-secondary: #cbd5e1;
+      --bg: #111827;
+      --bg-gradient: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+      --glass-panel: rgba(17, 24, 39, 0.92);
+      --glass-surface: rgba(30, 41, 59, 0.85);
+      --glass-card: rgba(31, 41, 55, 0.9);
+      --glass-backdrop: rgba(15, 23, 42, 0.65);
+      --panel: #162132;
+      --surface: #1b2535;
+      --card: #1f2c40;
+      --text: #f9fafb;
+      --text-secondary: #e2e8f0;
       --text-muted: #94a3b8;
-      --text-accent: #60a5fa;
-
-      /* Operations Center Status Colors */
-      --threat-critical: #dc2626;
-      --threat-high: #ea580c;
-      --threat-medium: #d97706;
-      --threat-low: #16a34a;
-      --threat-unknown: #6b7280;
-
-      /* Operational Status */
-      --status-operational: #10b981;
-      --status-degraded: #f59e0b;
-      --status-offline: #ef4444;
-      --status-maintenance: #8b5cf6;
-
-      /* Modern border system */
-      --border: rgba(51, 65, 85, 0.6);
-      --border-light: rgba(148, 163, 184, 0.2);
-      --border-focus: rgba(59, 130, 246, 0.5);
-
-      /* Vibrant accent system */
-      --accent: #3b82f6;
-      --accent-hover: #60a5fa;
-      --accent-light: rgba(59, 130, 246, 0.1);
-      --accent-glow: rgba(59, 130, 246, 0.3);
-
-      /* Status colors with improved contrast */
-      --success: #10b981;
-      --success-light: rgba(16, 185, 129, 0.1);
+      --text-accent: #bfdbfe;
+      --muted: #94a3b8;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: rgba(37, 99, 235, 0.18);
+      --accent-glow: rgba(37, 99, 235, 0.28);
+      --border: rgba(148, 163, 184, 0.22);
+      --border-light: rgba(148, 163, 184, 0.16);
+      --border-focus: rgba(37, 99, 235, 0.55);
+      --focus: #2563eb;
+      --chip: rgba(37, 99, 235, 0.12);
+      --chip-active: rgba(37, 99, 235, 0.22);
+      --success: #34d399;
+      --success-light: rgba(52, 211, 153, 0.18);
       --warning: #f59e0b;
-      --warning-light: rgba(245, 158, 11, 0.1);
-      --danger: #ef4444;
-      --danger-light: rgba(239, 68, 68, 0.1);
-      --purple: #8b5cf6;
-      --purple-light: rgba(139, 92, 246, 0.1);
-
-      /* Modern shadow system */
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
-
-      /* Typography Scale - Modern 2025 system */
-      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-size-xs: 0.75rem;    /* 12px */
-      --font-size-sm: 0.875rem;   /* 14px */
-      --font-size-base: 1rem;     /* 16px */
-      --font-size-lg: 1.125rem;   /* 18px */
-      --font-size-xl: 1.25rem;    /* 20px */
-      --font-size-2xl: 1.5rem;    /* 24px */
-      --font-size-3xl: 1.875rem;  /* 30px */
-      --font-size-4xl: 2.25rem;   /* 36px */
-
-      /* Line Heights */
+      --warning-light: rgba(245, 158, 11, 0.18);
+      --danger: #f97316;
+      --danger-light: rgba(239, 68, 68, 0.2);
+      --severity-1: #38bdf8;
+      --severity-2: #60a5fa;
+      --severity-3: #2563eb;
+      --severity-4: #1d4ed8;
+      --severity-5: #ef4444;
+      --status-operational: #34d399;
+      --status-degraded: #fbbf24;
+      --status-offline: #f87171;
+      --status-maintenance: #818cf8;
+      --shadow-sm: 0 1px 2px rgba(8, 15, 30, 0.35);
+      --shadow: 0 12px 32px rgba(8, 15, 30, 0.55);
+      --shadow-md: 0 20px 45px rgba(8, 15, 30, 0.6);
+      --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.25);
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-size-xs: 0.75rem;
+      --font-size-sm: 0.875rem;
+      --font-size-base: 1rem;
+      --font-size-lg: 1.125rem;
+      --font-size-xl: 1.25rem;
+      --font-size-2xl: 1.5rem;
       --line-height-tight: 1.25;
       --line-height-normal: 1.5;
-      --line-height-relaxed: 1.625;
-
-      /* Font Weights */
-      --font-weight-normal: 400;
-      --font-weight-medium: 500;
-      --font-weight-semibold: 600;
-      --font-weight-bold: 700;
-      --font-weight-extrabold: 800;
-
-      /* Spacing Scale - 8px grid system */
-      --space-1: 0.25rem;  /* 4px */
-      --space-2: 0.5rem;   /* 8px */
-      --space-3: 0.75rem;  /* 12px */
-      --space-4: 1rem;     /* 16px */
-      --space-5: 1.25rem;  /* 20px */
-      --space-6: 1.5rem;   /* 24px */
-      --space-8: 2rem;     /* 32px */
-      --space-10: 2.5rem;  /* 40px */
-      --space-12: 3rem;    /* 48px */
-
-      /* Asset colors */
-      --air: #ef4444;
-      --harbour: #3b82f6;
-      --energy: #f97316;
-      --rail: #22c55e;
-      --border-crossing: #eab308;
-      --military: #8b5cf6;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
     }
 
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; }
 
     html, body {
       height: 100%;
@@ -138,2668 +86,619 @@
       font-family: var(--font-family);
       font-size: var(--font-size-base);
       line-height: var(--line-height-normal);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Mobile-first responsive layout */
-    #app {
+    body {
       display: flex;
       flex-direction: column;
-      height: 100vh;
-      height: 100dvh; /* Dynamic viewport height for mobile */
+      min-height: 100vh;
     }
 
-    /* Header - Modern 2025 Glassmorphism */
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+
+    input, select, textarea {
+      background: none;
+      border: none;
+      color: inherit;
+    }
+
+    input[type='text'], input[type='search'], select, textarea {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+      background: var(--panel);
+      padding: 0.65rem 0.75rem;
+      color: var(--text);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+
+    input[type='text']:focus, input[type='search']:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      outline: none;
+      background: rgba(37, 99, 235, 0.08);
+    }
+
+    select[multiple] { min-height: 8rem; }
+
+    input[type='range'] {
+      width: 100%;
+      margin-top: var(--space-3);
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.04); }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 999px; }
+
+    .classification-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      background: rgba(37, 99, 235, 0.18);
+      color: var(--text-secondary);
+    }
+
+    .realtime-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .realtime-indicator .realtime-pulse {
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+      animation: pulse 2.4s infinite;
+    }
+
+    #app {
+      flex: 1;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: var(--space-4);
+      padding: 0 var(--space-6) var(--space-6);
+      min-height: 0;
+    }
+
     header {
       display: flex;
       flex-direction: column;
       gap: var(--space-3);
-      padding: var(--space-4) var(--space-4);
-      background: var(--glass-panel);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-light);
-      box-shadow: var(--shadow-md);
-      flex-shrink: 0;
-      position: relative;
+      background: var(--panel);
+      border-radius: 18px;
+      padding: var(--space-5);
+      border: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
     }
 
-    /* Glassmorphism backdrop effect */
-    header::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--bg-gradient);
-      opacity: 0.8;
-      z-index: -1;
-    }
-
-    .header-top {
+    .header-row {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: var(--space-3);
-    }
-
-    header h1 {
-      font-size: var(--font-size-2xl);
-      font-weight: var(--font-weight-extrabold);
-      margin: 0;
-      letter-spacing: -0.025em;
-      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: var(--line-height-tight);
-    }
-
-    .header-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      align-items: center;
-    }
-
-    /* Responsive header scaling */
-    @media (min-width: 640px) {
-      header {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: var(--space-4) var(--space-6);
-      }
-
-      header h1 {
-        font-size: var(--font-size-3xl);
-      }
-
-      .header-badges {
-        flex-wrap: nowrap;
-        gap: var(--space-3);
-      }
-    }
-
-    @media (min-width: 1024px) {
-      header {
-        padding: var(--space-5) var(--space-8);
-      }
-
-      header h1 {
-        font-size: var(--font-size-4xl);
-      }
-    }
-
-    /* Modern Glassmorphism Badge System */
-    .badge {
-      padding: var(--space-2) var(--space-4);
-      background: var(--glass-card);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border-light);
-      border-radius: 9999px;
-      color: var(--text-secondary);
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      min-height: 44px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .badge:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-      border-color: var(--border-focus);
-      background: var(--glass-surface);
-      color: var(--text);
-    }
-
-    .badge:active {
-      transform: translateY(0);
-    }
-    .badge.clickable {
-      cursor: pointer;
-      background: var(--glass-surface);
-      border: 1px solid var(--border-focus);
-    }
-    .badge.clickable:hover {
-      background: var(--focus);
-      color: white;
-    }
-
-    /* Special badge variants */
-    .badge.live {
-      background: linear-gradient(135deg, var(--success) 0%, #059669 100%) !important;
-      color: white !important;
-      border-color: var(--success) !important;
-      box-shadow: 0 0 20px var(--success-light);
-    }
-
-    /* Share button styling */
-    .share-btn {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-4);
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 9999px;
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      min-height: 44px;
-      white-space: nowrap;
-    }
-
-    .share-btn:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .share-btn:active {
-      transform: translateY(0);
-    }
-
-    .share-btn svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .header-title-europe {
-      opacity: 0.8;
-      font-weight: var(--font-weight-medium);
-    }
-
-    @media (max-width: 480px) {
-      .header-title-europe {
-        display: none;
-      }
-
-      .share-text {
-        display: none;
-      }
-
-      .share-btn {
-        padding: var(--space-2);
-        min-width: 44px;
-        min-height: 44px;
-        justify-content: center;
-      }
-    }
-
-
-    /* Main content area - Base mobile-first layout */
-    .main-container {
-      position: relative;
-      flex: 1;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    /* Mobile: Hidden panels by default */
-    .panels-container {
-      display: none; /* Hidden on mobile */
-    }
-
-    /* Mobile map container - full screen */
-    #map-container {
-      flex: 1;
-      position: relative;
-      background: var(--surface);
-      width: 100%;
-      height: 100%;
-    }
-
-    .panels-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--bg-gradient);
-      opacity: 0.6;
-      z-index: -1;
-    }
-
-    #map-container {
-      flex: 1;
-      position: relative;
-      background: var(--surface);
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      border-radius: 0;
-    }
-
-    /* Mobile panels toggle */
-    .mobile-toggle {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 1000;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 50px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mobile-toggle:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-    }
-
-    /* Panel sections */
-    .panel {
-      padding: var(--space-6);
-      max-height: 50vh;
-      overflow-y: auto;
-      background: var(--glass-backdrop);
-      border-radius: var(--space-3);
-      margin: var(--space-2);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-    }
-
-    /* Modern Typography for Headings */
-    h2 {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-bold);
-      text-transform: uppercase;
-      color: var(--text-accent);
-      letter-spacing: 0.05em;
-      margin: 0 0 var(--space-4) 0;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      line-height: var(--line-height-tight);
-    }
-
-    /* Modern Glassmorphism Section Cards */
-    .section {
-      margin-bottom: var(--space-6);
-      background: var(--glass-card);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid var(--border-light);
-      border-radius: var(--space-3);
-      padding: var(--space-5);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .section:hover {
-      box-shadow: var(--shadow-md);
-      border-color: var(--border-focus);
-      transform: translateY(-1px);
-    }
-
-    /* Modern Glassmorphism Chip System */
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-
-    .chip {
-      padding: var(--space-3) var(--space-4);
-      border: 1px solid var(--border-light);
-      border-radius: 9999px;
-      background: var(--glass-surface);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-medium);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      white-space: nowrap;
-      min-height: 40px;
-      user-select: none;
-      position: relative;
-    }
-
-    .chip:hover {
-      background: var(--glass-card);
-      border-color: var(--border-focus);
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-      color: var(--text);
-    }
-
-    .chip:active {
-      transform: translateY(0);
-    }
-
-    .chip.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: white;
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-    }
-
-    .chip.active:hover {
-      background: var(--accent-hover);
-      transform: translateY(-1px);
-    }
-
-    /* Modern 2025 Form System */
-    label {
-      font-size: var(--font-size-sm);
-      color: var(--text-secondary);
-      display: block;
-      margin-bottom: var(--space-2);
-      font-weight: var(--font-weight-medium);
-      letter-spacing: 0.01em;
-    }
-
-    /* Modern Range Slider */
-    input[type="range"] {
-      width: 100%;
-      height: var(--space-2);
-      border-radius: 9999px;
-      background: var(--glass-surface);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border: 1px solid var(--border-light);
-      outline: none;
-      -webkit-appearance: none;
-      cursor: pointer;
-    }
-
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: var(--space-5);
-      height: var(--space-5);
-      border-radius: 50%;
-      background: var(--accent);
-      cursor: pointer;
-      box-shadow: var(--shadow-md), var(--shadow-glow);
-      border: 2px solid white;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    input[type="range"]::-webkit-slider-thumb:hover {
-      background: var(--accent-hover);
-      transform: scale(1.1);
-    }
-
-    /* Modern Input Fields */
-    select,
-    input[type="text"] {
-      width: 100%;
-      padding: var(--space-3) var(--space-4);
-      background: var(--glass-surface);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      color: var(--text);
-      border: 1px solid var(--border-light);
-      border-radius: var(--space-3);
-      outline: none;
-      font-size: var(--font-size-base);
-      font-family: var(--font-family);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      min-height: 44px; /* Touch target */
-    }
-
-    select:focus,
-    input[type="text"]:focus {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--accent-light);
-      background: var(--glass-card);
-      transform: translateY(-1px);
-    }
-
-    select:hover,
-    input[type="text"]:hover {
-      border-color: var(--border-focus);
-      background: var(--glass-card);
-    }
-
-    /* Modern Stats and Legends - 2025 */
-    .legend {
-      display: flex;
-      gap: var(--space-3);
-      align-items: center;
-      flex-wrap: wrap;
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-medium);
-    }
-
-    .dot {
-      width: var(--space-3);
-      height: var(--space-3);
-      border-radius: 50%;
-      display: inline-block;
-      border: 2px solid var(--border-light);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      margin-right: var(--space-2);
-    }
-
-    /* Modern Glassmorphism Stats Grid */
-    .statbar {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: var(--space-4);
     }
 
-    .stat {
-      background: var(--glass-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+    .brand-stack { display: flex; flex-direction: column; gap: 0.35rem; }
+    .brand-stack h1 { margin: 0; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
+    .brand-stack p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+    .ops-status { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; }
+    .status-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+    .status-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--success); box-shadow: 0 0 12px rgba(52, 211, 153, 0.5); }
+
+    .time-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
       border: 1px solid var(--border-light);
-      border-radius: var(--space-4);
-      padding: var(--space-5) var(--space-3);
-      text-align: center;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent) 0%, var(--purple) 100%);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .stat:hover {
-      background: var(--glass-surface);
-      border-color: var(--border-focus);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .stat:hover::before {
-      opacity: 1;
-    }
-
-    .stat .k {
-      font-size: var(--font-size-3xl);
-      font-weight: var(--font-weight-extrabold);
-      margin-bottom: var(--space-1);
-      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: var(--line-height-tight);
-    }
-
-    .stat .label {
-      font-size: var(--font-size-xs);
-      color: var(--text-secondary);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-weight: var(--font-weight-semibold);
+      color: var(--text-secondary);
     }
 
-    /* Modern Glassmorphism Incident Cards */
-    .incident {
-      border: 1px solid var(--border-light);
-      border-radius: var(--space-4);
-      padding: var(--space-5);
-      margin-bottom: var(--space-4);
-      background: var(--glass-card);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
+    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
 
-    .incident::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      background: linear-gradient(to bottom, var(--accent), var(--purple));
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .incident::after {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, transparent 40%, var(--accent-light) 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    .incident:hover {
-      border-color: var(--border-focus);
-      background: var(--glass-surface);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-xl), var(--shadow-glow);
-    }
-
-    .incident:hover::before {
-      opacity: 1;
-    }
-
-    .incident:hover::after {
-      opacity: 0.1;
-    }
-
-    .muted {
-      color: var(--text-muted);
-      font-size: var(--font-size-sm);
-    }
-
-    /* Phase 4: Advanced Micro-Interactions & Loading States */
-
-    /* Skeleton Loading Animation */
-    @keyframes skeleton-pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, var(--glass-surface) 25%, var(--glass-card) 50%, var(--glass-surface) 75%);
-      background-size: 200% 100%;
-      animation: skeleton-pulse 1.5s ease-in-out infinite;
-      border-radius: var(--space-2);
-    }
-
-    /* Advanced Button Interactions */
-    .btn-primary {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-      border: none;
-      border-radius: 9999px;
-      color: white;
-      font-weight: var(--font-weight-semibold);
-      padding: var(--space-3) var(--space-6);
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-      min-height: 44px;
-    }
-
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg), var(--shadow-glow);
-    }
-
-    .btn-primary:hover::before {
-      left: 100%;
-    }
-
-    .btn-primary:active {
-      transform: translateY(0);
-    }
-
-    /* Loading Spinner */
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .loading-spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--border-light);
-      border-top: 2px solid var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-    }
-
-    /* Smooth Focus Management */
-    *:focus {
-      outline: 2px solid var(--accent);
-      outline-offset: 2px;
-      border-radius: var(--space-1);
-    }
-
-    /* Progressive Disclosure */
-    .collapsible {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .collapsible.expanded {
-      max-height: 500px;
-    }
-
-    /* Enhanced Tooltips */
-    .tooltip {
-      position: relative;
-      cursor: help;
-    }
-
-    .tooltip::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--glass-panel);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+    .share-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.32);
       color: var(--text);
-      padding: var(--space-2) var(--space-3);
-      border-radius: var(--space-2);
-      font-size: var(--font-size-sm);
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-      z-index: 1000;
-    }
-
-    .tooltip:hover::after {
-      opacity: 1;
-    }
-
-    /* Phase 5: Modern Mobile-First UX Patterns */
-
-    /* Floating Action Button (FAB) */
-    .fab {
-      position: fixed;
-      bottom: var(--space-6);
-      right: var(--space-6);
-      width: 56px;
-      height: 56px;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
-      border: none;
-      border-radius: 50%;
-      color: white;
-      font-size: var(--font-size-xl);
       cursor: pointer;
-      box-shadow: var(--shadow-xl);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1000;
-      display: none; /* Hidden by default, shown on mobile */
+      transition: transform 0.2s ease, background 0.2s ease;
     }
+    .share-btn:hover { background: rgba(37, 99, 235, 0.22); transform: translateY(-1px); }
 
-    .fab:hover {
-      transform: scale(1.1);
-      box-shadow: var(--shadow-xl), var(--shadow-glow);
-    }
-
-    .fab:active {
-      transform: scale(0.95);
-    }
-
-    /* Bottom Sheet Modal for Mobile */
-    .bottom-sheet {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--glass-panel);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: var(--space-6) var(--space-6) 0 0;
-      transform: translateY(100%);
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: 1001;
-      max-height: 80vh;
-      overflow-y: auto;
-      box-shadow: var(--shadow-xl);
-    }
-
-    .bottom-sheet.open {
-      transform: translateY(0);
-    }
-
-    .bottom-sheet-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border-light);
-      border-radius: 2px;
-      margin: var(--space-3) auto var(--space-4);
-      opacity: 0.6;
-    }
-
-    /* Mobile-First Navigation Bar */
-    .mobile-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--panel);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      padding: var(--space-1) var(--space-2);
-      display: none; /* Hidden by default, shown on mobile */
-      z-index: 999;
-      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-      /* Safe area handling for iOS */
-      padding-bottom: calc(var(--space-1) + env(safe-area-inset-bottom));
-    }
-
-    .mobile-nav-items {
-      display: flex;
-      justify-content: space-around;
+    .header-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .badge {
+      display: inline-flex;
       align-items: center;
-      max-width: 100%;
-      margin: 0 auto;
-    }
-
-    .mobile-nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-      padding: var(--space-2) var(--space-3);
-      color: var(--text-muted);
-      text-decoration: none;
-      border-radius: 12px;
-      transition: all 0.2s ease;
-      min-width: 60px;
-      min-height: 50px;
       justify-content: center;
-      flex: 1;
-      position: relative;
+      gap: 0.45rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-light);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
+    .badge.live { background: rgba(52, 211, 153, 0.18); color: #bbf7d0; border-color: rgba(52, 211, 153, 0.4); }
+    .badge-action { cursor: pointer; border-color: rgba(37, 99, 235, 0.3); background: rgba(37, 99, 235, 0.15); color: var(--text); transition: background 0.2s ease, transform 0.2s ease; }
+    .badge-action:hover { background: rgba(37, 99, 235, 0.25); transform: translateY(-1px); }
 
-    .mobile-nav-item::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 3px;
-      background: var(--accent);
-      border-radius: 2px;
-      opacity: 0;
-      transition: opacity 0.2s ease;
+    .stats-strip {
+      background: var(--panel);
+      border-radius: 18px;
+      padding: var(--space-4);
+      border: 1px solid var(--border-light);
     }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+    .stat-card { background: var(--surface); border-radius: 16px; padding: 1rem 1.25rem; border: 1px solid rgba(255, 255, 255, 0.04); display: flex; flex-direction: column; gap: 0.45rem; min-height: 120px; }
+    .stat-card .stat-value { font-size: 1.85rem; font-weight: 600; letter-spacing: -0.02em; }
+    .stat-card .stat-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
 
-    .mobile-nav-item.active {
-      color: var(--accent);
-      background: rgba(59, 130, 246, 0.1);
+    .layout { display: grid; grid-template-columns: 320px minmax(0, 1fr) 360px; gap: var(--space-4); min-height: 0; }
+    aside.sidebar { display: flex; flex-direction: column; gap: var(--space-3); overflow: hidden; min-height: 0; }
+    .sidebar-scroll { overflow-y: auto; padding-right: 0.35rem; min-height: 0; }
+
+    .activity-callout {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      border-radius: 16px;
+      padding: 0.75rem 1rem;
+      opacity: 0.65;
+      transition: opacity 0.2s ease, box-shadow 0.2s ease;
     }
+    .activity-callout.visible { opacity: 1; box-shadow: var(--shadow-glow); }
+    .activity-callout .activity-pulse { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.5); animation: pulse 2.4s infinite; }
 
-    .mobile-nav-item.active::before {
-      opacity: 1;
-    }
+    .breaking-banner { display: none; flex-direction: column; gap: 0.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 16px; padding: 0.75rem 1rem; }
+    .breaking-banner.visible { display: flex; }
+    .breaking-badge { background: rgba(239, 68, 68, 0.25); color: #fecaca; padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .breaking-news-header { display: flex; align-items: center; gap: 0.5rem; }
+    .breaking-close { margin-left: auto; width: 1.8rem; height: 1.8rem; border-radius: 999px; border: 1px solid rgba(239, 68, 68, 0.4); background: transparent; color: var(--text); cursor: pointer; }
+    .breaking-close:hover { background: rgba(239, 68, 68, 0.18); }
+    .breaking-details { font-size: 0.85rem; color: var(--text-muted); }
 
-    .mobile-nav-item:active {
-      transform: scale(0.95);
-    }
+    details.module { background: var(--panel); border-radius: 18px; border: 1px solid var(--border-light); overflow: hidden; }
+    details.module summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 0.65rem; padding: 0.95rem 1.1rem; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+    details.module summary::-webkit-details-marker { display: none; }
+    details.module summary::after { content: '\25BE'; margin-left: auto; font-size: 0.8rem; transition: transform 0.2s ease; }
+    details.module[open] summary::after { transform: rotate(180deg); }
+    details.module .module-content { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.1rem 1.2rem; display: grid; gap: 0.75rem; }
 
-    .mobile-nav-icon {
-      font-size: 20px;
-      line-height: 1;
-    }
+    .threat-level-indicator { display: flex; align-items: center; gap: 0.75rem; }
+    .threat-level-dot { width: 1rem; height: 1rem; border-radius: 50%; background: var(--warning); box-shadow: 0 0 14px rgba(245, 158, 11, 0.4); }
 
-    .mobile-nav-label {
-      font-size: 10px;
-      font-weight: var(--font-weight-semibold);
-      line-height: 1;
-      margin-top: 2px;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .chip { padding: 0.45rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.03); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+    .chip.active { background: var(--accent); border-color: rgba(37, 99, 235, 0.6); color: #fff; }
 
-    /* Swipe Gestures Support */
-    .swipe-container {
-      touch-action: pan-y;
-      -webkit-user-select: none;
-      user-select: none;
-    }
+    .toggle-group { display: grid; gap: 0.5rem; }
+    .toggle { display: flex; gap: 0.65rem; align-items: center; font-size: 0.85rem; }
+    .toggle input { width: 1rem; height: 1rem; accent-color: var(--accent); }
 
-    .swipe-indicator {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-accent);
-      font-size: var(--font-size-2xl);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
+    .legend { display: grid; gap: 0.35rem; font-size: 0.8rem; color: var(--text-muted); }
+    .legend .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block; }
+    .legend span { display: flex; align-items: center; gap: 0.5rem; }
 
-    .swipe-indicator.left {
-      left: var(--space-4);
-    }
+    .statbar { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .statbar .stat { flex: 1 1 90px; background: var(--surface); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04); padding: 0.75rem 0.9rem; }
+    .statbar .k { font-size: 1.35rem; font-weight: 600; }
 
-    .swipe-indicator.right {
-      right: var(--space-4);
-    }
+    .map-shell { position: relative; background: var(--panel); border-radius: 22px; border: 1px solid var(--border-light); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    #map-container { position: relative; flex: 1; min-height: 0; border-radius: inherit; overflow: hidden; }
+    #map { width: 100%; height: 100%; }
 
-    .swipe-active .swipe-indicator {
-      opacity: 0.8;
-    }
+    .map-hint { position: absolute; top: 1rem; left: 1rem; background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; z-index: 500; display: flex; gap: 0.5rem; align-items: center; }
 
-    /* Enhanced responsive breakpoints */
-    @media (min-width: 768px) {
-      #app {
-        display: grid;
-        grid-template-columns: 320px 1fr 360px;
-        grid-template-rows: auto 1fr;
-        height: 100vh;
-        overflow: hidden;
-      }
+    #mapOverlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 0.65rem; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(4px); z-index: 600; text-align: center; padding: 2rem; }
+    #mapOverlay h3 { margin: 0; font-size: 2rem; letter-spacing: 0.2em; }
 
-      header {
-        grid-column: 1 / 4;
-        grid-row: 1;
-        position: relative;
-        padding: var(--space-5) var(--space-8);
-        overflow-x: visible;
-      }
+    #incidentList { display: grid; gap: 0.75rem; }
+    .incident { display: grid; gap: 0.65rem; padding: 0.85rem 1rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); background: var(--surface); cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease; }
+    .incident:hover { border-color: rgba(37, 99, 235, 0.45); transform: translateY(-1px); }
+    .incident-header { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; font-weight: 600; }
+    .incident-meta { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; font-size: 0.78rem; color: var(--text-muted); }
+    .incident-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
+    .incident-tags span { padding: 0.25rem 0.5rem; border-radius: 999px; background: rgba(255, 255, 255, 0.06); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; }
+    .incident .provenance-btn { font-size: 0.75rem; padding: 0.35rem 0.6rem; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.4); background: rgba(37, 99, 235, 0.12); color: var(--text); cursor: pointer; }
 
-      .main-container {
-        grid-column: 1 / 4;
-        grid-row: 2;
-        display: grid;
-        grid-template-columns: 320px 1fr 360px;
-        overflow: hidden;
-        height: 100%;
-      }
+    .critical-panel { display: grid; gap: 0.75rem; }
+    .critical-card { display: grid; gap: 0.45rem; padding: 0.75rem 0.9rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(37, 99, 235, 0.08); text-align: left; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
+    .critical-card:hover { background: rgba(37, 99, 235, 0.16); border-color: rgba(37, 99, 235, 0.35); }
+    .critical-card__header { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
+    .critical-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+    .critical-dot.severity-3 { background: var(--severity-3); }
+    .critical-dot.severity-4 { background: var(--severity-4); }
+    .critical-dot.severity-5 { background: var(--severity-5); box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
+    .critical-time { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); }
+    .critical-meta { font-size: 0.78rem; color: var(--text-muted); }
 
-      .panels-container {
-        grid-column: 1;
-        display: block;
-        background: var(--glass-panel);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-right: 1px solid var(--border-light);
-        overflow-y: auto;
-        position: relative;
-      }
+    .news-feed { display: grid; gap: 0.6rem; }
+    .news-item { text-align: left; display: grid; gap: 0.4rem; padding: 0.7rem 0.85rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(255, 255, 255, 0.03); cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease; }
+    .news-item:hover { border-color: rgba(37, 99, 235, 0.4); transform: translateY(-1px); }
+    .news-item__header { display: flex; align-items: center; gap: 0.5rem; }
+    .news-headline { font-weight: 600; font-size: 0.9rem; }
+    .news-meta { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); }
+    .news-body { font-size: 0.8rem; color: var(--text-muted); }
+    .news-footer { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-muted); }
+    .news-tag { margin-left: auto; padding: 0.2rem 0.5rem; border-radius: 999px; background: rgba(37, 99, 235, 0.18); border: 1px solid rgba(37, 99, 235, 0.35); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
 
-      #map-container {
-        grid-column: 2;
-        position: relative;
-        background: var(--surface);
-        overflow: hidden;
-      }
+    .empty-state { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
+    #noDataMessage { display: none; border-radius: 18px; border: 1px dashed rgba(148, 163, 184, 0.3); padding: 2.5rem 1.5rem; text-align: center; background: rgba(255, 255, 255, 0.02); }
 
-      #right {
-        grid-column: 3;
-        background: var(--glass-panel);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-left: 1px solid var(--border-light);
-        overflow-y: auto;
-        position: relative;
-        padding: var(--space-6);
-      }
+    .activity-timeline { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: rgba(255, 255, 255, 0.02); }
+    .timeline-loading { padding: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); }
+    .timeline-hour { border-bottom: 1px solid rgba(255, 255, 255, 0.04); padding: 0.75rem 0.9rem; }
+    .timeline-hour:last-child { border-bottom: none; }
+    .timeline-hour-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
+    .timeline-hour-count { background: rgba(255, 255, 255, 0.08); padding: 0.15rem 0.45rem; border-radius: 999px; font-size: 0.68rem; }
+    .timeline-incidents { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.6rem; }
+    .timeline-incident { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.55rem; border-radius: 8px; transition: background 0.2s ease; cursor: pointer; }
+    .timeline-incident.live-incident { background: rgba(37, 99, 235, 0.15); }
+    .timeline-incident:hover { background: rgba(37, 99, 235, 0.2); }
+    .timeline-incident-dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; }
+    .timeline-incident-name { font-size: 0.78rem; font-weight: 600; }
+    .timeline-incident-time { font-size: 0.72rem; color: var(--text-muted); }
+    .timeline-empty { padding: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); }
 
-      .panel {
-        padding: var(--space-6);
-        max-height: none;
-        overflow-y: visible;
-        background: var(--glass-backdrop);
-        border-radius: var(--space-3);
-        margin: var(--space-2);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
-      }
-
-      .mobile-toggle,
-      .mobile-nav,
-      .fab {
-        display: none !important;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      #app {
-        grid-template-columns: 380px 1fr 400px;
-      }
-
-      .main-container {
-        grid-template-columns: 380px 1fr 400px;
-      }
-    }
-
-    /* Mobile panel overlay */
-    /* Complete Mobile Header Redesign */
-    @media (max-width: 767px) {
-      header {
-        padding: 10px 12px 8px 12px;
-        gap: 4px;
-        background: #0f1419;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        height: auto;
-        max-height: 60px;
-      }
-
-      .header-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        gap: 8px;
-      }
-
-      header h1 {
-        font-size: 16px;
-        line-height: 1;
-        margin: 0;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex: 1;
-      }
-
-      header h1 .header-title-text {
-        color: #fff;
-        background: none;
-        -webkit-text-fill-color: #fff;
-      }
-
-      .header-icon {
-        display: none; /* Hide emoji on mobile */
-      }
-
-      .header-title-europe {
-        display: none;
-      }
-
-      /* Compact Share button */
-      .share-btn {
-        padding: 6px 10px;
-        min-height: 32px;
-        font-size: 13px;
-        border-radius: 16px;
-        background: #3b82f6;
-      }
-
-      .share-btn svg {
-        display: none; /* Hide icon on mobile */
-      }
-
-      .share-text {
-        font-size: 12px;
-      }
-
-      /* Complete badge redesign for mobile */
-      .header-badges {
-        display: flex;
-        gap: 4px;
-        width: 100%;
-        padding: 0;
-      }
-
-      /* Much smaller badges */
-      .header-badges .badge {
-        padding: 3px 6px;
-        font-size: 9px;
-        min-height: 20px;
-        max-height: 20px;
-        line-height: 14px;
-        flex-shrink: 0;
-        border-radius: 10px;
-        font-weight: 500;
-        background: rgba(255,255,255,0.1);
-        border: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Remove all emojis from badges */
-      .badge.live::before,
-      .badge::before {
-        content: none !important;
-      }
-
-      /* Live badge special style */
-      .badge.live {
-        background: #ef4444;
-        color: white;
-        text-transform: uppercase;
-      }
-
-      /* Hide non-essential badges */
-      #badge-refresh,
-      #badge-generated {
-        display: none !important;
-      }
-
-      /* Only show 2-3 key badges */
-      .header-badges .badge:nth-child(n+4) {
-        display: none;
-      }
-    }
-
-    /* Mobile-First Modern UX - 2025 */
-    @media (max-width: 767px) {
-      /* AGGRESSIVE FIX: Force map to display on mobile */
-      #app {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
-        position: relative;
-      }
-
-      /* Clean mobile layout */
-      .main-container {
-        position: fixed;
-        top: 60px; /* After header */
-        left: 0;
-        right: 0;
-        bottom: 56px; /* Before bottom nav */
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        height: calc(100vh - 116px);
-      }
-
-      #map-container {
-        flex: 1;
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background: var(--surface);
-      }
-
-      #map {
-        width: 100%;
-        height: 100%;
-      }
-
-      /* CRITICAL: Ensure Leaflet map displays on mobile */
-      .leaflet-container {
-        width: 100% !important;
-        height: 100% !important;
-        background: #1a1f2b !important;
-      }
-
-      .leaflet-tile-pane {
-        opacity: 1 !important;
-      }
-
-      .leaflet-control-container {
-        z-index: 100 !important;
-      }
-
-      /* Show modern mobile navigation ONLY on mobile */
-      .mobile-nav {
-        display: block !important;
-      }
-
-      .fab {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      /* Hide both side panels on mobile - access via bottom sheet instead */
-      .panels-container,
-      #right {
-        display: none !important;
-      }
-
-      /* Adjust main container for mobile nav */
-      #app {
-        padding-bottom: calc(60px + env(safe-area-inset-bottom));
-      }
-
-      /* Enhanced mobile header */
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 998;
-        padding-top: calc(var(--space-4) + env(safe-area-inset-top));
-      }
-
-      /* Optimize incident cards for mobile */
-      .incident {
-        margin-bottom: var(--space-3);
-        padding: var(--space-4);
-      }
-
-      /* Mobile-optimized stats */
-      .statbar {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-3);
-      }
-
-      .stat {
-        padding: var(--space-4) var(--space-3);
-      }
-
-      .stat .k {
-        font-size: var(--font-size-2xl);
-      }
-
-      /* Improve touch targets */
-      .chip {
-        min-height: 44px;
-        padding: var(--space-3) var(--space-4);
-      }
-
-      .badge {
-        min-height: 40px;
-        font-size: var(--font-size-sm);
-      }
-    }
-
-    /* Animations */
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
-      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    .legend { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 12px; }
-    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.4); }
-    .sev { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
-    .sev.s1 { background: var(--severity-1); }
-    .sev.s2 { background: var(--severity-2); }
-    .sev.s3 { background: var(--severity-3); }
-    .sev.s4 { background: var(--severity-4); }
-    .sev.s5 { background: var(--severity-5); }
-    .statbar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
-    .stat .k { font-size: 18px; font-weight: 700; }
-    .incident { border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: var(--surface); cursor: pointer; transition: border .2s ease; }
-    .incident:hover { border-color: #3a4162; }
-    .muted { color: var(--muted); font-size: 12px; }
-    .leaflet-control-attribution { background: rgba(0,0,0,.45); color: #dfe4ff; border-radius: 8px; padding: 2px 6px; }
-    .leaflet-popup-content-wrapper { background: var(--surface); color: var(--text); }
-    .leaflet-popup-tip { background: var(--surface); }
-    .no-data-overlay {
-      background: var(--surface) !important;
-      color: var(--text) !important;
-      border: 2px solid var(--border) !important;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
-    }
-    .risk-tooltip {
-      background: var(--surface) !important;
-      color: var(--text) !important;
-      border: 1px solid var(--border) !important;
-      font-size: 12px !important;
-    }
-
-    /* Live Activity Pulse Animations */
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.7; transform: scale(1.15); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes pulse-ring {
-      0% { opacity: 0.8; transform: scale(1); }
-      100% { opacity: 0; transform: scale(2.5); }
-    }
+    .provenance-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); display: flex; align-items: center; justify-content: center; padding: 2rem; z-index: 1200; }
+    .provenance-modal-content { background: var(--panel); border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.06); width: min(720px, 100%); max-height: 90vh; display: flex; flex-direction: column; }
+    .provenance-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+    .provenance-modal-body { padding: 1.5rem; overflow-y: auto; }
+    .provenance-modal-close { background: rgba(255, 255, 255, 0.08); border-radius: 999px; width: 2.25rem; height: 2.25rem; border: none; color: var(--text); cursor: pointer; }
 
     .live-marker {
-      animation: pulse 2s ease-in-out infinite;
+      animation: markerPulse 1.8s infinite;
+      transform-origin: center;
     }
 
-    .live-marker::before {
-      content: '';
-      position: absolute;
-      top: -5px;
-      left: -5px;
-      right: -5px;
-      bottom: -5px;
-      border: 2px solid var(--severity-4);
-      border-radius: 50%;
-      animation: pulse-ring 3s ease-out infinite;
-      pointer-events: none;
+    @keyframes markerPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
 
-    .activity-indicator {
-      position: fixed;
-      top: 68px;
-      right: 20px;
-      background: var(--panel);
-      border: 1px solid var(--border);
+    .no-data-overlay {
+      background: rgba(17, 24, 39, 0.85) !important;
+      color: var(--text);
       border-radius: 12px;
-      padding: 12px 16px;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      animation: slideInRight 0.3s ease-out;
     }
 
-    .activity-indicator.visible {
-      display: flex;
-    }
-
-    .activity-pulse {
-      width: 8px;
-      height: 8px;
-      background: var(--severity-4);
-      border-radius: 50%;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    /* Breaking News Alert */
-    .breaking-news-alert {
-      position: fixed;
-      top: 68px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, var(--severity-4), #dc2626);
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      color: white;
-      font-weight: 600;
-      z-index: 2000;
-      display: none;
-      min-width: 400px;
-      max-width: 600px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      animation: breakingSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .breaking-news-alert.visible {
-      display: block;
-    }
-
-    .breaking-news-content {
-      padding: 16px 20px;
-    }
-
-    .breaking-news-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .breaking-badge {
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--severity-4);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .breaking-close {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s ease;
-    }
-
-    .breaking-close:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .breaking-details {
-      font-size: 14px;
-      font-weight: 500;
-      opacity: 0.9;
-      line-height: 1.4;
-    }
-
-    @keyframes breakingSlideIn {
-      0% {
-        transform: translate(-50%, -100%);
-        opacity: 0;
-      }
-      70% {
-        transform: translate(-50%, 10px);
-      }
-      100% {
-        transform: translate(-50%, 0);
-        opacity: 1;
-      }
-    }
-
-    /* Activity Timeline */
-    .activity-timeline {
-      max-height: 200px;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--surface);
-    }
-
-    .timeline-loading {
-      padding: 20px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 12px;
-    }
-
-    .timeline-hour {
-      border-bottom: 1px solid var(--border);
-      padding: 8px 12px;
-    }
-
-    .timeline-hour:last-child {
-      border-bottom: none;
-    }
-
-    .timeline-hour-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .timeline-hour-count {
-      background: var(--chip);
-      color: var(--text);
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 10px;
-    }
-
-    .timeline-incidents {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .timeline-incident {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 6px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.15s ease;
-      font-size: 11px;
-    }
-
-    .timeline-incident:hover {
-      background: var(--chip-active);
-    }
-
-    .timeline-incident-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .timeline-incident-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .timeline-incident-name {
-      font-weight: 500;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .timeline-incident-time {
-      color: var(--muted);
-      font-size: 10px;
-    }
-
-    .timeline-empty {
-      padding: 12px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 11px;
-      font-style: italic;
-    }
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOutRight {
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(100%); opacity: 0; }
-    }
-
-    /* Statistics Dashboard Styles */
-    .stats-dashboard {
-      background: var(--glass-panel);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-light);
-      padding: var(--space-3) var(--space-4);
-      position: relative;
-      z-index: 100;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .stats-container {
-      display: flex;
-      gap: var(--space-3);
-      min-width: fit-content;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .stat-card {
-      flex: 1;
-      min-width: 140px;
-      background: var(--glass-card);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
-      padding: var(--space-3) var(--space-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--border-focus);
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    .stat-card:hover::before {
-      opacity: 1;
-    }
-
-    .stat-value {
-      font-size: var(--font-size-2xl);
-      font-weight: var(--font-weight-bold);
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .stat-label {
-      font-size: var(--font-size-xs);
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: var(--font-weight-medium);
-    }
-
-    .stat-change {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      display: flex;
-      align-items: center;
-      gap: var(--space-1);
-    }
-
-    .stat-change.positive {
-      color: var(--danger);
-    }
-
-    .stat-change.positive::before {
-      content: '↑';
-    }
-
-    .stat-change.negative {
-      color: var(--success);
-    }
-
-    .stat-change.negative::before {
-      content: '↓';
-    }
-
-    .stat-change.neutral {
-      color: var(--text-muted);
-    }
-
-    .stat-change.neutral::before {
-      content: '→';
-    }
-
-    .stat-indicator {
-      margin-top: var(--space-1);
-      height: 4px;
-      background: var(--chip);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .severity-bar {
-      height: 100%;
-      background: linear-gradient(90deg, var(--warning) 0%, var(--danger) 100%);
-      width: 0%;
-      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 2px;
-    }
-
-    .stat-detail {
-      font-size: var(--font-size-xs);
-      color: var(--text-secondary);
-    }
-
-    .stat-trend {
-      padding: var(--space-2);
-    }
-
-    #trend-chart {
-      width: 100%;
-      height: 40px;
-      margin-bottom: var(--space-1);
-    }
-
-    /* Special stat card colors */
-    .stat-active .stat-value {
-      color: var(--danger);
-    }
-
-    .stat-24h .stat-value {
-      color: var(--accent);
-    }
-
-    .stat-severity .stat-value {
-      color: var(--warning);
-    }
-
-    .stat-assets .stat-value {
-      color: var(--purple);
-    }
-
-    /* Loading Skeletons and Empty States */
-    .skeleton {
-      position: relative;
-      overflow: hidden;
-      background: var(--glass-card);
-      border-radius: 8px;
-      margin-bottom: var(--space-3);
-    }
-
-    .skeleton::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%
-      );
-      animation: shimmer 2s infinite;
-    }
-
-    @keyframes shimmer {
-      0% {
-        transform: translateX(-100%);
-      }
-      100% {
-        transform: translateX(100%);
-      }
-    }
-
-    .skeleton-card {
-      height: 120px;
-      padding: var(--space-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-    }
-
-    .skeleton-line {
-      height: 16px;
-      background: var(--chip);
-      border-radius: 4px;
-    }
-
-    .skeleton-line.short {
-      width: 60%;
-    }
-
-    .skeleton-line.long {
-      width: 90%;
-    }
-
-    /* Empty State */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: var(--space-12) var(--space-6);
-      text-align: center;
-      min-height: 400px;
-    }
-
-    .empty-state-icon {
-      font-size: 64px;
-      margin-bottom: var(--space-4);
-      opacity: 0.5;
-      animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    .empty-state-title {
-      font-size: var(--font-size-xl);
-      font-weight: var(--font-weight-bold);
-      color: var(--text);
-      margin-bottom: var(--space-2);
-    }
-
-    .empty-state-description {
-      font-size: var(--font-size-base);
-      color: var(--text-muted);
-      max-width: 400px;
-      line-height: var(--line-height-relaxed);
-      margin-bottom: var(--space-6);
-    }
-
-    /* Mobile adjustments for stats dashboard */
-    @media (max-width: 767px) {
-      .stats-dashboard {
-        display: none !important; /* Completely hide stats on mobile */
-      }
-
-      .stats-container {
-        gap: var(--space-2);
-        overflow-x: auto;
-        padding-bottom: var(--space-1);
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-      }
-
-      .stats-container::-webkit-scrollbar {
-        display: none;
-      }
-
-      .stat-card {
-        min-width: 90px;
-        padding: var(--space-2);
-        background: var(--surface);
-        border: 1px solid var(--border);
-      }
-
-      .stat-value {
-        font-size: var(--font-size-lg);
-      }
-
-      .stat-label {
-        font-size: 9px;
-        letter-spacing: 0;
-      }
-
-      .stat-change {
-        font-size: 10px;
-      }
+    .leaflet-control-zoom, .leaflet-bar { border: none !important; }
+    .leaflet-control-zoom a { background: rgba(17, 24, 39, 0.85) !important; color: var(--text) !important; }
 
-      .stat-trend {
-        min-width: 100px;
-      }
-    }
-
-    /* Tablet adjustments */
-    @media (min-width: 768px) and (max-width: 1023px) {
-      .stats-container {
-        gap: var(--space-2);
-      }
-
-      .stat-card {
-        min-width: 120px;
-      }
-    }
-
-    /* Enhanced Provenance Modal Styles */
-    .provenance-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .provenance-modal-content {
-      background: var(--panel);
-      margin: 20px auto;
-      padding: 0;
-      border-radius: 16px;
-      max-width: 800px;
-      width: 95%;
-      max-height: 90vh;
-      display: flex;
-      flex-direction: column;
-      border: 1px solid var(--border);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-    }
-
-    .provenance-modal-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--surface);
-      border-radius: 16px 16px 0 0;
-      flex-shrink: 0;
-    }
-
-    .provenance-modal-title {
-      margin: 0;
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      line-height: 1.2;
-    }
-
-    .provenance-modal-close {
-      background: var(--chip);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text);
-      cursor: pointer;
-      font-size: 18px;
-      transition: all 0.2s ease;
-      line-height: 1;
-      min-width: 40px;
-      min-height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .provenance-modal-close:hover {
-      background: var(--accent);
-      transform: scale(1.05);
-    }
-
-    .provenance-modal-body {
-      padding: 24px;
-      overflow-y: auto;
-      flex: 1;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* Enhanced mobile styles for provenance content */
-    .provenance-modal-body h3 {
-      font-size: 20px;
-      margin-bottom: 12px;
-      color: var(--text);
-      font-weight: 600;
-    }
-
-    .provenance-modal-body h4 {
-      font-size: 16px;
-      margin-top: 24px;
-      margin-bottom: 12px;
-      color: var(--text);
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .provenance-modal-body .badge {
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      display: inline-block;
-      margin-right: 8px;
-      margin-bottom: 8px;
-    }
-
-    /* Provenance content structure styles */
-    .provenance-section {
-      margin-bottom: 24px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .provenance-section:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .provenance-badges {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .provenance-narrative {
-      line-height: 1.6;
-      font-size: 15px;
-      color: var(--text-secondary);
-    }
-
-    .provenance-factors {
-      background: var(--chip);
-      border-radius: 8px;
-      padding: 16px;
-    }
-
-    .provenance-factor {
-      margin: 8px 0;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text);
-    }
-
-    .provenance-timeline,
-    .provenance-asset {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .timeline-item,
-    .asset-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .timeline-item:last-child,
-    .asset-item:last-child {
-      border-bottom: none;
-    }
-
-    .timeline-label,
-    .asset-label {
-      font-weight: 600;
-      color: var(--text-muted);
-      flex: 0 0 140px;
-    }
-
-    .timeline-value,
-    .asset-value {
-      color: var(--text);
-      text-align: right;
-      flex: 1;
-    }
-
-    /* Mobile-specific adjustments for provenance modal */
-    @media (max-width: 767px) {
-      .provenance-modal-content {
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        max-height: 100%;
-        border-radius: 0;
-      }
-
-      .provenance-modal-header {
-        padding: 16px 20px;
-        border-radius: 0;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        backdrop-filter: blur(10px);
-      }
-
-      .provenance-modal-title {
-        font-size: 16px;
-        max-width: 70%;
-      }
-
-      .provenance-modal-body {
-        padding: 20px;
-        padding-bottom: 40px;
-      }
-
-      .provenance-modal-body h3 {
-        font-size: 18px;
-      }
-
-      .provenance-modal-body h4 {
-        font-size: 15px;
-      }
-
-      /* Improve readability on mobile */
-      .provenance-modal-body div {
-        line-height: 1.6;
-      }
-
-      .provenance-modal-body .muted {
-        color: var(--text-secondary);
-        font-size: 14px;
-        line-height: 1.5;
-      }
-    }
-
-    @media (max-width: 1120px) and (min-width: 768px) {
-      /* Tablet layout - keep panels visible but stacked */
-      #app {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        height: 100dvh;
-      }
-
-      .main-container {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        min-height: 0;
-        bottom: 0 !important; /* No bottom spacing on tablets */
-        height: 100% !important;
-      }
-
-      .panels-container {
-        display: none !important; /* Hide panels on tablet/mobile - access via mobile UI */
-      }
-
-      /* Ensure mobile nav is hidden on tablets */
-      .mobile-nav {
-        display: none !important;
-      }
-
-      #map-container {
-        flex: 1;
-        min-height: 400px;
-        position: relative;
-        height: 100%;
-      }
-
-      #map {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-      }
-
-      #right {
-        flex-shrink: 0;
-        height: 250px;
-        overflow-y: auto;
-      }
-    }
-
-    /* Professional Operations Center Components */
-
-    /* Threat Level Indicator */
-    .threat-level-indicator {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      background: var(--glass-card);
-      border-radius: var(--space-2);
-      border: 1px solid var(--border-light);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
-
-    .threat-level-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      position: relative;
-    }
-
-    .threat-level-dot.critical {
-      background: var(--threat-critical);
-      box-shadow: 0 0 8px var(--threat-critical);
-    }
-
-    .threat-level-dot.high {
-      background: var(--threat-high);
-      box-shadow: 0 0 6px var(--threat-high);
-    }
-
-    .threat-level-dot.medium {
-      background: var(--threat-medium);
-      box-shadow: 0 0 4px var(--threat-medium);
-    }
-
-    .threat-level-dot.low {
-      background: var(--threat-low);
-    }
-
-    .threat-level-dot.unknown {
-      background: var(--threat-unknown);
-    }
-
-    .threat-level-dot.critical::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      border-radius: 50%;
-      background: var(--threat-critical);
-      opacity: 0.3;
-      animation: pulse-critical 2s infinite;
-    }
-
-    @keyframes pulse-critical {
-      0%, 100% { transform: scale(1); opacity: 0.3; }
-      50% { transform: scale(1.5); opacity: 0; }
-    }
-
-    /* System Status Bar */
-    .system-status-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: var(--space-2) var(--space-4);
-      background: var(--glass-panel);
-      border-bottom: 1px solid var(--border-light);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-medium);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
-
-    .status-group {
-      display: flex;
-      align-items: center;
-      gap: var(--space-4);
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-    }
-
-    .status-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    .status-dot.operational { background: var(--status-operational); }
-    .status-dot.degraded { background: var(--status-degraded); }
-    .status-dot.offline { background: var(--status-offline); }
-    .status-dot.maintenance { background: var(--status-maintenance); }
-
-    /* Real-time Data Indicator */
-    .realtime-indicator {
-      position: fixed;
-      top: 70px;
-      right: var(--space-4);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      background: var(--glass-card);
-      border: 1px solid var(--border-light);
-      border-radius: 9999px;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-medium);
-      color: var(--text-secondary);
-    }
-
-    .realtime-pulse {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--status-operational);
-      animation: pulse-realtime 2s infinite;
-    }
-
-    @keyframes pulse-realtime {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    /* Operational Typography */
-    .ops-heading {
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      font-weight: var(--font-weight-bold);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text-accent);
-    }
-
-    .ops-code {
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      background: var(--glass-surface);
-      padding: var(--space-1) var(--space-2);
-      border-radius: var(--space-1);
-      font-size: var(--font-size-xs);
-      border: 1px solid var(--border-light);
-    }
-
-    /* Activity Timeline */
-    .activity-timeline {
-      position: relative;
-      padding-left: var(--space-6);
-    }
-
-    .activity-timeline::before {
-      content: '';
-      position: absolute;
-      left: var(--space-2);
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
-    }
-
-    .timeline-item {
-      position: relative;
-      padding: var(--space-3) 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -21px;
-      top: var(--space-4);
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      border: 2px solid var(--bg);
-    }
-
-    .timeline-item.critical::before {
-      background: var(--threat-critical);
-      box-shadow: 0 0 8px var(--threat-critical);
-    }
-
-    .timeline-time {
-      font-size: var(--font-size-xs);
-      color: var(--text-muted);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
-
-    /* Command Center Grid */
-    .command-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-4);
-      margin: var(--space-4) 0;
-    }
-
-    .command-card {
-      background: var(--glass-card);
-      border: 1px solid var(--border-light);
-      border-radius: var(--space-3);
-      padding: var(--space-4);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .command-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--accent);
-    }
-
-    .command-card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: var(--space-3);
-    }
-
-    .command-card-title {
-      font-size: var(--font-size-sm);
-      font-weight: var(--font-weight-semibold);
-      color: var(--text-accent);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .command-card-value {
-      font-size: var(--font-size-2xl);
-      font-weight: var(--font-weight-bold);
-      color: var(--text);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-    }
-
-    /* Classification Banners */
-    .classification-banner {
-      background: var(--status-operational);
-      color: white;
-      text-align: center;
-      padding: var(--space-1);
-      font-size: var(--font-size-xs);
-      font-weight: var(--font-weight-bold);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 9999;
-    }
-
-    .classification-banner.unclassified {
-      background: var(--status-operational);
-    }
-
-    .classification-banner.confidential {
-      background: var(--threat-medium);
-    }
+    .mobile-nav, .fab, .bottom-sheet { display: none; }
 
-    .classification-banner.secret {
-      background: var(--threat-high);
+    @media (max-width: 1400px) {
+      .layout { grid-template-columns: 280px minmax(0, 1fr) 320px; }
     }
 
-    .classification-banner.top-secret {
-      background: var(--threat-critical);
+    @media (max-width: 1200px) {
+      #app { padding: 0 var(--space-4) var(--space-6); }
+      .layout { grid-template-columns: 260px minmax(0, 1fr); grid-template-areas: 'left map' 'left right'; }
+      #left { grid-area: left; }
+      .map-shell { grid-area: map; }
+      #right { grid-area: right; }
+      #right details.module .module-content { max-height: none; }
     }
 
-    /* Enhanced Header for Operations Center */
-    .ops-header-enhancement {
-      background: linear-gradient(135deg, var(--glass-panel) 0%, var(--glass-surface) 100%);
-      border-bottom: 2px solid var(--accent);
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      #left, #right { display: none; }
+      .map-shell { min-height: 60vh; }
+      .mobile-nav, .fab, .bottom-sheet { display: block; }
+      .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17, 24, 39, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 0.35rem 0.6rem; z-index: 900; backdrop-filter: blur(18px); }
+      .mobile-nav-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
+      .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.65rem 0.5rem; border-radius: 12px; font-size: 0.7rem; color: var(--text-muted); }
+      .mobile-nav-item.active { background: rgba(37, 99, 235, 0.18); color: var(--text); }
+      .fab { position: fixed; bottom: 5rem; right: 1.25rem; width: 3.25rem; height: 3.25rem; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 1.35rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow); cursor: pointer; }
+      .bottom-sheet { position: fixed; left: 0; right: 0; bottom: -100%; background: rgba(15, 23, 42, 0.96); border-radius: 22px 22px 0 0; border: 1px solid rgba(255, 255, 255, 0.06); padding: 0.85rem 1rem 1.25rem; max-height: 80vh; overflow-y: auto; z-index: 950; transition: transform 0.3s ease; backdrop-filter: blur(18px); }
+      .bottom-sheet.open { transform: translateY(-100%); }
+      .bottom-sheet-handle { width: 48px; height: 4px; border-radius: 999px; background: rgba(148, 163, 184, 0.5); margin: 0 auto 1rem; }
     }
 
-    .ops-title {
-      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      font-weight: var(--font-weight-extrabold);
-      letter-spacing: -0.02em;
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.6; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
-    .ops-subtitle {
-      font-size: var(--font-size-sm);
-      color: var(--text-muted);
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: var(--space-1);
+    @supports (color: color(display-p3 1 1 1)) {
+      body { color-scheme: dark; }
     }
   </style>
 </head>
+
 <body>
-  <!-- Classification Banner -->
   <div class="classification-banner unclassified">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
-
-  <!-- Real-time Data Indicator -->
-  <div class="realtime-indicator">
+  <div class="realtime-indicator" aria-live="polite">
     <div class="realtime-pulse"></div>
-    <span>LIVE DATA FEED</span>
+    <span>Live monitoring channel</span>
   </div>
-
-  <div id="app" role="application" aria-label="DroneWatch Operations Center">
-    <!-- System Status Bar -->
-    <div class="system-status-bar">
-      <div class="status-group">
-        <div class="status-item">
-          <div class="status-dot operational"></div>
-          <span>SURVEILLANCE NETWORK</span>
+  <div id="app" role="application" aria-label="DroneWatch threat assessment dashboard">
+    <header>
+      <div class="header-row">
+        <div class="brand-stack">
+          <h1>DroneWatch</h1>
+          <p>Minimal operations dashboard for high-stakes drone threat response</p>
         </div>
-        <div class="status-item">
-          <div class="status-dot operational"></div>
-          <span>DATA INGESTION</span>
-        </div>
-        <div class="status-item">
-          <div class="status-dot operational"></div>
-          <span>THREAT ASSESSMENT</span>
+        <div class="header-actions">
+          <div class="time-chip" id="system-time">00:00:00Z</div>
+          <button class="share-btn" id="btn-share" type="button">Share secure view</button>
         </div>
       </div>
-      <div class="status-group">
-        <span class="ops-code">DEFCON-5</span>
-        <span class="ops-code" id="system-time">00:00:00Z</span>
-      </div>
-    </div>
-
-    <header class="ops-header-enhancement">
-      <div class="header-top">
-        <div>
-          <h1 class="ops-title"><span class="header-icon">🛡️</span> <span class="header-title-text">DroneWatch</span></h1>
-          <div class="ops-subtitle">Real-Time Drone Threat Monitoring</div>
-        </div>
-        <button class="share-btn" id="btn-share">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-            <polyline points="16 6 12 2 8 6"></polyline>
-            <line x1="12" y1="2" x2="12" y2="15"></line>
-          </svg>
-          <span class="share-text">Share</span>
-        </button>
+      <div class="ops-status">
+        <div class="status-item"><span class="status-dot"></span>Radar Grid</div>
+        <div class="status-item"><span class="status-dot"></span>Comms Link</div>
+        <div class="status-item"><span class="status-dot"></span>Incident Feed</div>
       </div>
       <div class="header-badges">
-        <span class="badge live">LIVE</span>
-        <span class="badge mobile-realtime">Real-time</span>
+        <span class="badge live">Live</span>
         <span class="badge" id="badge-refresh">Auto-sync</span>
         <span class="badge" id="badge-generated">Updated: —</span>
-        <span class="badge" id="badge-status" style="display: none;">NO DATA</span>
-        <button class="badge clickable" id="ai-fetch-btn" onclick="fetchRealTimeNews()">🤖 AI News</button>
+        <span class="badge" id="badge-status" style="display:none;">No Data</span>
+        <button class="badge badge-action" id="ai-fetch-btn" type="button">🤖 AI News</button>
       </div>
     </header>
 
-    <!-- Statistics Dashboard -->
-    <div id="stats-dashboard" class="stats-dashboard">
-      <div class="stats-container">
-        <div class="stat-card stat-active">
+    <section id="stats-dashboard" class="stats-strip">
+      <div class="stats-grid">
+        <article class="stat-card">
           <div class="stat-value" id="stat-active">0</div>
-          <div class="stat-label">Active Now</div>
-          <div class="stat-change" id="stat-active-change">-</div>
-        </div>
-        <div class="stat-card stat-24h">
+          <div class="stat-label">Active now</div>
+          <div class="stat-change" id="stat-active-change">—</div>
+        </article>
+        <article class="stat-card">
           <div class="stat-value" id="stat-24h">0</div>
-          <div class="stat-label">Last 24h</div>
-          <div class="stat-change" id="stat-24h-change">-</div>
-        </div>
-        <div class="stat-card stat-severity">
+          <div class="stat-label">Past 24h</div>
+          <div class="stat-change" id="stat-24h-change">—</div>
+        </article>
+        <article class="stat-card">
           <div class="stat-value" id="stat-severity">0</div>
-          <div class="stat-label">High Severity</div>
-          <div class="stat-indicator">
-            <div class="severity-bar" id="severity-bar"></div>
-          </div>
-        </div>
-        <div class="stat-card stat-assets">
+          <div class="stat-label">High severity</div>
+          <div class="stat-indicator"><div id="severity-bar" style="height:4px;background:var(--accent);border-radius:999px;width:0%"></div></div>
+        </article>
+        <article class="stat-card">
           <div class="stat-value" id="stat-assets">0</div>
-          <div class="stat-label">Assets Affected</div>
-          <div class="stat-detail" id="stat-assets-detail">-</div>
-        </div>
-        <div class="stat-card stat-trend">
-          <canvas id="trend-chart" width="120" height="40"></canvas>
-          <div class="stat-label">7-Day Trend</div>
-        </div>
+          <div class="stat-label">Assets impacted</div>
+          <div class="stat-change" id="stat-assets-detail">—</div>
+        </article>
+        <article class="stat-card">
+          <canvas id="trend-chart" width="160" height="40"></canvas>
+          <div class="stat-label">7-day trend</div>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <div id="main-container" class="main-container">
-      <!-- Left Panel - Filters & Controls -->
-      <div class="panels-container" id="panels">
-        <div class="panel" id="left-panel">
-
-    <!-- Live Activity Indicator -->
-    <div id="activity-indicator" class="activity-indicator">
-      <div class="activity-pulse"></div>
-      <span id="activity-text">Live Activity</span>
-    </div>
-
-    <!-- Breaking News Alert -->
-    <div id="breaking-news-alert" class="breaking-news-alert">
-      <div class="breaking-news-content">
-        <div class="breaking-news-header">
-          <span class="breaking-badge">BREAKING</span>
-          <span id="breaking-title">New Drone Incident</span>
-          <button id="breaking-close" class="breaking-close">×</button>
-        </div>
-        <div id="breaking-details" class="breaking-details">
-          Location and details will appear here
-        </div>
-      </div>
-    </div>
-
-    <aside id="left" aria-label="Filters">
-      <!-- Threat Level Assessment -->
-      <div class="section">
-        <h2 class="ops-heading">🔴 Threat Level Assessment</h2>
-        <div class="threat-level-indicator">
-          <div class="threat-level-dot medium" id="current-threat-level"></div>
+    <div class="layout">
+      <aside id="left" class="sidebar" aria-label="Filters and controls">
+        <div class="activity-callout" id="activity-indicator">
+          <div class="activity-pulse"></div>
           <div>
-            <div style="font-weight: 600; color: var(--text);">ELEVATED</div>
-            <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Multiple incidents detected</div>
+            <strong id="activity-text">Live activity</strong><br />
+            <span class="muted">Streaming incident telemetry</span>
           </div>
         </div>
-        <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--glass-surface); border-radius: var(--space-2); border: 1px solid var(--border-light);">
-          <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: var(--space-2);">OPERATIONAL STATUS</div>
-          <div style="font-size: var(--font-size-sm); color: var(--text); font-weight: 600;">
-            Monitoring <strong>European critical infrastructure</strong> for drone threats. Real-time data from OSINT, NOTAMs, and official reports.
+
+        <div class="breaking-banner" id="breaking-news-alert" role="status" aria-live="assertive">
+          <div class="breaking-news-header">
+            <span class="breaking-badge">Breaking</span>
+            <strong id="breaking-title"></strong>
+            <button id="breaking-close" class="breaking-close" type="button">×</button>
           </div>
+          <div id="breaking-details" class="breaking-details"></div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2 class="ops-heading">⏱️ Time Window</h2>
-        <div class="chips" role="group" aria-label="Quick time windows">
-          <button class="chip active" data-window="7">7d</button>
-          <button class="chip" data-window="30">30d</button>
-          <button class="chip" data-window="90">90d</button>
-          <button class="chip" data-window="365">365d</button>
+        <div class="sidebar-scroll">
+          <details class="module" open>
+            <summary>Threat posture</summary>
+            <div class="module-content">
+              <div class="threat-level-indicator">
+                <div class="threat-level-dot medium" id="current-threat-level"></div>
+                <div>
+                  <div style="font-weight:600;">Elevated</div>
+                  <div class="muted" style="font-size:0.78rem;">Monitoring critical European infrastructure</div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <details class="module" open>
+            <summary>Time window</summary>
+            <div class="module-content">
+              <div class="chips">
+                <button class="chip active" data-window="7" type="button">7d</button>
+                <button class="chip" data-window="30" type="button">30d</button>
+                <button class="chip" data-window="90" type="button">90d</button>
+                <button class="chip" data-window="365" type="button">365d</button>
+              </div>
+              <label for="dateRange">Select range (days)</label>
+              <input id="dateRange" type="range" min="1" max="365" value="7" step="1" />
+              <div class="muted" id="dateRangeLabel">Showing last 7 days</div>
+            </div>
+          </details>
+
+          <details class="module" open>
+            <summary>Asset layers</summary>
+            <div class="module-content">
+              <div class="toggle-group">
+                <label class="toggle"><input type="checkbox" id="layer-airport" checked />Airports &amp; aviation</label>
+                <label class="toggle"><input type="checkbox" id="layer-harbour" checked />Harbours</label>
+                <label class="toggle"><input type="checkbox" id="layer-energy" checked />Energy</label>
+                <label class="toggle"><input type="checkbox" id="layer-rail" checked />Rail &amp; transit</label>
+                <label class="toggle"><input type="checkbox" id="layer-border" checked />Border crossings</label>
+                <label class="toggle"><input type="checkbox" id="layer-military" checked />Military</label>
+              </div>
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Infrastructure proximity</summary>
+            <div class="module-content">
+              <p class="muted">Highlight incidents within 10km of key infrastructure</p>
+              <label class="toggle"><input type="checkbox" id="filter-near-harbours" />Near harbours</label>
+              <label class="toggle"><input type="checkbox" id="filter-near-military" />Near military bases</label>
+              <label class="toggle"><input type="checkbox" id="filter-near-airports" />Near airports</label>
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Risk visualisation</summary>
+            <div class="module-content">
+              <label class="toggle"><input type="checkbox" id="show-risk-rings" checked />Show risk rings</label>
+              <label class="toggle"><input type="checkbox" id="show-threat-heatmap" />Threat heatmap</label>
+              <label class="toggle"><input type="checkbox" id="auto-focus" checked />Auto-focus on new incidents</label>
+              <label class="toggle"><input type="checkbox" id="compare-mode" />Compare previous period</label>
+              <div id="compare-controls" class="muted" style="display:none;font-size:0.75rem;">Comparing current vs previous window</div>
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Status &amp; evidence</summary>
+            <div class="module-content">
+              <label for="statusSelect">Status</label>
+              <select id="statusSelect" multiple>
+                <option value="active" selected>Active</option>
+                <option value="resolved" selected>Resolved</option>
+                <option value="unconfirmed" selected>Unconfirmed</option>
+              </select>
+              <label for="evidenceSelect">Evidence strength</label>
+              <select id="evidenceSelect" multiple>
+                <option value="3" selected>3 — Official / NOTAM</option>
+                <option value="2" selected>2 — Tier-1 corroborated</option>
+                <option value="1" selected>1 — Single credible</option>
+                <option value="0" selected>0 — Unconfirmed</option>
+              </select>
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Search</summary>
+            <div class="module-content">
+              <label for="searchBox">Free-text search</label>
+              <input id="searchBox" type="text" placeholder="e.g., Nordhavn, NOTAM, Oslo" />
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Activity timeline</summary>
+            <div class="module-content">
+              <div id="activity-timeline" class="activity-timeline">
+                <div class="timeline-loading">Loading timeline...</div>
+              </div>
+            </div>
+          </details>
+
+          <details class="module">
+            <summary>Summary</summary>
+            <div class="module-content">
+              <div class="statbar">
+                <div class="stat"><div class="k" id="stat-total">0</div><div class="muted">Incidents</div></div>
+                <div class="stat"><div class="k" id="stat-air">0</div><div class="muted">Airspace</div></div>
+                <div class="stat"><div class="k" id="stat-har">0</div><div class="muted">Harbours</div></div>
+              </div>
+            </div>
+          </details>
+
+          <p class="muted" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;">Basemap © Esri; OSM contributors. UI refreshes every 5 minutes.</p>
         </div>
-        <label for="dateRange">Filter by days</label>
-        <input id="dateRange" type="range" min="1" max="365" value="7" step="1" aria-valuemin="1" aria-valuemax="365" aria-valuenow="7" />
-        <div class="muted" id="dateRangeLabel">Showing last 7 days</div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">🛡️ Infrastructure Proximity</h2>
-        <div style="margin-bottom: var(--space-3); color: var(--text-muted); font-size: var(--font-size-xs);">
-          Show incidents near critical infrastructure (within 10km)
-        </div>
-        <div class="legend" role="group" aria-label="Proximity filters">
-          <label><input type="checkbox" id="filter-near-harbours" /> <span class="dot" style="background:var(--accent);"></span> Near Harbours</label>
-          <label><input type="checkbox" id="filter-near-military" /> <span class="dot" style="background:var(--danger);"></span> Near Military Bases</label>
-          <label><input type="checkbox" id="filter-near-airports" /> <span class="dot" style="background:var(--success);"></span> Near Airports</label>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">⚡ Risk Visualization</h2>
-        <label><input type="checkbox" id="show-risk-rings" checked /> Show risk rings around critical assets</label>
-        <div class="muted" style="font-size: 11px; margin-top: 4px;">2km/5km operational zones based on asset type and threat profile</div>
-
-        <label style="margin-top: 8px;"><input type="checkbox" id="show-threat-heatmap" /> Show regional threat heatmap</label>
-        <div class="muted" style="font-size: 11px; margin-top: 4px;">Visualize incident density and severity concentrations across regions</div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">🗺️ Navigation</h2>
-        <label><input type="checkbox" id="auto-focus" checked /> Auto-focus on recent activity</label>
-        <div class="muted" style="font-size: 11px; margin-top: 4px;">Automatically center map on most recent incidents when loading</div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">📊 Compare Mode</h2>
-        <label><input type="checkbox" id="compare-mode" /> Compare periods</label>
-        <div class="muted" style="font-size: 11px; margin-top: 4px;">Show current period vs previous period for trend analysis</div>
-        <div id="compare-controls" style="display: none; margin-top: 8px;">
-          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-            <span style="color: var(--severity-4); font-weight: 700;">●</span>
-            <span class="muted" style="font-size: 12px;">Current</span>
-            <span style="color: var(--severity-2); font-weight: 700;">●</span>
-            <span class="muted" style="font-size: 12px;">Previous</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">🔍 Status & Evidence</h2>
-        <label for="statusSelect">Status</label>
-        <select id="statusSelect" multiple size="3">
-          <option value="active" selected>Active</option>
-          <option value="resolved" selected>Resolved</option>
-          <option value="unconfirmed" selected>Unconfirmed</option>
-        </select>
-
-        <label style="margin-top:8px;" for="evidenceSelect">Evidence strength</label>
-        <select id="evidenceSelect" multiple size="4">
-          <option value="3" selected>3 — Official/NOTAM/NAVTEX</option>
-          <option value="2" selected>2 — Multi tier-1 reports</option>
-          <option value="1" selected>1 — Single credible</option>
-          <option value="0" selected>0 — Unconfirmed</option>
-        </select>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">🔎 Find</h2>
-        <label for="searchBox">Search assets, sources, narratives</label>
-        <input id="searchBox" type="text" placeholder="e.g., CPH, Nordhavn, Reuters" />
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">📈 Activity Timeline</h2>
-        <div id="activity-timeline" class="activity-timeline">
-          <div class="timeline-loading">Loading timeline...</div>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">⚠️ Severity Legend</h2>
-        <div class="legend">
-          <span><span class="sev s1"></span>1</span>
-          <span><span class="sev s2"></span>2</span>
-          <span><span class="sev s3"></span>3</span>
-          <span><span class="sev s4"></span>4</span>
-          <span><span class="sev s5"></span>5</span>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2 class="ops-heading">📋 Summary</h2>
-        <div class="statbar">
-          <div class="stat"><div class="k" id="stat-total">0</div><div class="muted">Incidents</div></div>
-          <div class="stat"><div class="k" id="stat-air">0</div><div class="muted">Airports</div></div>
-          <div class="stat"><div class="k" id="stat-har">0</div><div class="muted">Harbours</div></div>
-        </div>
-      </div>
-
-      <div class="section muted" style="font-size:11px;">
-        Basemap © Esri; OSM contributors. Data refreshes hourly; UI reloads automatically every 5 minutes.
-      </div>
-    </aside>
-        </div> <!-- Close left-panel -->
-      </div> <!-- Close panels-container -->
-
-      <!-- Map Container - NOW PROPERLY INSIDE main-container -->
-      <div id="map-container">
-        <main id="map" role="region" aria-label="Incident map">
-          <div id="mapOverlay" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: var(--surface); border: 3px solid var(--severity-4); border-radius: 16px; padding: 40px 60px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.8);">
-            <div style="font-size: 48px; font-weight: 900; color: var(--severity-4); margin-bottom: 16px; letter-spacing: 3px;">NO DATA</div>
-            <div style="color: var(--muted); font-size: 16px; line-height: 1.4;">Europe-wide incident monitoring system<br/>No current incidents detected</div>
-          </div>
-        </main>
-      </div>
-
-      <aside id="right" aria-label="Incident details">
-      <div id="details">
-        <h2 class="ops-heading">📡 Incident Feed</h2>
-        <p class="muted" id="detailsIntro">Pins refresh every few minutes. Click a marker or list item for full provenance.</p>
-        <div id="noDataMessage" style="display: none; text-align: center; padding: 60px 20px; background: var(--surface); border: 2px solid var(--border); border-radius: 12px; margin: 20px 0;">
-          <div style="font-size: 32px; font-weight: 900; color: var(--text); margin-bottom: 16px; letter-spacing: 2px;">NO DATA</div>
-          <div class="muted" style="line-height: 1.5; font-size: 14px;">No incidents match the current filters.<br />Try expanding the time window or enabling more status options.</div>
-        </div>
-        <div id="incidentList"></div>
-      </div>
       </aside>
-    </div> <!-- End of main-container - CRITICAL FIX -->
 
-    <!-- Provenance Modal - Enhanced for Mobile -->
-    <div id="provenanceModal" class="provenance-modal" style="display: none;">
-      <div class="provenance-modal-content">
-        <div class="provenance-modal-header">
-          <h2 class="provenance-modal-title">INCIDENT PROVENANCE</h2>
-          <button id="closeProvenance" class="provenance-modal-close">✕</button>
+      <section class="map-shell">
+        <div id="map-container">
+          <div class="map-hint">Scroll to zoom • Shift + drag to focus • Double-click to recenter</div>
+          <div id="map" role="region" aria-label="Incident map"></div>
+          <div id="mapOverlay" class="map-overlay">
+            <h3>NO DATA</h3>
+            <p class="muted">No incidents match the current filters</p>
+          </div>
         </div>
-        <div id="provenanceContent" class="provenance-modal-body"></div>
-      </div>
+      </section>
+
+      <aside id="right" class="sidebar" aria-label="Incident intelligence">
+        <details class="module" open>
+          <summary>Critical alerts</summary>
+          <div class="module-content critical-panel" id="critical-alerts">
+            <p class="empty-state muted">Awaiting incident data.</p>
+          </div>
+        </details>
+
+        <details class="module" open>
+          <summary>Incident feed</summary>
+          <div class="module-content">
+            <p class="muted" id="detailsIntro">Interactive feed of active incidents. Select a row to focus on the map.</p>
+            <div id="noDataMessage" role="status">
+              <strong style="letter-spacing:0.2em; text-transform:uppercase;">No matches</strong>
+              <p class="muted">Adjust filters or expand the time window to widen coverage.</p>
+            </div>
+            <div id="incidentList"></div>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary>Intel briefing</summary>
+          <div class="module-content news-feed" id="news-feed">
+            <p class="empty-state muted">AI-assisted news brief will appear here.</p>
+          </div>
+        </details>
+      </aside>
     </div>
+  </div>
+
+  <div id="provenanceModal" class="provenance-modal" style="display:none;">
+    <div class="provenance-modal-content">
+      <div class="provenance-modal-header">
+        <h2 class="provenance-modal-title">Incident provenance</h2>
+        <button id="closeProvenance" class="provenance-modal-close" type="button">✕</button>
+      </div>
+      <div id="provenanceContent" class="provenance-modal-body"></div>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="#" class="mobile-nav-item active" data-tab="map">🗺️<span class="mobile-nav-label">Map</span></a>
+      <a href="#" class="mobile-nav-item" data-tab="incidents">🚨<span class="mobile-nav-label">Incidents</span></a>
+      <a href="#" class="mobile-nav-item" data-tab="filters">⚙️<span class="mobile-nav-label">Filters</span></a>
+      <a href="#" class="mobile-nav-item" data-tab="stats">📊<span class="mobile-nav-label">Stats</span></a>
+    </div>
+  </nav>
+
+  <button class="fab" id="mobile-fab" type="button" aria-label="Toggle mobile controls">⚡</button>
+
+  <div class="bottom-sheet" id="mobile-bottom-sheet">
+    <div class="bottom-sheet-handle"></div>
+    <div id="bottom-sheet-content"></div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin="anonymous"></script>
-  <script>
+<script>
     const INCIDENTS_URL = './incidents.json';
     const REFRESH_MS = 5 * 60 * 1000;
 
@@ -3160,126 +1059,147 @@
       console.log('State assigned to window:', !!window.state, !!window.droneState);
 
       // URL state management for shareable links
-      function saveStateToURL() {
+            function saveStateToURL() {
         const params = new URLSearchParams();
 
-        // Time window
-        params.set('days', document.getElementById('dateRange').value);
+        const range = document.getElementById('dateRange');
+        if (range) {
+          params.set('days', range.value);
+        }
 
-        // Asset layers
-        if (document.getElementById('layer-airport').checked) params.append('layers', 'airport');
-        if (document.getElementById('layer-harbour').checked) params.append('layers', 'harbour');
-        if (document.getElementById('layer-energy').checked) params.append('layers', 'energy');
-        if (document.getElementById('layer-rail').checked) params.append('layers', 'rail');
-        if (document.getElementById('layer-border').checked) params.append('layers', 'border');
-        if (document.getElementById('layer-military').checked) params.append('layers', 'military');
+        ['airport', 'harbour', 'energy', 'rail', 'border', 'military'].forEach(layer => {
+          const el = document.getElementById(`layer-${layer}`);
+          if (el && el.checked) {
+            params.append('layers', layer);
+          }
+        });
 
-        // Status filters
-        const statusOptions = Array.from(document.getElementById('statusSelect').selectedOptions);
-        statusOptions.forEach(opt => params.append('status', opt.value));
+        const statusSelect = document.getElementById('statusSelect');
+        if (statusSelect) {
+          Array.from(statusSelect.selectedOptions).forEach(opt => params.append('status', opt.value));
+        }
 
-        // Evidence filters
-        const evidenceOptions = Array.from(document.getElementById('evidenceSelect').selectedOptions);
-        evidenceOptions.forEach(opt => params.append('evidence', opt.value));
+        const evidenceSelect = document.getElementById('evidenceSelect');
+        if (evidenceSelect) {
+          Array.from(evidenceSelect.selectedOptions).forEach(opt => params.append('evidence', opt.value));
+        }
 
-        // Search term
-        const searchTerm = document.getElementById('searchBox').value.trim();
+        const searchInput = document.getElementById('searchBox');
+        const searchTerm = searchInput ? searchInput.value.trim() : '';
         if (searchTerm) params.set('search', searchTerm);
 
-        // Risk rings
         if (state.showRiskRings) params.set('risks', '1');
-
-        // Compare mode
         if (state.compareMode) params.set('compare', '1');
-
-        // Auto-focus (only save if disabled, since it's enabled by default)
         if (!state.autoFocusEnabled) params.set('noautofocus', '1');
 
-        // Map view
-        const center = map.getCenter();
-        const zoom = map.getZoom();
-        params.set('lat', center.lat.toFixed(4));
-        params.set('lng', center.lng.toFixed(4));
-        params.set('zoom', zoom);
+        if (typeof map !== 'undefined') {
+          const center = map.getCenter();
+          const zoom = map.getZoom();
+          params.set('lat', center.lat.toFixed(4));
+          params.set('lng', center.lng.toFixed(4));
+          params.set('zoom', zoom);
+        }
 
-        // Update URL without reload
         const newUrl = window.location.pathname + '?' + params.toString();
         window.history.replaceState({}, '', newUrl);
       }
 
-    function loadStateFromURL() {
+
+
+        function loadStateFromURL() {
       const params = new URLSearchParams(window.location.search);
 
-      // Time window
       if (params.has('days')) {
         const days = params.get('days');
-        document.getElementById('dateRange').value = days;
-        document.getElementById('dateRangeLabel').textContent = `Showing last ${days} days`;
-        // Update active chip
+        const range = document.getElementById('dateRange');
+        if (range) {
+          range.value = days;
+        }
+        const label = document.getElementById('dateRangeLabel');
+        if (label) {
+          label.textContent = `Showing last ${days} days`;
+        }
         document.querySelectorAll('.chip[data-window]').forEach(btn => {
           btn.classList.toggle('active', btn.dataset.window === days);
         });
       }
 
-      // Asset layers
       const layers = params.getAll('layers');
       if (layers.length > 0) {
-        document.getElementById('layer-airport').checked = layers.includes('airport');
-        document.getElementById('layer-harbour').checked = layers.includes('harbour');
-        document.getElementById('layer-energy').checked = layers.includes('energy');
-        document.getElementById('layer-rail').checked = layers.includes('rail');
-        document.getElementById('layer-border').checked = layers.includes('border');
-        document.getElementById('layer-military').checked = layers.includes('military');
+        ['airport', 'harbour', 'energy', 'rail', 'border', 'military'].forEach(layer => {
+          const el = document.getElementById(`layer-${layer}`);
+          if (el) {
+            el.checked = layers.includes(layer);
+          }
+        });
       }
 
-      // Status filters
       const statuses = params.getAll('status');
       if (statuses.length > 0) {
-        Array.from(document.getElementById('statusSelect').options).forEach(opt => {
-          opt.selected = statuses.includes(opt.value);
-        });
+        const statusSelect = document.getElementById('statusSelect');
+        if (statusSelect) {
+          Array.from(statusSelect.options).forEach(opt => {
+            opt.selected = statuses.includes(opt.value);
+          });
+        }
       }
 
-      // Evidence filters
       const evidences = params.getAll('evidence');
       if (evidences.length > 0) {
-        Array.from(document.getElementById('evidenceSelect').options).forEach(opt => {
-          opt.selected = evidences.includes(opt.value);
-        });
+        const evidenceSelect = document.getElementById('evidenceSelect');
+        if (evidenceSelect) {
+          Array.from(evidenceSelect.options).forEach(opt => {
+            opt.selected = evidences.includes(opt.value);
+          });
+        }
       }
 
-      // Search term
       if (params.has('search')) {
-        document.getElementById('searchBox').value = params.get('search');
+        const searchInput = document.getElementById('searchBox');
+        if (searchInput) {
+          searchInput.value = params.get('search');
+        }
       }
 
-      // Risk rings
       if (params.has('risks')) {
         state.showRiskRings = params.get('risks') === '1';
-        document.getElementById('show-risk-rings').checked = state.showRiskRings;
+        const riskToggle = document.getElementById('show-risk-rings');
+        if (riskToggle) {
+          riskToggle.checked = state.showRiskRings;
+        }
       }
 
-      // Compare mode
       if (params.has('compare')) {
         state.compareMode = params.get('compare') === '1';
-        document.getElementById('compare-mode').checked = state.compareMode;
-        document.getElementById('compare-controls').style.display = state.compareMode ? 'block' : 'none';
+        const compareToggle = document.getElementById('compare-mode');
+        if (compareToggle) {
+          compareToggle.checked = state.compareMode;
+        }
+        const compareControls = document.getElementById('compare-controls');
+        if (compareControls) {
+          compareControls.style.display = state.compareMode ? 'block' : 'none';
+        }
       }
 
-      // Auto-focus
       if (params.has('noautofocus')) {
         state.autoFocusEnabled = false;
-        document.getElementById('auto-focus').checked = false;
+        const autoFocusToggle = document.getElementById('auto-focus');
+        if (autoFocusToggle) {
+          autoFocusToggle.checked = false;
+        }
       }
 
-      // Map view
-      if (params.has('lat') && params.has('lng') && params.has('zoom')) {
+      if (params.has('lat') && params.has('lng') && params.has('zoom') && typeof map !== 'undefined') {
         const lat = parseFloat(params.get('lat'));
         const lng = parseFloat(params.get('lng'));
-        const zoom = parseInt(params.get('zoom'));
-        map.setView([lat, lng], zoom);
+        const zoom = parseInt(params.get('zoom'), 10);
+        if (!Number.isNaN(lat) && !Number.isNaN(lng) && !Number.isNaN(zoom)) {
+          map.setView([lat, lng], zoom);
+        }
       }
     }
+
+
 
     function sevBox(score) {
       const level = Math.min(5, Math.max(1, Number(score) || 1));
@@ -3321,21 +1241,36 @@
       return opts.length ? opts : Array.from(select.options).map(opt => opt.value);
     }
 
-    function assetToggles() {
-      // Updated to use proximity filters instead of layer toggles
+        function assetToggles() {
+      const layerToggles = {};
+      let hasLayerToggle = false;
+      ['airport', 'harbour', 'energy', 'rail', 'border', 'military'].forEach(layer => {
+        const el = document.getElementById(`layer-${layer}`);
+        if (el) {
+          layerToggles[layer] = el.checked;
+          hasLayerToggle = true;
+        }
+      });
+
+      if (hasLayerToggle) {
+        return layerToggles;
+      }
+
       const airportEl = document.getElementById('filter-near-airports');
       const harbourEl = document.getElementById('filter-near-harbours');
       const militaryEl = document.getElementById('filter-near-military');
 
       return {
-        airport: airportEl ? airportEl.checked : false,
-        harbour: harbourEl ? harbourEl.checked : false,
-        energy: false, // Not used anymore
-        rail: false,   // Not used anymore
-        border: false, // Not used anymore
-        military: militaryEl ? militaryEl.checked : false
+        airport: airportEl ? airportEl.checked : true,
+        harbour: harbourEl ? harbourEl.checked : true,
+        energy: true,
+        rail: true,
+        border: true,
+        military: militaryEl ? militaryEl.checked : true
       };
     }
+
+
 
     function mapAssetType(assetType) {
       // Map asset types to filter categories
@@ -4120,6 +2055,113 @@
       });
     }
 
+    function renderCriticalAlerts(incidents) {
+      const container = document.getElementById('critical-alerts');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (!Array.isArray(incidents) || incidents.length === 0) {
+        container.innerHTML = '<p class="empty-state muted">No incidents in the current view.</p>';
+        return;
+      }
+
+      const activeIncidents = incidents
+        .filter(incident => incident.incident?.status === 'active')
+        .sort((a, b) => {
+          const severityDiff = (b.scores?.severity || 0) - (a.scores?.severity || 0);
+          if (severityDiff !== 0) return severityDiff;
+          const aTime = new Date(a.last_update_utc || a.first_seen_utc || 0).getTime();
+          const bTime = new Date(b.last_update_utc || b.first_seen_utc || 0).getTime();
+          return bTime - aTime;
+        });
+
+      if (activeIncidents.length === 0) {
+        container.innerHTML = '<p class="empty-state muted">No active incidents at the moment.</p>';
+        return;
+      }
+
+      activeIncidents.slice(0, 3).forEach(incident => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'critical-card';
+        const severity = incident.scores?.severity || 0;
+        const assetName = incident.asset?.name || 'Unidentified asset';
+        const category = incident.incident?.category || 'incident';
+        const time = getTimeAgo(new Date(incident.last_update_utc || incident.first_seen_utc || Date.now()));
+
+        button.innerHTML = `
+          <div class="critical-card__header">
+            <span class="critical-dot severity-${severity}"></span>
+            <span class="critical-asset">${assetName}</span>
+            <span class="critical-time">${time}</span>
+          </div>
+          <div class="critical-meta">${category.replace(/_/g, ' ')} • Severity ${severity}</div>
+        `;
+
+        button.addEventListener('click', () => {
+          renderDetails([incident]);
+          if (typeof focusIncident === 'function') {
+            focusIncident(incident);
+          }
+        });
+
+        container.appendChild(button);
+      });
+    }
+
+    function renderNewsBriefs(incidents) {
+      const container = document.getElementById('news-feed');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (!Array.isArray(incidents) || incidents.length === 0) {
+        container.innerHTML = '<p class="empty-state muted">No recent intelligence updates.</p>';
+        return;
+      }
+
+      const sorted = [...incidents]
+        .sort((a, b) => {
+          const aTime = new Date(a.last_update_utc || a.first_seen_utc || 0).getTime();
+          const bTime = new Date(b.last_update_utc || b.first_seen_utc || 0).getTime();
+          return bTime - aTime;
+        })
+        .slice(0, 4);
+
+      sorted.forEach(incident => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'news-item';
+        const assetName = incident.asset?.name || 'Unknown asset';
+        const location = incident.asset?.location || incident.asset?.country || incident.asset?.region || 'Location withheld';
+        const category = incident.incident?.category || 'incident';
+        const status = incident.incident?.status || 'status unknown';
+        const tag = incident.tags?.includes('ai-generated') ? 'AI Insight' : incident.tags?.[0];
+        const time = getTimeAgo(new Date(incident.last_update_utc || incident.first_seen_utc || Date.now()));
+        const severity = incident.scores?.severity || 0;
+
+        item.innerHTML = `
+          <div class="news-item__header">
+            <span class="news-headline">${assetName}</span>
+            <span class="news-meta">${time}</span>
+          </div>
+          <div class="news-body">${category.replace(/_/g, ' ')} • ${status.replace(/_/g, ' ')} • Severity ${severity}</div>
+          <div class="news-footer">
+            <span class="news-location">${location}</span>
+            ${tag ? `<span class="news-tag">${tag}</span>` : ''}
+          </div>
+        `;
+
+        item.addEventListener('click', () => {
+          renderDetails([incident]);
+          if (typeof focusIncident === 'function') {
+            focusIncident(incident);
+          }
+        });
+
+        container.appendChild(item);
+      });
+    }
+
     function render() {
       console.log('render() called, total incidents:', state.data.incidents.length);
       console.log('render() state.data:', state.data);
@@ -4160,6 +2202,10 @@
 
       // Store all current incidents for mobile access
       state.allIncidents = currentFiltered;
+
+      renderCriticalAlerts(currentFiltered);
+      renderNewsBriefs(state.data.incidents);
+
 
       console.log('current period incidents:', currentFiltered.length);
       if (state.compareMode) console.log('previous period incidents:', previousFiltered.length);
@@ -4918,43 +2964,7 @@
       initializeMap();
     }
   </script>
-
-  <!-- Modern Mobile Navigation (2025) -->
-  <nav class="mobile-nav" id="mobile-nav">
-    <div class="mobile-nav-items">
-      <a href="#" class="mobile-nav-item active" data-tab="map">
-        <div class="mobile-nav-icon">🗺️</div>
-        <div class="mobile-nav-label">Map</div>
-      </a>
-      <a href="#" class="mobile-nav-item" data-tab="incidents">
-        <div class="mobile-nav-icon">🚨</div>
-        <div class="mobile-nav-label">Incidents</div>
-      </a>
-      <a href="#" class="mobile-nav-item" data-tab="filters">
-        <div class="mobile-nav-icon">⚙️</div>
-        <div class="mobile-nav-label">Filters</div>
-      </a>
-      <a href="#" class="mobile-nav-item" data-tab="stats">
-        <div class="mobile-nav-icon">📊</div>
-        <div class="mobile-nav-label">Stats</div>
-      </a>
-    </div>
-  </nav>
-
-  <!-- Floating Action Button -->
-  <button class="fab" id="mobile-fab" aria-label="Open mobile menu">
-    ⚡
-  </button>
-
-  <!-- Bottom Sheet Modal -->
-  <div class="bottom-sheet" id="mobile-bottom-sheet">
-    <div class="bottom-sheet-handle"></div>
-    <div id="bottom-sheet-content">
-      <!-- Content will be dynamically loaded here -->
-    </div>
-  </div>
-
-  <script>
+<script>
     // Setup Modern Mobile UX
     function setupMobileUX() {
       const fab = document.getElementById('mobile-fab');
@@ -5168,6 +3178,7 @@
 
               state.data.incidents = [...state.data.incidents, ...enhancedIncidents];
               render();
+              renderNewsBriefs(state.data.incidents);
               aiBtn.textContent = `✅ +${incidents.length} AI`;
             } else {
               aiBtn.textContent = '📭 No new data';
@@ -5184,7 +3195,10 @@
         aiBtn.textContent = '❌ Failed';
       }
 
-      setTimeout(() => aiBtn.textContent = '🤖 AI News', 3000);
+      setTimeout(() => {
+        aiBtn.textContent = '🤖 AI News';
+        renderNewsBriefs(state.data.incidents);
+      }, 3000);
     }
   </script>
 </body>
