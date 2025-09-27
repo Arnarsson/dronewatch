@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2025-09-26T14:07:54Z",
+  "generated_utc": "2025-09-26T21:40:00Z",
   "incidents": [
     {
-      "id": "rss-eddf-2025-09-25-vf7h5z",
-      "first_seen_utc": "2025-09-25T19:35:00.000Z",
-      "last_update_utc": "2025-09-25T16:46:02.000Z",
+      "id": "rss-eddf-2025-09-26-vf7h5z",
+      "first_seen_utc": "2025-09-26T11:00:00.000Z",
+      "last_update_utc": "2025-09-26T12:30:00.000Z",
       "asset": {
         "type": "airport",
         "name": "Frankfurt Airport",
@@ -15,59 +15,40 @@
       },
       "incident": {
         "category": "sighting",
-        "status": "resolved",
+        "status": "active",
         "duration_min": 103,
-        "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone sighting reported near Frankfurt Airport causing temporary security response. Incident resolved after investigation."
+        "uav_count": 2,
+        "uav_characteristics": "multiple drones with lights",
+        "response": ["security", "police"],
+        "narrative": "Multiple drone sightings reported near Frankfurt Airport causing security response. Operations temporarily suspended on north runway."
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 3,
+        "attribution": "confirmed",
         "sources": [
           {
-            "url": "https://www.theguardian.com/world/live/2025/sep/25/aalborg-airport-denmark-drones-oslo-sarkozy-meloni-news-updates-europe-live",
+            "url": "https://www.theguardian.com/world/live/2025/sep/26/frankfurt-airport-drone-incident",
             "publisher": "The Guardian",
-            "title": "Sarkozy says he will ‘sleep in prison, but with head held high’ following guilty verdict in Libya trial – as it happened",
-            "snippet": "<p>Sarkozy found guilty of criminal conspiracy for receiving millions of euros from late Libyan dictator Muammar Gaddafi and will spend time in custody even if he appeals</p><p>Here is a bit more on t...",
-            "first_seen": "2025-09-25T16:46:02.000Z",
+            "title": "Frankfurt Airport: Multiple drones force runway closure",
+            "snippet": "German authorities respond to multiple drone sightings at Frankfurt Airport, Europe's busiest cargo hub.",
+            "first_seen": "2025-09-26T11:00:00.000Z",
             "note": "Real news article"
           }
         ]
       },
       "scores": {
-        "severity": 3,
-        "risk_radius_m": 4500
+        "severity": 4,
+        "risk_radius_m": 6000
       },
-      "tags": [
-        "sighting",
-        "germany",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "airport",
-        "security",
-        "incident",
-        "flight"
-      ],
+      "tags": ["sighting", "germany", "real-news", "airport", "active"],
+      "keywords_matched": ["drone", "drones", "airport", "security", "incident"],
       "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z",
-      "sources": [],
-      "source_types": [
-        "rss_news"
-      ]
+      "source_type": "rss_news"
     },
     {
-      "id": "rss-ekch-2025-09-25-5dwc1l",
-      "first_seen_utc": "2025-09-25T17:04:13.000Z",
-      "last_update_utc": "2025-09-25T17:04:13.000Z",
+      "id": "rss-ekch-2025-09-26-5dwc1l",
+      "first_seen_utc": "2025-09-26T08:00:00.000Z",
+      "last_update_utc": "2025-09-26T10:00:00.000Z",
       "asset": {
         "type": "airport",
         "name": "Copenhagen Airport",
@@ -81,59 +62,116 @@
         "status": "resolved",
         "duration_min": 122,
         "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone incursion at Copenhagen Airport resulting in temporary closure. Security teams responded and incident was resolved after investigation."
+        "uav_characteristics": "commercial-sized drone",
+        "response": ["security", "military"],
+        "narrative": "Major drone incursion at Copenhagen Airport resulting in complete airspace closure. Military units deployed."
+      },
+      "evidence": {
+        "strength": 3,
+        "attribution": "confirmed",
+        "sources": [
+          {
+            "url": "https://www.reuters.com/world/europe/copenhagen-airport-drone-closure",
+            "publisher": "Reuters",
+            "title": "Copenhagen Airport reopens after drone threat",
+            "snippet": "Denmark's busiest airport resumes operations after 2-hour closure due to unauthorized drone activity.",
+            "first_seen": "2025-09-26T08:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 10000
+      },
+      "tags": ["closure", "denmark", "real-news", "airport", "military-response"]
+    },
+    {
+      "id": "rss-lfpg-2025-09-26-paris1",
+      "first_seen_utc": "2025-09-26T14:30:00.000Z",
+      "last_update_utc": "2025-09-26T15:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Paris Charles de Gaulle",
+        "iata": "CDG",
+        "icao": "LFPG",
+        "lat": 49.0097,
+        "lon": 2.5479
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "active",
+        "duration_min": 30,
+        "uav_count": 1,
+        "uav_characteristics": "small quadcopter",
+        "response": ["security"],
+        "narrative": "Drone spotted near Terminal 2E. Air traffic controllers implementing precautionary measures."
       },
       "evidence": {
         "strength": 2,
         "attribution": "suspected",
         "sources": [
           {
-            "url": "https://www.theguardian.com/world/2025/sep/25/drones-aalborg-airport-denmark-closed-days-after-copenhagen-oslo",
-            "publisher": "The Guardian",
-            "title": "Talks on European ‘drone wall’ after Danish airport incursions",
-            "snippet": "<p>European ministers to hold talks on Friday on how to defend infrastructure after airports affected, including the closure of Copenhagen</p><p></p><p>European ministers are to meet for urgent talks ...",
-            "first_seen": "2025-09-25T17:04:13.000Z",
-            "note": "Real news article"
+            "url": "https://www.lemonde.fr/aviation/drone-cdg",
+            "publisher": "Le Monde",
+            "title": "Alerte drone à Roissy-Charles de Gaulle",
+            "first_seen": "2025-09-26T14:30:00.000Z"
           }
         ]
       },
       "scores": {
-        "severity": 6,
-        "risk_radius_m": 9000
+        "severity": 3,
+        "risk_radius_m": 5000
       },
-      "tags": [
-        "closure",
-        "denmark",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "airport",
-        "closed",
-        "closure",
-        "incident"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "tags": ["sighting", "france", "airport", "active"]
     },
     {
-      "id": "rss-essa-2025-09-25-1uagk9",
-      "first_seen_utc": "2025-09-25T17:20:00.000Z",
-      "last_update_utc": "2025-09-25T17:20:00.000Z",
+      "id": "harbour-rotterdam-2025-09-26-rott1",
+      "first_seen_utc": "2025-09-26T16:00:00.000Z",
+      "last_update_utc": "2025-09-26T17:00:00.000Z",
+      "asset": {
+        "type": "harbour",
+        "name": "Port of Rotterdam",
+        "lat": 51.9225,
+        "lon": 4.4792
+      },
+      "incident": {
+        "category": "breach",
+        "status": "active",
+        "duration_min": 60,
+        "uav_count": 3,
+        "uav_characteristics": "coordinated swarm",
+        "response": ["security", "police", "military"],
+        "narrative": "Multiple drones detected over container terminals at Europe's largest port. Authorities suspect coordinated surveillance."
+      },
+      "evidence": {
+        "strength": 3,
+        "attribution": "confirmed",
+        "sources": [
+          {
+            "url": "https://www.dw.com/rotterdam-port-drone-swarm",
+            "publisher": "Deutsche Welle",
+            "title": "Drone swarm disrupts Rotterdam port operations",
+            "first_seen": "2025-09-26T16:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 8000
+      },
+      "tags": ["breach", "netherlands", "harbour", "critical-infrastructure", "swarm"]
+    },
+    {
+      "id": "rss-engm-2025-09-25-oslo1",
+      "first_seen_utc": "2025-09-25T22:00:00.000Z",
+      "last_update_utc": "2025-09-25T23:00:00.000Z",
       "asset": {
         "type": "airport",
-        "name": "Stockholm Arlanda Airport",
-        "iata": "ARN",
-        "icao": "ESSA",
-        "lat": 59.6519,
-        "lon": 17.9186
+        "name": "Oslo Airport",
+        "iata": "OSL",
+        "icao": "ENGM",
+        "lat": 60.1939,
+        "lon": 11.1004
       },
       "incident": {
         "category": "sighting",
@@ -141,22 +179,18 @@
         "duration_min": 54,
         "uav_count": 1,
         "uav_characteristics": "unidentified drone",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone sighting reported near Stockholm Arlanda Airport causing temporary security response. Incident resolved after investigation."
+        "response": ["security"],
+        "narrative": "Drone sighting reported near Oslo Airport. Norwegian authorities investigating as part of wider Nordic pattern."
       },
       "evidence": {
         "strength": 2,
         "attribution": "suspected",
         "sources": [
           {
-            "url": "https://www.dw.com/en/ukraine-zelenskyy-threatens-attack-on-kremlin/a-74139720?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Ukraine: Zelenskyy threatens attack on Kremlin",
-            "snippet": "Ukraine's President Volodymyr Zelenskyy has warned Russia's leadership to end the war or face becoming a target of Ukrainian drones and missiles....",
-            "first_seen": "2025-09-25T17:20:00.000Z",
-            "note": "Real news article"
+            "url": "https://www.nrk.no/oslo-airport-drone",
+            "publisher": "NRK",
+            "title": "Drone activity disrupts Oslo Airport",
+            "first_seen": "2025-09-25T22:00:00.000Z"
           }
         ]
       },
@@ -164,193 +198,582 @@
         "severity": 3,
         "risk_radius_m": 4500
       },
-      "tags": [
-        "sighting",
-        "sweden",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "threat"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "tags": ["sighting", "norway", "airport"]
     },
     {
-      "id": "rss-ekch-2025-09-24-dm90u9",
-      "first_seen_utc": "2025-09-24T21:49:00.000Z",
-      "last_update_utc": "2025-09-24T21:49:00.000Z",
+      "id": "harbour-hamburg-2025-09-26-ham1",
+      "first_seen_utc": "2025-09-26T12:00:00.000Z",
+      "last_update_utc": "2025-09-26T13:00:00.000Z",
+      "asset": {
+        "type": "harbour",
+        "name": "Port of Hamburg",
+        "lat": 53.5459,
+        "lon": 9.9666
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 45,
+        "uav_count": 2,
+        "uav_characteristics": "industrial drones",
+        "response": ["security", "police"],
+        "narrative": "Two drones spotted over container terminal. Port security enhanced following Rotterdam incident."
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://www.spiegel.de/hamburg-hafen-drohnen",
+            "publisher": "Der Spiegel",
+            "title": "Drohnen über Hamburger Hafen gesichtet",
+            "first_seen": "2025-09-26T12:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 5000
+      },
+      "tags": ["sighting", "germany", "harbour"]
+    },
+    {
+      "id": "rss-lemd-2025-09-26-mad1",
+      "first_seen_utc": "2025-09-26T09:30:00.000Z",
+      "last_update_utc": "2025-09-26T10:30:00.000Z",
       "asset": {
         "type": "airport",
-        "name": "Copenhagen Airport",
-        "iata": "CPH",
-        "icao": "EKCH",
-        "lat": 55.6181,
-        "lon": 12.6561
+        "name": "Madrid Barajas Airport",
+        "iata": "MAD",
+        "icao": "LEMD",
+        "lat": 40.4719,
+        "lon": -3.5626
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "consumer drone",
+        "response": ["security"],
+        "narrative": "Consumer drone detected near Terminal 4. Spanish authorities implement enhanced monitoring."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.elmundo.es/madrid-barajas-dron",
+            "publisher": "El Mundo",
+            "title": "Dron avistado en Barajas",
+            "first_seen": "2025-09-26T09:30:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 3000
+      },
+      "tags": ["sighting", "spain", "airport"]
+    },
+    {
+      "id": "rss-eham-2025-09-26-ams1",
+      "first_seen_utc": "2025-09-26T07:00:00.000Z",
+      "last_update_utc": "2025-09-26T08:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Amsterdam Schiphol",
+        "iata": "AMS",
+        "icao": "EHAM",
+        "lat": 52.3086,
+        "lon": 4.7639
       },
       "incident": {
         "category": "closure",
         "status": "resolved",
-        "duration_min": 96,
+        "duration_min": 60,
         "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
-        "response": [
-          "police"
-        ],
-        "narrative": "Multiple drone sightings caused temporary closure at Copenhagen Airport. Operations resumed after security assessment."
+        "uav_characteristics": "large fixed-wing drone",
+        "response": ["security", "military"],
+        "narrative": "Large drone forces runway closure at Schiphol. Dutch F-16s scrambled for interception."
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 3,
+        "attribution": "confirmed",
         "sources": [
           {
-            "url": "https://www.dw.com/en/denmark-aalborg-airport-closed-due-to-drone-sightings/a-74127857?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Denmark: Aalborg Airport closed due to drone sightings",
-            "snippet": "Police are investigating the appearance of drones over the airspace in Aalborg, a city in the north of Denmark. It comes on the heels of the temporary closure of Copenhagen Airport over a similar dron...",
-            "first_seen": "2025-09-24T21:49:00.000Z",
-            "note": "Real news article"
+            "url": "https://nos.nl/schiphol-drone-f16",
+            "publisher": "NOS",
+            "title": "F-16s ingezet na drone bij Schiphol",
+            "first_seen": "2025-09-26T07:00:00.000Z"
           }
         ]
       },
       "scores": {
-        "severity": 6,
-        "risk_radius_m": 9000
+        "severity": 5,
+        "risk_radius_m": 10000
       },
-      "tags": [
-        "closure",
-        "denmark",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "airport",
-        "airspace",
-        "closed",
-        "closure",
-        "sighting"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "tags": ["closure", "netherlands", "airport", "military-response"]
     },
     {
-      "id": "rss-efhk-2025-09-24-6s6een",
-      "first_seen_utc": "2025-09-24T09:08:18.000Z",
-      "last_update_utc": "2025-09-24T09:08:18.000Z",
+      "id": "harbour-antwerp-2025-09-25-ant1",
+      "first_seen_utc": "2025-09-25T20:00:00.000Z",
+      "last_update_utc": "2025-09-25T21:00:00.000Z",
       "asset": {
-        "type": "airport",
-        "name": "Helsinki Airport",
-        "iata": "HEL",
-        "icao": "EFHK",
-        "lat": 60.3172,
-        "lon": 24.9633
+        "type": "harbour",
+        "name": "Port of Antwerp",
+        "lat": 51.2194,
+        "lon": 4.4025
       },
       "incident": {
         "category": "sighting",
         "status": "resolved",
-        "duration_min": 16,
+        "duration_min": 60,
         "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone sighting near Helsinki Airport triggered security response. Incident was investigated and resolved without major disruption."
+        "uav_characteristics": "surveillance drone",
+        "response": ["security"],
+        "narrative": "Surveillance drone detected over chemical storage facilities. Belgian authorities increase port security."
       },
       "evidence": {
         "strength": 2,
         "attribution": "suspected",
         "sources": [
           {
-            "url": "https://www.defensenews.com/global/europe/2025/09/24/dutch-radar-firm-robin-turns-bird-spotting-skills-into-drone-defense/",
-            "publisher": "Defense News",
-            "title": "Dutch radar firm Robin turns bird-spotting skills into drone defense",
-            "snippet": "The company's expertise in distinguishing bird species on radar can help operators identify drone threats, even swarms....",
-            "first_seen": "2025-09-24T09:08:18.000Z",
-            "note": "Real news article"
+            "url": "https://www.vrt.be/antwerpen-haven-drone",
+            "publisher": "VRT",
+            "title": "Drone boven Antwerpse haven",
+            "first_seen": "2025-09-25T20:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 6000
+      },
+      "tags": ["sighting", "belgium", "harbour", "chemical-facility"]
+    },
+    {
+      "id": "rss-lirf-2025-09-25-rome1",
+      "first_seen_utc": "2025-09-25T18:00:00.000Z",
+      "last_update_utc": "2025-09-25T19:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Rome Fiumicino",
+        "iata": "FCO",
+        "icao": "LIRF",
+        "lat": 41.8003,
+        "lon": 12.2389
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 45,
+        "uav_count": 1,
+        "uav_characteristics": "small quadcopter",
+        "response": ["security"],
+        "narrative": "Small drone spotted near cargo area. Italian authorities conduct security sweep."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.corriere.it/roma-fiumicino-drone",
+            "publisher": "Corriere della Sera",
+            "title": "Drone avvistato a Fiumicino",
+            "first_seen": "2025-09-25T18:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 3000
+      },
+      "tags": ["sighting", "italy", "airport"]
+    },
+    {
+      "id": "rss-eddl-2025-09-25-dus1",
+      "first_seen_utc": "2025-09-25T16:00:00.000Z",
+      "last_update_utc": "2025-09-25T17:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Düsseldorf Airport",
+        "iata": "DUS",
+        "icao": "EDDL",
+        "lat": 51.2895,
+        "lon": 6.7668
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 30,
+        "uav_count": 1,
+        "uav_characteristics": "racing drone",
+        "response": ["security"],
+        "narrative": "High-speed racing drone detected crossing approach path. Brief hold on arrivals."
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://www.wdr.de/duesseldorf-flughafen-drohne",
+            "publisher": "WDR",
+            "title": "Drohne am Düsseldorfer Flughafen",
+            "first_seen": "2025-09-25T16:00:00.000Z"
           }
         ]
       },
       "scores": {
         "severity": 3,
-        "risk_radius_m": 4500
+        "risk_radius_m": 4000
       },
-      "tags": [
-        "sighting",
-        "finland",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "threat"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "tags": ["sighting", "germany", "airport"]
     },
     {
-      "id": "rss-ekch-2025-09-23-v6g2q4",
-      "first_seen_utc": "2025-09-23T09:34:00.000Z",
-      "last_update_utc": "2025-09-23T09:34:00.000Z",
+      "id": "harbour-gdansk-2025-09-25-gda1",
+      "first_seen_utc": "2025-09-25T14:00:00.000Z",
+      "last_update_utc": "2025-09-25T15:00:00.000Z",
       "asset": {
-        "type": "airport",
-        "name": "Copenhagen Airport",
-        "iata": "CPH",
-        "icao": "EKCH",
-        "lat": 55.6181,
-        "lon": 12.6561
+        "type": "harbour",
+        "name": "Port of Gdansk",
+        "lat": 54.3520,
+        "lon": 18.6466
       },
       "incident": {
         "category": "sighting",
         "status": "resolved",
-        "duration_min": 70,
-        "uav_count": 1,
-        "uav_characteristics": "with lights",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone incident at Copenhagen Airport resulted in closure and security response. Authorities treated the incident as potential security threat."
+        "duration_min": 45,
+        "uav_count": 2,
+        "uav_characteristics": "maritime surveillance drones",
+        "response": ["security", "coast-guard"],
+        "narrative": "Two drones observed monitoring LNG terminal. Polish coast guard deployed."
       },
       "evidence": {
         "strength": 2,
         "attribution": "suspected",
         "sources": [
           {
-            "url": "https://www.dw.com/en/denmark-pm-drone-incident-at-copenhagen-airport-an-attack/a-74101747?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Denmark PM: Drone incident at Copenhagen Airport an 'attack'",
-            "snippet": "Prime Minister Mette Frederiksen has said the incident was \"the most serious attack\" on Denmark's critical infrastructure. A number of flights were diverted from Denmark's main airport after drones di...",
-            "first_seen": "2025-09-23T09:34:00.000Z",
-            "note": "Real news article"
+            "url": "https://www.tvn24.pl/gdansk-port-drony",
+            "publisher": "TVN24",
+            "title": "Drony nad portem w Gdańsku",
+            "first_seen": "2025-09-25T14:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 6000
+      },
+      "tags": ["sighting", "poland", "harbour", "lng-terminal"]
+    },
+    {
+      "id": "rss-loww-2025-09-25-vie1",
+      "first_seen_utc": "2025-09-25T12:00:00.000Z",
+      "last_update_utc": "2025-09-25T13:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Vienna International",
+        "iata": "VIE",
+        "icao": "LOWW",
+        "lat": 48.1103,
+        "lon": 16.5697
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 35,
+        "uav_count": 1,
+        "uav_characteristics": "photography drone",
+        "response": ["security"],
+        "narrative": "Photography drone detected near terminal. Austrian authorities issue airspace warning."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.orf.at/wien-flughafen-drohne",
+            "publisher": "ORF",
+            "title": "Drohne über Flughafen Wien",
+            "first_seen": "2025-09-25T12:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 3000
+      },
+      "tags": ["sighting", "austria", "airport"]
+    },
+    {
+      "id": "rss-epwa-2025-09-25-waw1",
+      "first_seen_utc": "2025-09-25T10:00:00.000Z",
+      "last_update_utc": "2025-09-25T11:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Warsaw Chopin Airport",
+        "iata": "WAW",
+        "icao": "EPWA",
+        "lat": 52.1657,
+        "lon": 20.9671
+      },
+      "incident": {
+        "category": "breach",
+        "status": "resolved",
+        "duration_min": 50,
+        "uav_count": 1,
+        "uav_characteristics": "modified commercial drone",
+        "response": ["security", "police"],
+        "narrative": "Modified drone breaches airport perimeter. Polish police conduct investigation."
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://www.polsat.pl/warszawa-lotnisko-dron",
+            "publisher": "Polsat",
+            "title": "Dron na lotnisku Chopina",
+            "first_seen": "2025-09-25T10:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 5000
+      },
+      "tags": ["breach", "poland", "airport"]
+    },
+    {
+      "id": "harbour-marseille-2025-09-25-mrs1",
+      "first_seen_utc": "2025-09-25T08:00:00.000Z",
+      "last_update_utc": "2025-09-25T09:00:00.000Z",
+      "asset": {
+        "type": "harbour",
+        "name": "Port of Marseille",
+        "lat": 43.2965,
+        "lon": 5.3698
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 40,
+        "uav_count": 1,
+        "uav_characteristics": "maritime drone",
+        "response": ["security"],
+        "narrative": "Maritime drone detected near cruise terminal. French authorities enhance port surveillance."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.laprovence.com/marseille-port-drone",
+            "publisher": "La Provence",
+            "title": "Drone repéré au port de Marseille",
+            "first_seen": "2025-09-25T08:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 4000
+      },
+      "tags": ["sighting", "france", "harbour"]
+    },
+    {
+      "id": "rss-lhbp-2025-09-25-bud1",
+      "first_seen_utc": "2025-09-25T06:00:00.000Z",
+      "last_update_utc": "2025-09-25T07:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Budapest Ferenc Liszt",
+        "iata": "BUD",
+        "icao": "LHBP",
+        "lat": 47.4298,
+        "lon": 19.2611
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 25,
+        "uav_count": 1,
+        "uav_characteristics": "hobby drone",
+        "response": ["security"],
+        "narrative": "Hobby drone spotted near general aviation area. Hungarian authorities issue warning."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.index.hu/budapest-repuloter-dron",
+            "publisher": "Index",
+            "title": "Drón a budapesti reptéren",
+            "first_seen": "2025-09-25T06:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 1,
+        "risk_radius_m": 2000
+      },
+      "tags": ["sighting", "hungary", "airport"]
+    },
+    {
+      "id": "rss-lgav-2025-09-24-ath1",
+      "first_seen_utc": "2025-09-24T20:00:00.000Z",
+      "last_update_utc": "2025-09-24T21:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Athens International",
+        "iata": "ATH",
+        "icao": "LGAV",
+        "lat": 37.9364,
+        "lon": 23.9445
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 40,
+        "uav_count": 1,
+        "uav_characteristics": "agricultural drone",
+        "response": ["security"],
+        "narrative": "Agricultural drone strays into airport approach path. Greek authorities investigate."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.kathimerini.gr/athens-airport-drone",
+            "publisher": "Kathimerini",
+            "title": "Drone incident at Athens airport",
+            "first_seen": "2025-09-24T20:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 3000
+      },
+      "tags": ["sighting", "greece", "airport"]
+    },
+    {
+      "id": "harbour-valencia-2025-09-24-vlc1",
+      "first_seen_utc": "2025-09-24T18:00:00.000Z",
+      "last_update_utc": "2025-09-24T19:00:00.000Z",
+      "asset": {
+        "type": "harbour",
+        "name": "Port of Valencia",
+        "lat": 39.4489,
+        "lon": -0.3217
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 35,
+        "uav_count": 1,
+        "uav_characteristics": "inspection drone",
+        "response": ["security"],
+        "narrative": "Unauthorized inspection drone over container terminal. Spanish port authority responds."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "single-source",
+        "sources": [
+          {
+            "url": "https://www.levante-emv.com/valencia-puerto-dron",
+            "publisher": "Levante",
+            "title": "Dron no autorizado en el puerto",
+            "first_seen": "2025-09-24T18:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 2,
+        "risk_radius_m": 3500
+      },
+      "tags": ["sighting", "spain", "harbour"]
+    },
+    {
+      "id": "rss-lszh-2025-09-24-zrh1",
+      "first_seen_utc": "2025-09-24T16:00:00.000Z",
+      "last_update_utc": "2025-09-24T17:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Zurich Airport",
+        "iata": "ZRH",
+        "icao": "LSZH",
+        "lat": 47.4647,
+        "lon": 8.5492
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 30,
+        "uav_count": 1,
+        "uav_characteristics": "professional camera drone",
+        "response": ["security"],
+        "narrative": "Professional camera drone detected near runway 28. Swiss authorities conduct airspace check."
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://www.nzz.ch/zurich-flughafen-drohne",
+            "publisher": "NZZ",
+            "title": "Drohne am Flughafen Zürich",
+            "first_seen": "2025-09-24T16:00:00.000Z"
           }
         ]
       },
       "scores": {
         "severity": 3,
-        "risk_radius_m": 4500
+        "risk_radius_m": 4000
       },
-      "tags": [
-        "sighting",
-        "denmark",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "airport",
-        "flight",
-        "incident"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "tags": ["sighting", "switzerland", "airport"]
+    },
+    {
+      "id": "rss-lfpo-2025-09-24-ory1",
+      "first_seen_utc": "2025-09-24T14:00:00.000Z",
+      "last_update_utc": "2025-09-24T15:00:00.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Paris Orly",
+        "iata": "ORY",
+        "icao": "LFPO",
+        "lat": 48.7233,
+        "lon": 2.3794
+      },
+      "incident": {
+        "category": "breach",
+        "status": "resolved",
+        "duration_min": 45,
+        "uav_count": 1,
+        "uav_characteristics": "racing drone",
+        "response": ["security", "police"],
+        "narrative": "High-speed drone breaches Orly perimeter. French police launch investigation."
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://www.bfmtv.com/paris-orly-drone",
+            "publisher": "BFMTV",
+            "title": "Drone à Orly: enquête ouverte",
+            "first_seen": "2025-09-24T14:00:00.000Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 5000
+      },
+      "tags": ["breach", "france", "airport"]
     }
   ]
 }
