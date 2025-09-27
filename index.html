@@ -1017,6 +1017,15 @@
         stroke-width: 3;
       }
     }
+
+    /* Leaflet popup override - ensure popups appear above risk indicator */
+    .leaflet-popup-pane {
+      z-index: 3000 !important;
+    }
+
+    .leaflet-popup {
+      z-index: 3000 !important;
+    }
   </style>
 </head>
 <body>
