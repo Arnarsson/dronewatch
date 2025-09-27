@@ -12,7 +12,7 @@
         - generic [ref=e17]: THREAT ASSESSMENT
       - generic [ref=e18]:
         - generic [ref=e19]: DEFCON-5
-        - generic [ref=e20]: 21:11:32Z
+        - generic [ref=e20]: 08:18:19Z
     - banner [ref=e21]:
       - generic [ref=e22]:
         - generic [ref=e23]:
