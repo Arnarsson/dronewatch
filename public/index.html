@@ -1,0 +1,5191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>DroneWatch — Real-Time Threat Monitoring</title>
+  <!-- Force deployment update 2025-09-25 -->
+  <!-- Second deployment fix 19:30 -->
+  <!-- Asset layer fix 19:53 -->
+  <!-- Mobile UI fix 23:37 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#3b82f6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" crossorigin="anonymous" />
+  <style>
+    :root {
+      /* Modern 2025 Color System */
+      --bg: #0a0d14;
+      --bg-gradient: linear-gradient(135deg, #0a0d14 0%, #0f1419 100%);
+
+      /* Glassmorphism surfaces */
+      --glass-panel: rgba(19, 22, 31, 0.8);
+      --glass-surface: rgba(26, 31, 43, 0.6);
+      --glass-card: rgba(36, 41, 54, 0.7);
+      --glass-backdrop: rgba(255, 255, 255, 0.03);
+
+      /* Traditional surfaces for fallback */
+      --panel: #13161f;
+      --surface: #1a1f2b;
+      --card: #242936;
+
+      /* Enhanced text colors */
+      --text: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-accent: #60a5fa;
+
+      /* Operations Center Status Colors */
+      --threat-critical: #dc2626;
+      --threat-high: #ea580c;
+      --threat-medium: #d97706;
+      --threat-low: #16a34a;
+      --threat-unknown: #6b7280;
+
+      /* Operational Status */
+      --status-operational: #10b981;
+      --status-degraded: #f59e0b;
+      --status-offline: #ef4444;
+      --status-maintenance: #8b5cf6;
+
+      /* Modern border system */
+      --border: rgba(51, 65, 85, 0.6);
+      --border-light: rgba(148, 163, 184, 0.2);
+      --border-focus: rgba(59, 130, 246, 0.5);
+
+      /* Vibrant accent system */
+      --accent: #3b82f6;
+      --accent-hover: #60a5fa;
+      --accent-light: rgba(59, 130, 246, 0.1);
+      --accent-glow: rgba(59, 130, 246, 0.3);
+
+      /* Status colors with improved contrast */
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.1);
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.1);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.1);
+      --purple: #8b5cf6;
+      --purple-light: rgba(139, 92, 246, 0.1);
+
+      /* Modern shadow system */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+
+      /* Typography Scale - Modern 2025 system */
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-size-xs: 0.75rem;    /* 12px */
+      --font-size-sm: 0.875rem;   /* 14px */
+      --font-size-base: 1rem;     /* 16px */
+      --font-size-lg: 1.125rem;   /* 18px */
+      --font-size-xl: 1.25rem;    /* 20px */
+      --font-size-2xl: 1.5rem;    /* 24px */
+      --font-size-3xl: 1.875rem;  /* 30px */
+      --font-size-4xl: 2.25rem;   /* 36px */
+
+      /* Line Heights */
+      --line-height-tight: 1.25;
+      --line-height-normal: 1.5;
+      --line-height-relaxed: 1.625;
+
+      /* Font Weights */
+      --font-weight-normal: 400;
+      --font-weight-medium: 500;
+      --font-weight-semibold: 600;
+      --font-weight-bold: 700;
+      --font-weight-extrabold: 800;
+
+      /* Spacing Scale - 8px grid system */
+      --space-1: 0.25rem;  /* 4px */
+      --space-2: 0.5rem;   /* 8px */
+      --space-3: 0.75rem;  /* 12px */
+      --space-4: 1rem;     /* 16px */
+      --space-5: 1.25rem;  /* 20px */
+      --space-6: 1.5rem;   /* 24px */
+      --space-8: 2rem;     /* 32px */
+      --space-10: 2.5rem;  /* 40px */
+      --space-12: 3rem;    /* 48px */
+
+      /* Asset colors */
+      --air: #ef4444;
+      --harbour: #3b82f6;
+      --energy: #f97316;
+      --rail: #22c55e;
+      --border-crossing: #eab308;
+      --military: #8b5cf6;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-family);
+      font-size: var(--font-size-base);
+      line-height: var(--line-height-normal);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Mobile-first responsive layout */
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height for mobile */
+    }
+
+    /* Header - Modern 2025 Glassmorphism */
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-4);
+      background: var(--glass-panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: var(--shadow-md);
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* Glassmorphism backdrop effect */
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-gradient);
+      opacity: 0.8;
+      z-index: -1;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    header h1 {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-extrabold);
+      margin: 0;
+      letter-spacing: -0.025em;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: var(--line-height-tight);
+    }
+
+    .header-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    /* Responsive header scaling */
+    @media (min-width: 640px) {
+      header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: var(--space-4) var(--space-6);
+      }
+
+      header h1 {
+        font-size: var(--font-size-3xl);
+      }
+
+      .header-badges {
+        flex-wrap: nowrap;
+        gap: var(--space-3);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      header {
+        padding: var(--space-5) var(--space-8);
+      }
+
+      header h1 {
+        font-size: var(--font-size-4xl);
+      }
+    }
+
+    /* Modern Glassmorphism Badge System */
+    .badge {
+      padding: var(--space-2) var(--space-4);
+      background: var(--glass-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-light);
+      border-radius: 9999px;
+      color: var(--text-secondary);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .badge:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+      border-color: var(--border-focus);
+      background: var(--glass-surface);
+      color: var(--text);
+    }
+
+    .badge:active {
+      transform: translateY(0);
+    }
+    .badge.clickable {
+      cursor: pointer;
+      background: var(--glass-surface);
+      border: 1px solid var(--border-focus);
+    }
+    .badge.clickable:hover {
+      background: var(--focus);
+      color: white;
+    }
+
+    /* Special badge variants */
+    .badge.live {
+      background: linear-gradient(135deg, var(--success) 0%, #059669 100%) !important;
+      color: white !important;
+      border-color: var(--success) !important;
+      box-shadow: 0 0 20px var(--success-light);
+    }
+
+    /* Share button styling */
+    .share-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px;
+      white-space: nowrap;
+    }
+
+    .share-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .share-btn:active {
+      transform: translateY(0);
+    }
+
+    .share-btn svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .header-title-europe {
+      opacity: 0.8;
+      font-weight: var(--font-weight-medium);
+    }
+
+    @media (max-width: 480px) {
+      .header-title-europe {
+        display: none;
+      }
+
+      .share-text {
+        display: none;
+      }
+
+      .share-btn {
+        padding: var(--space-2);
+        min-width: 44px;
+        min-height: 44px;
+        justify-content: center;
+      }
+    }
+
+
+    /* Main content area - Base mobile-first layout */
+    .main-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Mobile: Hidden panels by default */
+    .panels-container {
+      display: none; /* Hidden on mobile */
+    }
+
+    /* Mobile map container - full screen */
+    #map-container {
+      flex: 1;
+      position: relative;
+      background: var(--surface);
+      width: 100%;
+      height: 100%;
+    }
+
+    .panels-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--bg-gradient);
+      opacity: 0.6;
+      z-index: -1;
+    }
+
+    #map-container {
+      flex: 1;
+      position: relative;
+      background: var(--surface);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+    }
+
+    /* Mobile panels toggle */
+    .mobile-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mobile-toggle:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+    }
+
+    /* Panel sections */
+    .panel {
+      padding: var(--space-6);
+      max-height: 50vh;
+      overflow-y: auto;
+      background: var(--glass-backdrop);
+      border-radius: var(--space-3);
+      margin: var(--space-2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    /* Modern Typography for Headings */
+    h2 {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      text-transform: uppercase;
+      color: var(--text-accent);
+      letter-spacing: 0.05em;
+      margin: 0 0 var(--space-4) 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      line-height: var(--line-height-tight);
+    }
+
+    /* Modern Glassmorphism Section Cards */
+    .section {
+      margin-bottom: var(--space-6);
+      background: var(--glass-card);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--space-3);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .section:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+    }
+
+    /* Modern Glassmorphism Chip System */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .chip {
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-light);
+      border-radius: 9999px;
+      background: var(--glass-surface);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      white-space: nowrap;
+      min-height: 40px;
+      user-select: none;
+      position: relative;
+    }
+
+    .chip:hover {
+      background: var(--glass-card);
+      border-color: var(--border-focus);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+      color: var(--text);
+    }
+
+    .chip:active {
+      transform: translateY(0);
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+
+    .chip.active:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Modern 2025 Form System */
+    label {
+      font-size: var(--font-size-sm);
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: var(--space-2);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0.01em;
+    }
+
+    /* Modern Range Slider */
+    input[type="range"] {
+      width: 100%;
+      height: var(--space-2);
+      border-radius: 9999px;
+      background: var(--glass-surface);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid var(--border-light);
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: var(--space-5);
+      height: var(--space-5);
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      box-shadow: var(--shadow-md), var(--shadow-glow);
+      border: 2px solid white;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: var(--accent-hover);
+      transform: scale(1.1);
+    }
+
+    /* Modern Input Fields */
+    select,
+    input[type="text"] {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      background: var(--glass-surface);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: var(--text);
+      border: 1px solid var(--border-light);
+      border-radius: var(--space-3);
+      outline: none;
+      font-size: var(--font-size-base);
+      font-family: var(--font-family);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      min-height: 44px; /* Touch target */
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-light);
+      background: var(--glass-card);
+      transform: translateY(-1px);
+    }
+
+    select:hover,
+    input[type="text"]:hover {
+      border-color: var(--border-focus);
+      background: var(--glass-card);
+    }
+
+    /* Modern Stats and Legends - 2025 */
+    .legend {
+      display: flex;
+      gap: var(--space-3);
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .dot {
+      width: var(--space-3);
+      height: var(--space-3);
+      border-radius: 50%;
+      display: inline-block;
+      border: 2px solid var(--border-light);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      margin-right: var(--space-2);
+    }
+
+    /* Modern Glassmorphism Stats Grid */
+    .statbar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: var(--space-4);
+    }
+
+    .stat {
+      background: var(--glass-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-light);
+      border-radius: var(--space-4);
+      padding: var(--space-5) var(--space-3);
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--purple) 100%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .stat:hover {
+      background: var(--glass-surface);
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat:hover::before {
+      opacity: 1;
+    }
+
+    .stat .k {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-extrabold);
+      margin-bottom: var(--space-1);
+      background: linear-gradient(135deg, var(--accent) 0%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: var(--line-height-tight);
+    }
+
+    .stat .label {
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    /* Modern Glassmorphism Incident Cards */
+    .incident {
+      border: 1px solid var(--border-light);
+      border-radius: var(--space-4);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      background: var(--glass-card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .incident::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--accent), var(--purple));
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .incident::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, transparent 40%, var(--accent-light) 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .incident:hover {
+      border-color: var(--border-focus);
+      background: var(--glass-surface);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl), var(--shadow-glow);
+    }
+
+    .incident:hover::before {
+      opacity: 1;
+    }
+
+    .incident:hover::after {
+      opacity: 0.1;
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Phase 4: Advanced Micro-Interactions & Loading States */
+
+    /* Skeleton Loading Animation */
+    @keyframes skeleton-pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--glass-surface) 25%, var(--glass-card) 50%, var(--glass-surface) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-pulse 1.5s ease-in-out infinite;
+      border-radius: var(--space-2);
+    }
+
+    /* Advanced Button Interactions */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border: none;
+      border-radius: 9999px;
+      color: white;
+      font-weight: var(--font-weight-semibold);
+      padding: var(--space-3) var(--space-6);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      min-height: 44px;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg), var(--shadow-glow);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    /* Loading Spinner */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border-light);
+      border-top: 2px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+
+    /* Smooth Focus Management */
+    *:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: var(--space-1);
+    }
+
+    /* Progressive Disclosure */
+    .collapsible {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .collapsible.expanded {
+      max-height: 500px;
+    }
+
+    /* Enhanced Tooltips */
+    .tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--glass-panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--space-2);
+      font-size: var(--font-size-sm);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 1000;
+    }
+
+    .tooltip:hover::after {
+      opacity: 1;
+    }
+
+    /* Phase 5: Modern Mobile-First UX Patterns */
+
+    /* Floating Action Button (FAB) */
+    .fab {
+      position: fixed;
+      bottom: var(--space-6);
+      right: var(--space-6);
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: var(--font-size-xl);
+      cursor: pointer;
+      box-shadow: var(--shadow-xl);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      display: none; /* Hidden by default, shown on mobile */
+    }
+
+    .fab:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-xl), var(--shadow-glow);
+    }
+
+    .fab:active {
+      transform: scale(0.95);
+    }
+
+    /* Bottom Sheet Modal for Mobile */
+    .bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--glass-panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: var(--space-6) var(--space-6) 0 0;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1001;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .bottom-sheet.open {
+      transform: translateY(0);
+    }
+
+    .bottom-sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border-light);
+      border-radius: 2px;
+      margin: var(--space-3) auto var(--space-4);
+      opacity: 0.6;
+    }
+
+    /* Mobile-First Navigation Bar */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--panel);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      padding: var(--space-1) var(--space-2);
+      display: none; /* Hidden by default, shown on mobile */
+      z-index: 999;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+      /* Safe area handling for iOS */
+      padding-bottom: calc(var(--space-1) + env(safe-area-inset-bottom));
+    }
+
+    .mobile-nav-items {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: var(--space-2) var(--space-3);
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+      min-width: 60px;
+      min-height: 50px;
+      justify-content: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .mobile-nav-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .mobile-nav-item.active {
+      color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .mobile-nav-item.active::before {
+      opacity: 1;
+    }
+
+    .mobile-nav-item:active {
+      transform: scale(0.95);
+    }
+
+    .mobile-nav-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .mobile-nav-label {
+      font-size: 10px;
+      font-weight: var(--font-weight-semibold);
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    /* Swipe Gestures Support */
+    .swipe-container {
+      touch-action: pan-y;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .swipe-indicator {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-accent);
+      font-size: var(--font-size-2xl);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+
+    .swipe-indicator.left {
+      left: var(--space-4);
+    }
+
+    .swipe-indicator.right {
+      right: var(--space-4);
+    }
+
+    .swipe-active .swipe-indicator {
+      opacity: 0.8;
+    }
+
+    /* Enhanced responsive breakpoints */
+    @media (min-width: 768px) {
+      #app {
+        display: grid;
+        grid-template-columns: 320px 1fr 360px;
+        grid-template-rows: auto 1fr;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      header {
+        grid-column: 1 / 4;
+        grid-row: 1;
+        position: relative;
+        padding: var(--space-5) var(--space-8);
+        overflow-x: visible;
+      }
+
+      .main-container {
+        grid-column: 1 / 4;
+        grid-row: 2;
+        display: grid;
+        grid-template-columns: 320px 1fr 360px;
+        overflow: hidden;
+        height: 100%;
+      }
+
+      .panels-container {
+        grid-column: 1;
+        display: block;
+        background: var(--glass-panel);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-right: 1px solid var(--border-light);
+        overflow-y: auto;
+        position: relative;
+      }
+
+      #map-container {
+        grid-column: 2;
+        position: relative;
+        background: var(--surface);
+        overflow: hidden;
+      }
+
+      #right {
+        grid-column: 3;
+        background: var(--glass-panel);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-left: 1px solid var(--border-light);
+        overflow-y: auto;
+        position: relative;
+        padding: var(--space-6);
+      }
+
+      .panel {
+        padding: var(--space-6);
+        max-height: none;
+        overflow-y: visible;
+        background: var(--glass-backdrop);
+        border-radius: var(--space-3);
+        margin: var(--space-2);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+
+      .mobile-toggle,
+      .mobile-nav,
+      .fab {
+        display: none !important;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      #app {
+        grid-template-columns: 380px 1fr 400px;
+      }
+
+      .main-container {
+        grid-template-columns: 380px 1fr 400px;
+      }
+    }
+
+    /* Mobile panel overlay */
+    /* Complete Mobile Header Redesign */
+    @media (max-width: 767px) {
+      header {
+        padding: 10px 12px 8px 12px;
+        gap: 4px;
+        background: #0f1419;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        height: auto;
+        max-height: 60px;
+      }
+
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        gap: 8px;
+      }
+
+      header h1 {
+        font-size: 16px;
+        line-height: 1;
+        margin: 0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1;
+      }
+
+      header h1 .header-title-text {
+        color: #fff;
+        background: none;
+        -webkit-text-fill-color: #fff;
+      }
+
+      .header-icon {
+        display: none; /* Hide emoji on mobile */
+      }
+
+      .header-title-europe {
+        display: none;
+      }
+
+      /* Compact Share button */
+      .share-btn {
+        padding: 6px 10px;
+        min-height: 32px;
+        font-size: 13px;
+        border-radius: 16px;
+        background: #3b82f6;
+      }
+
+      .share-btn svg {
+        display: none; /* Hide icon on mobile */
+      }
+
+      .share-text {
+        font-size: 12px;
+      }
+
+      /* Complete badge redesign for mobile */
+      .header-badges {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+        padding: 0;
+      }
+
+      /* Much smaller badges */
+      .header-badges .badge {
+        padding: 3px 6px;
+        font-size: 9px;
+        min-height: 20px;
+        max-height: 20px;
+        line-height: 14px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        font-weight: 500;
+        background: rgba(255,255,255,0.1);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Remove all emojis from badges */
+      .badge.live::before,
+      .badge::before {
+        content: none !important;
+      }
+
+      /* Live badge special style */
+      .badge.live {
+        background: #ef4444;
+        color: white;
+        text-transform: uppercase;
+      }
+
+      /* Hide non-essential badges */
+      #badge-refresh,
+      #badge-generated {
+        display: none !important;
+      }
+
+      /* Only show 2-3 key badges */
+      .header-badges .badge:nth-child(n+4) {
+        display: none;
+      }
+    }
+
+    /* Mobile-First Modern UX - 2025 */
+    @media (max-width: 767px) {
+      /* AGGRESSIVE FIX: Force map to display on mobile */
+      #app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Clean mobile layout */
+      .main-container {
+        position: fixed;
+        top: 60px; /* After header */
+        left: 0;
+        right: 0;
+        bottom: 56px; /* Before bottom nav */
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: calc(100vh - 116px);
+      }
+
+      #map-container {
+        flex: 1;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: var(--surface);
+      }
+
+      #map {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* CRITICAL: Ensure Leaflet map displays on mobile */
+      .leaflet-container {
+        width: 100% !important;
+        height: 100% !important;
+        background: #1a1f2b !important;
+      }
+
+      .leaflet-tile-pane {
+        opacity: 1 !important;
+      }
+
+      .leaflet-control-container {
+        z-index: 100 !important;
+      }
+
+      /* Show modern mobile navigation ONLY on mobile */
+      .mobile-nav {
+        display: block !important;
+      }
+
+      .fab {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Hide both side panels on mobile - access via bottom sheet instead */
+      .panels-container,
+      #right {
+        display: none !important;
+      }
+
+      /* Adjust main container for mobile nav */
+      #app {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom));
+      }
+
+      /* Enhanced mobile header */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 998;
+        padding-top: calc(var(--space-4) + env(safe-area-inset-top));
+      }
+
+      /* Optimize incident cards for mobile */
+      .incident {
+        margin-bottom: var(--space-3);
+        padding: var(--space-4);
+      }
+
+      /* Mobile-optimized stats */
+      .statbar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--space-3);
+      }
+
+      .stat {
+        padding: var(--space-4) var(--space-3);
+      }
+
+      .stat .k {
+        font-size: var(--font-size-2xl);
+      }
+
+      /* Improve touch targets */
+      .chip {
+        min-height: 44px;
+        padding: var(--space-3) var(--space-4);
+      }
+
+      .badge {
+        min-height: 40px;
+        font-size: var(--font-size-sm);
+      }
+    }
+
+    /* Animations */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 5px rgba(16, 185, 129, 0.5); }
+      50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .legend { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 12px; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,.4); }
+    .sev { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 4px; }
+    .sev.s1 { background: var(--severity-1); }
+    .sev.s2 { background: var(--severity-2); }
+    .sev.s3 { background: var(--severity-3); }
+    .sev.s4 { background: var(--severity-4); }
+    .sev.s5 { background: var(--severity-5); }
+    .statbar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
+    .stat .k { font-size: 18px; font-weight: 700; }
+    .incident { border: 1px solid var(--border); border-radius: 12px; padding: 10px; margin-bottom: 10px; background: var(--surface); cursor: pointer; transition: border .2s ease; }
+    .incident:hover { border-color: #3a4162; }
+    .muted { color: var(--muted); font-size: 12px; }
+    .leaflet-control-attribution { background: rgba(0,0,0,.45); color: #dfe4ff; border-radius: 8px; padding: 2px 6px; }
+    .leaflet-popup-content-wrapper { background: var(--surface); color: var(--text); }
+    .leaflet-popup-tip { background: var(--surface); }
+    .no-data-overlay {
+      background: var(--surface) !important;
+      color: var(--text) !important;
+      border: 2px solid var(--border) !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+    }
+    .risk-tooltip {
+      background: var(--surface) !important;
+      color: var(--text) !important;
+      border: 1px solid var(--border) !important;
+      font-size: 12px !important;
+    }
+
+    /* Live Activity Pulse Animations */
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes pulse-ring {
+      0% { opacity: 0.8; transform: scale(1); }
+      100% { opacity: 0; transform: scale(2.5); }
+    }
+
+    .live-marker {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .live-marker::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border: 2px solid var(--severity-4);
+      border-radius: 50%;
+      animation: pulse-ring 3s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .activity-indicator {
+      position: fixed;
+      top: 68px;
+      right: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: slideInRight 0.3s ease-out;
+    }
+
+    .activity-indicator.visible {
+      display: flex;
+    }
+
+    .activity-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--severity-4);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    /* Breaking News Alert */
+    .breaking-news-alert {
+      position: fixed;
+      top: 68px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--severity-4), #dc2626);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      color: white;
+      font-weight: 600;
+      z-index: 2000;
+      display: none;
+      min-width: 400px;
+      max-width: 600px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      animation: breakingSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .breaking-news-alert.visible {
+      display: block;
+    }
+
+    .breaking-news-content {
+      padding: 16px 20px;
+    }
+
+    .breaking-news-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .breaking-badge {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--severity-4);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .breaking-close {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s ease;
+    }
+
+    .breaking-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .breaking-details {
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+
+    @keyframes breakingSlideIn {
+      0% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+      }
+      70% {
+        transform: translate(-50%, 10px);
+      }
+      100% {
+        transform: translate(-50%, 0);
+        opacity: 1;
+      }
+    }
+
+    /* Activity Timeline */
+    .activity-timeline {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .timeline-loading {
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .timeline-hour {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 12px;
+    }
+
+    .timeline-hour:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-hour-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timeline-hour-count {
+      background: var(--chip);
+      color: var(--text);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+    }
+
+    .timeline-incidents {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .timeline-incident {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+      font-size: 11px;
+    }
+
+    .timeline-incident:hover {
+      background: var(--chip-active);
+    }
+
+    .timeline-incident-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .timeline-incident-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .timeline-incident-name {
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .timeline-incident-time {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .timeline-empty {
+      padding: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      font-style: italic;
+    }
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* Statistics Dashboard Styles */
+    .stats-dashboard {
+      background: var(--glass-panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      padding: var(--space-3) var(--space-4);
+      position: relative;
+      z-index: 100;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .stats-container {
+      display: flex;
+      gap: var(--space-3);
+      min-width: fit-content;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .stat-card {
+      flex: 1;
+      min-width: 140px;
+      background: var(--glass-card);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-focus);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: var(--font-weight-medium);
+    }
+
+    .stat-change {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .stat-change.positive {
+      color: var(--danger);
+    }
+
+    .stat-change.positive::before {
+      content: '↑';
+    }
+
+    .stat-change.negative {
+      color: var(--success);
+    }
+
+    .stat-change.negative::before {
+      content: '↓';
+    }
+
+    .stat-change.neutral {
+      color: var(--text-muted);
+    }
+
+    .stat-change.neutral::before {
+      content: '→';
+    }
+
+    .stat-indicator {
+      margin-top: var(--space-1);
+      height: 4px;
+      background: var(--chip);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .severity-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--warning) 0%, var(--danger) 100%);
+      width: 0%;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 2px;
+    }
+
+    .stat-detail {
+      font-size: var(--font-size-xs);
+      color: var(--text-secondary);
+    }
+
+    .stat-trend {
+      padding: var(--space-2);
+    }
+
+    #trend-chart {
+      width: 100%;
+      height: 40px;
+      margin-bottom: var(--space-1);
+    }
+
+    /* Special stat card colors */
+    .stat-active .stat-value {
+      color: var(--danger);
+    }
+
+    .stat-24h .stat-value {
+      color: var(--accent);
+    }
+
+    .stat-severity .stat-value {
+      color: var(--warning);
+    }
+
+    .stat-assets .stat-value {
+      color: var(--purple);
+    }
+
+    /* Loading Skeletons and Empty States */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: var(--glass-card);
+      border-radius: 8px;
+      margin-bottom: var(--space-3);
+    }
+
+    .skeleton::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        transparent 100%
+      );
+      animation: shimmer 2s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+
+    .skeleton-card {
+      height: 120px;
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .skeleton-line {
+      height: 16px;
+      background: var(--chip);
+      border-radius: 4px;
+    }
+
+    .skeleton-line.short {
+      width: 60%;
+    }
+
+    .skeleton-line.long {
+      width: 90%;
+    }
+
+    /* Empty State */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-12) var(--space-6);
+      text-align: center;
+      min-height: 400px;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: var(--space-4);
+      opacity: 0.5;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    .empty-state-title {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-state-description {
+      font-size: var(--font-size-base);
+      color: var(--text-muted);
+      max-width: 400px;
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-6);
+    }
+
+    /* Mobile adjustments for stats dashboard */
+    @media (max-width: 767px) {
+      .stats-dashboard {
+        display: none !important; /* Completely hide stats on mobile */
+      }
+
+      .stats-container {
+        gap: var(--space-2);
+        overflow-x: auto;
+        padding-bottom: var(--space-1);
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .stats-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .stat-card {
+        min-width: 90px;
+        padding: var(--space-2);
+        background: var(--surface);
+        border: 1px solid var(--border);
+      }
+
+      .stat-value {
+        font-size: var(--font-size-lg);
+      }
+
+      .stat-label {
+        font-size: 9px;
+        letter-spacing: 0;
+      }
+
+      .stat-change {
+        font-size: 10px;
+      }
+
+      .stat-trend {
+        min-width: 100px;
+      }
+    }
+
+    /* Tablet adjustments */
+    @media (min-width: 768px) and (max-width: 1023px) {
+      .stats-container {
+        gap: var(--space-2);
+      }
+
+      .stat-card {
+        min-width: 120px;
+      }
+    }
+
+    /* Enhanced Provenance Modal Styles */
+    .provenance-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .provenance-modal-content {
+      background: var(--panel);
+      margin: 20px auto;
+      padding: 0;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 95%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+    }
+
+    .provenance-modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--surface);
+      border-radius: 16px 16px 0 0;
+      flex-shrink: 0;
+    }
+
+    .provenance-modal-title {
+      margin: 0;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+
+    .provenance-modal-close {
+      background: var(--chip);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.2s ease;
+      line-height: 1;
+      min-width: 40px;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .provenance-modal-close:hover {
+      background: var(--accent);
+      transform: scale(1.05);
+    }
+
+    .provenance-modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Enhanced mobile styles for provenance content */
+    .provenance-modal-body h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .provenance-modal-body h4 {
+      font-size: 16px;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .provenance-modal-body .badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    /* Provenance content structure styles */
+    .provenance-section {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .provenance-section:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .provenance-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .provenance-narrative {
+      line-height: 1.6;
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    .provenance-factors {
+      background: var(--chip);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .provenance-factor {
+      margin: 8px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .provenance-timeline,
+    .provenance-asset {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .timeline-item,
+    .asset-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .timeline-item:last-child,
+    .asset-item:last-child {
+      border-bottom: none;
+    }
+
+    .timeline-label,
+    .asset-label {
+      font-weight: 600;
+      color: var(--text-muted);
+      flex: 0 0 140px;
+    }
+
+    .timeline-value,
+    .asset-value {
+      color: var(--text);
+      text-align: right;
+      flex: 1;
+    }
+
+    /* Mobile-specific adjustments for provenance modal */
+    @media (max-width: 767px) {
+      .provenance-modal-content {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        border-radius: 0;
+      }
+
+      .provenance-modal-header {
+        padding: 16px 20px;
+        border-radius: 0;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+      }
+
+      .provenance-modal-title {
+        font-size: 16px;
+        max-width: 70%;
+      }
+
+      .provenance-modal-body {
+        padding: 20px;
+        padding-bottom: 40px;
+      }
+
+      .provenance-modal-body h3 {
+        font-size: 18px;
+      }
+
+      .provenance-modal-body h4 {
+        font-size: 15px;
+      }
+
+      /* Improve readability on mobile */
+      .provenance-modal-body div {
+        line-height: 1.6;
+      }
+
+      .provenance-modal-body .muted {
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+    }
+
+    @media (max-width: 1120px) and (min-width: 768px) {
+      /* Tablet layout - keep panels visible but stacked */
+      #app {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        height: 100dvh;
+      }
+
+      .main-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        min-height: 0;
+        bottom: 0 !important; /* No bottom spacing on tablets */
+        height: 100% !important;
+      }
+
+      .panels-container {
+        display: none !important; /* Hide panels on tablet/mobile - access via mobile UI */
+      }
+
+      /* Ensure mobile nav is hidden on tablets */
+      .mobile-nav {
+        display: none !important;
+      }
+
+      #map-container {
+        flex: 1;
+        min-height: 400px;
+        position: relative;
+        height: 100%;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #right {
+        flex-shrink: 0;
+        height: 250px;
+        overflow-y: auto;
+      }
+    }
+
+    /* Professional Operations Center Components */
+
+    /* Threat Level Indicator */
+    .threat-level-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--glass-card);
+      border-radius: var(--space-2);
+      border: 1px solid var(--border-light);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .threat-level-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .threat-level-dot.critical {
+      background: var(--threat-critical);
+      box-shadow: 0 0 8px var(--threat-critical);
+    }
+
+    .threat-level-dot.high {
+      background: var(--threat-high);
+      box-shadow: 0 0 6px var(--threat-high);
+    }
+
+    .threat-level-dot.medium {
+      background: var(--threat-medium);
+      box-shadow: 0 0 4px var(--threat-medium);
+    }
+
+    .threat-level-dot.low {
+      background: var(--threat-low);
+    }
+
+    .threat-level-dot.unknown {
+      background: var(--threat-unknown);
+    }
+
+    .threat-level-dot.critical::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      background: var(--threat-critical);
+      opacity: 0.3;
+      animation: pulse-critical 2s infinite;
+    }
+
+    @keyframes pulse-critical {
+      0%, 100% { transform: scale(1); opacity: 0.3; }
+      50% { transform: scale(1.5); opacity: 0; }
+    }
+
+    /* System Status Bar */
+    .system-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-4);
+      background: var(--glass-panel);
+      border-bottom: 1px solid var(--border-light);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-dot.operational { background: var(--status-operational); }
+    .status-dot.degraded { background: var(--status-degraded); }
+    .status-dot.offline { background: var(--status-offline); }
+    .status-dot.maintenance { background: var(--status-maintenance); }
+
+    /* Real-time Data Indicator */
+    .realtime-indicator {
+      position: fixed;
+      top: 70px;
+      right: var(--space-4);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--glass-card);
+      border: 1px solid var(--border-light);
+      border-radius: 9999px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--text-secondary);
+    }
+
+    .realtime-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--status-operational);
+      animation: pulse-realtime 2s infinite;
+    }
+
+    @keyframes pulse-realtime {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Operational Typography */
+    .ops-heading {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-accent);
+    }
+
+    .ops-code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      background: var(--glass-surface);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--space-1);
+      font-size: var(--font-size-xs);
+      border: 1px solid var(--border-light);
+    }
+
+    /* Activity Timeline */
+    .activity-timeline {
+      position: relative;
+      padding-left: var(--space-6);
+    }
+
+    .activity-timeline::before {
+      content: '';
+      position: absolute;
+      left: var(--space-2);
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -21px;
+      top: var(--space-4);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+
+    .timeline-item.critical::before {
+      background: var(--threat-critical);
+      box-shadow: 0 0 8px var(--threat-critical);
+    }
+
+    .timeline-time {
+      font-size: var(--font-size-xs);
+      color: var(--text-muted);
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    }
+
+    /* Command Center Grid */
+    .command-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-4) 0;
+    }
+
+    .command-card {
+      background: var(--glass-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--space-3);
+      padding: var(--space-4);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .command-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--accent);
+    }
+
+    .command-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-3);
+    }
+
+    .command-card-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--text-accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .command-card-value {
+      font-size: var(--font-size-2xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--text);
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    }
+
+    /* Classification Banners */
+    .classification-banner {
+      background: var(--status-operational);
+      color: white;
+      text-align: center;
+      padding: var(--space-1);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+    }
+
+    .classification-banner.unclassified {
+      background: var(--status-operational);
+    }
+
+    .classification-banner.confidential {
+      background: var(--threat-medium);
+    }
+
+    .classification-banner.secret {
+      background: var(--threat-high);
+    }
+
+    .classification-banner.top-secret {
+      background: var(--threat-critical);
+    }
+
+    /* Enhanced Header for Operations Center */
+    .ops-header-enhancement {
+      background: linear-gradient(135deg, var(--glass-panel) 0%, var(--glass-surface) 100%);
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .ops-title {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #1d4ed8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: var(--font-weight-extrabold);
+      letter-spacing: -0.02em;
+    }
+
+    .ops-subtitle {
+      font-size: var(--font-size-sm);
+      color: var(--text-muted);
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: var(--space-1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Classification Banner -->
+  <div class="classification-banner unclassified">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
+
+  <!-- Real-time Data Indicator -->
+  <div class="realtime-indicator">
+    <div class="realtime-pulse"></div>
+    <span>LIVE DATA FEED</span>
+  </div>
+
+  <div id="app" role="application" aria-label="DroneWatch Operations Center">
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+      <div class="status-group">
+        <div class="status-item">
+          <div class="status-dot operational"></div>
+          <span>SURVEILLANCE NETWORK</span>
+        </div>
+        <div class="status-item">
+          <div class="status-dot operational"></div>
+          <span>DATA INGESTION</span>
+        </div>
+        <div class="status-item">
+          <div class="status-dot operational"></div>
+          <span>THREAT ASSESSMENT</span>
+        </div>
+      </div>
+      <div class="status-group">
+        <span class="ops-code">DEFCON-5</span>
+        <span class="ops-code" id="system-time">00:00:00Z</span>
+      </div>
+    </div>
+
+    <header class="ops-header-enhancement">
+      <div class="header-top">
+        <div>
+          <h1 class="ops-title"><span class="header-icon">🛡️</span> <span class="header-title-text">DroneWatch</span></h1>
+          <div class="ops-subtitle">Real-Time Drone Threat Monitoring</div>
+        </div>
+        <button class="share-btn" id="btn-share">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+            <polyline points="16 6 12 2 8 6"></polyline>
+            <line x1="12" y1="2" x2="12" y2="15"></line>
+          </svg>
+          <span class="share-text">Share</span>
+        </button>
+      </div>
+      <div class="header-badges">
+        <span class="badge live">LIVE</span>
+        <span class="badge mobile-realtime">Real-time</span>
+        <span class="badge" id="badge-refresh">Auto-sync</span>
+        <span class="badge" id="badge-generated">Updated: —</span>
+        <span class="badge" id="badge-status" style="display: none;">NO DATA</span>
+        <button class="badge clickable" id="ai-fetch-btn" onclick="fetchRealTimeNews()">🤖 AI News</button>
+      </div>
+    </header>
+
+    <!-- Statistics Dashboard -->
+    <div id="stats-dashboard" class="stats-dashboard">
+      <div class="stats-container">
+        <div class="stat-card stat-active">
+          <div class="stat-value" id="stat-active">0</div>
+          <div class="stat-label">Active Now</div>
+          <div class="stat-change" id="stat-active-change">-</div>
+        </div>
+        <div class="stat-card stat-24h">
+          <div class="stat-value" id="stat-24h">0</div>
+          <div class="stat-label">Last 24h</div>
+          <div class="stat-change" id="stat-24h-change">-</div>
+        </div>
+        <div class="stat-card stat-severity">
+          <div class="stat-value" id="stat-severity">0</div>
+          <div class="stat-label">High Severity</div>
+          <div class="stat-indicator">
+            <div class="severity-bar" id="severity-bar"></div>
+          </div>
+        </div>
+        <div class="stat-card stat-assets">
+          <div class="stat-value" id="stat-assets">0</div>
+          <div class="stat-label">Assets Affected</div>
+          <div class="stat-detail" id="stat-assets-detail">-</div>
+        </div>
+        <div class="stat-card stat-trend">
+          <canvas id="trend-chart" width="120" height="40"></canvas>
+          <div class="stat-label">7-Day Trend</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="main-container" class="main-container">
+      <!-- Left Panel - Filters & Controls -->
+      <div class="panels-container" id="panels">
+        <div class="panel" id="left-panel">
+
+    <!-- Live Activity Indicator -->
+    <div id="activity-indicator" class="activity-indicator">
+      <div class="activity-pulse"></div>
+      <span id="activity-text">Live Activity</span>
+    </div>
+
+    <!-- Breaking News Alert -->
+    <div id="breaking-news-alert" class="breaking-news-alert">
+      <div class="breaking-news-content">
+        <div class="breaking-news-header">
+          <span class="breaking-badge">BREAKING</span>
+          <span id="breaking-title">New Drone Incident</span>
+          <button id="breaking-close" class="breaking-close">×</button>
+        </div>
+        <div id="breaking-details" class="breaking-details">
+          Location and details will appear here
+        </div>
+      </div>
+    </div>
+
+    <aside id="left" aria-label="Filters">
+      <!-- Threat Level Assessment -->
+      <div class="section">
+        <h2 class="ops-heading">🔴 Threat Level Assessment</h2>
+        <div class="threat-level-indicator">
+          <div class="threat-level-dot medium" id="current-threat-level"></div>
+          <div>
+            <div style="font-weight: 600; color: var(--text);">ELEVATED</div>
+            <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Multiple incidents detected</div>
+          </div>
+        </div>
+        <div style="margin-top: var(--space-3); padding: var(--space-3); background: var(--glass-surface); border-radius: var(--space-2); border: 1px solid var(--border-light);">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-bottom: var(--space-2);">OPERATIONAL STATUS</div>
+          <div style="font-size: var(--font-size-sm); color: var(--text); font-weight: 600;">
+            Monitoring <strong>European critical infrastructure</strong> for drone threats. Real-time data from OSINT, NOTAMs, and official reports.
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">⏱️ Time Window</h2>
+        <div class="chips" role="group" aria-label="Quick time windows">
+          <button class="chip" data-window="7">7d</button>
+          <button class="chip active" data-window="30">30d</button>
+          <button class="chip" data-window="90">90d</button>
+          <button class="chip" data-window="365">365d</button>
+        </div>
+        <label for="dateRange">Filter by days</label>
+        <input id="dateRange" type="range" min="1" max="365" value="30" step="1" aria-valuemin="1" aria-valuemax="365" aria-valuenow="30" />
+        <div class="muted" id="dateRangeLabel">Showing last 30 days</div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">🛡️ Infrastructure Proximity</h2>
+        <div style="margin-bottom: var(--space-3); color: var(--text-muted); font-size: var(--font-size-xs);">
+          Show incidents near critical infrastructure (within 10km)
+        </div>
+        <div class="legend" role="group" aria-label="Proximity filters">
+          <label><input type="checkbox" id="filter-near-harbours" /> <span class="dot" style="background:var(--accent);"></span> Near Harbours</label>
+          <label><input type="checkbox" id="filter-near-military" /> <span class="dot" style="background:var(--danger);"></span> Near Military Bases</label>
+          <label><input type="checkbox" id="filter-near-airports" /> <span class="dot" style="background:var(--success);"></span> Near Airports</label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">⚡ Risk Visualization</h2>
+        <label><input type="checkbox" id="show-risk-rings" checked /> Show risk rings around critical assets</label>
+        <div class="muted" style="font-size: 11px; margin-top: 4px;">2km/5km operational zones based on asset type and threat profile</div>
+
+        <label style="margin-top: 8px;"><input type="checkbox" id="show-threat-heatmap" /> Show regional threat heatmap</label>
+        <div class="muted" style="font-size: 11px; margin-top: 4px;">Visualize incident density and severity concentrations across regions</div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">🗺️ Navigation</h2>
+        <label><input type="checkbox" id="auto-focus" checked /> Auto-focus on recent activity</label>
+        <div class="muted" style="font-size: 11px; margin-top: 4px;">Automatically center map on most recent incidents when loading</div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">📊 Compare Mode</h2>
+        <label><input type="checkbox" id="compare-mode" /> Compare periods</label>
+        <div class="muted" style="font-size: 11px; margin-top: 4px;">Show current period vs previous period for trend analysis</div>
+        <div id="compare-controls" style="display: none; margin-top: 8px;">
+          <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
+            <span style="color: var(--severity-4); font-weight: 700;">●</span>
+            <span class="muted" style="font-size: 12px;">Current</span>
+            <span style="color: var(--severity-2); font-weight: 700;">●</span>
+            <span class="muted" style="font-size: 12px;">Previous</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">🔍 Status & Evidence</h2>
+        <label for="statusSelect">Status</label>
+        <select id="statusSelect" multiple size="3">
+          <option value="active" selected>Active</option>
+          <option value="resolved" selected>Resolved</option>
+          <option value="unconfirmed" selected>Unconfirmed</option>
+        </select>
+
+        <label style="margin-top:8px;" for="evidenceSelect">Evidence strength</label>
+        <select id="evidenceSelect" multiple size="4">
+          <option value="3" selected>3 — Official/NOTAM/NAVTEX</option>
+          <option value="2" selected>2 — Multi tier-1 reports</option>
+          <option value="1" selected>1 — Single credible</option>
+          <option value="0" selected>0 — Unconfirmed</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">🔎 Find</h2>
+        <label for="searchBox">Search assets, sources, narratives</label>
+        <input id="searchBox" type="text" placeholder="e.g., CPH, Nordhavn, Reuters" />
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">📈 Activity Timeline</h2>
+        <div id="activity-timeline" class="activity-timeline">
+          <div class="timeline-loading">Loading timeline...</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">⚠️ Severity Legend</h2>
+        <div class="legend">
+          <span><span class="sev s1"></span>1</span>
+          <span><span class="sev s2"></span>2</span>
+          <span><span class="sev s3"></span>3</span>
+          <span><span class="sev s4"></span>4</span>
+          <span><span class="sev s5"></span>5</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="ops-heading">📋 Summary</h2>
+        <div class="statbar">
+          <div class="stat"><div class="k" id="stat-total">0</div><div class="muted">Incidents</div></div>
+          <div class="stat"><div class="k" id="stat-air">0</div><div class="muted">Airports</div></div>
+          <div class="stat"><div class="k" id="stat-har">0</div><div class="muted">Harbours</div></div>
+        </div>
+      </div>
+
+      <div class="section muted" style="font-size:11px;">
+        Basemap © Esri; OSM contributors. Data refreshes hourly; UI reloads automatically every 5 minutes.
+      </div>
+    </aside>
+        </div> <!-- Close left-panel -->
+      </div> <!-- Close panels-container -->
+
+      <!-- Map Container - NOW PROPERLY INSIDE main-container -->
+      <div id="map-container">
+        <main id="map" role="region" aria-label="Incident map">
+          <div id="mapOverlay" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: var(--surface); border: 3px solid var(--severity-4); border-radius: 16px; padding: 40px 60px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.8);">
+            <div style="font-size: 48px; font-weight: 900; color: var(--severity-4); margin-bottom: 16px; letter-spacing: 3px;">NO DATA</div>
+            <div style="color: var(--muted); font-size: 16px; line-height: 1.4;">Europe-wide incident monitoring system<br/>No current incidents detected</div>
+          </div>
+        </main>
+      </div>
+
+      <aside id="right" aria-label="Incident details">
+      <div id="details">
+        <h2 class="ops-heading">📡 Incident Feed</h2>
+        <p class="muted" id="detailsIntro">Pins refresh every few minutes. Click a marker or list item for full provenance.</p>
+        <div id="noDataMessage" style="display: none; text-align: center; padding: 60px 20px; background: var(--surface); border: 2px solid var(--border); border-radius: 12px; margin: 20px 0;">
+          <div style="font-size: 32px; font-weight: 900; color: var(--text); margin-bottom: 16px; letter-spacing: 2px;">NO DATA</div>
+          <div class="muted" style="line-height: 1.5; font-size: 14px;">No incidents match the current filters.<br />Try expanding the time window or enabling more status options.</div>
+        </div>
+        <div id="incidentList"></div>
+      </div>
+      </aside>
+    </div> <!-- End of main-container - CRITICAL FIX -->
+
+    <!-- Provenance Modal - Enhanced for Mobile -->
+    <div id="provenanceModal" class="provenance-modal" style="display: none;">
+      <div class="provenance-modal-content">
+        <div class="provenance-modal-header">
+          <h2 class="provenance-modal-title">INCIDENT PROVENANCE</h2>
+          <button id="closeProvenance" class="provenance-modal-close">✕</button>
+        </div>
+        <div id="provenanceContent" class="provenance-modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js" crossorigin="anonymous"></script>
+  <script>
+    const INCIDENTS_URL = './incidents.json';
+    const REFRESH_MS = 5 * 60 * 1000;
+
+    // AI API Configuration for real-time news
+    const AI_CONFIG = {
+      // OpenRouter API (recommended - best free models)
+      OPENROUTER_API_URL: 'https://openrouter.ai/api/v1/chat/completions',
+      OPENROUTER_API_KEY: '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', // OpenRouter API key
+
+      // Best free models on OpenRouter (ordered by recommendation):
+      FREE_MODELS: [
+        'x-ai/grok-4-fast:free',                        // Grok-4 Fast - very fast and capable
+        'microsoft/phi-3-mini-128k-instruct:free',      // Excellent for analysis, 128K context
+        'meta-llama/llama-3.1-8b-instruct:free',       // Great reasoning, fast
+        'google/gemma-2-9b-it:free',                    // Google's latest, very capable
+        'mistralai/mistral-7b-instruct:free',          // Good for structured tasks
+        'huggingface/zephyr-7b-beta:free'              // Reliable fallback
+      ],
+
+      // RSS news feeds for drone incidents
+      NEWS_SOURCES: [
+        'https://feeds.reuters.com/reuters/topNews',
+        'https://rss.cnn.com/rss/edition.rss',
+        'https://feeds.bbci.co.uk/news/world/rss.xml'
+      ]
+    };
+
+    // Infrastructure data for proximity filtering
+    window.infrastructureData = {
+      harbours: [],
+      military: [],
+      airports: []
+    };
+
+    async function loadInfrastructureDataForFiltering() {
+      console.log('Loading infrastructure data for proximity filtering...');
+      const infrastructureTypes = [
+        { name: 'harbours', file: 'harbours.geojson' },
+        { name: 'military', file: 'military.geojson' },
+        { name: 'airports_wikidata', file: 'airports_wikidata.geojson' }
+      ];
+
+      for (const infra of infrastructureTypes) {
+        try {
+          const response = await fetch(`data/assets/${infra.file}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.features && data.features.length > 0) {
+              // Store for proximity filtering
+              if (infra.name === 'airports_wikidata') {
+                window.infrastructureData.airports = data.features;
+              } else {
+                window.infrastructureData[infra.name] = data.features;
+              }
+              console.log(`Loaded ${data.features.length} ${infra.name} for filtering`);
+            }
+          }
+        } catch (error) {
+          console.error(`Error loading ${infra.name} for filtering:`, error);
+        }
+      }
+    }
+
+    // Function to check if incident is near infrastructure
+    function isNearInfrastructure(incident, infrastructureType, maxDistanceKm = 10) {
+      if (!window.infrastructureData[infrastructureType]) return false;
+
+      const incidentLat = incident.lat || incident.latitude;
+      const incidentLng = incident.lng || incident.longitude;
+
+      if (!incidentLat || !incidentLng) return false;
+
+      return window.infrastructureData[infrastructureType].some(feature => {
+        if (feature.geometry && feature.geometry.type === 'Point') {
+          const [lng, lat] = feature.geometry.coordinates;
+          const distance = calculateDistance(incidentLat, incidentLng, lat, lng);
+          return distance <= maxDistanceKm;
+        }
+        return false;
+      });
+    }
+
+    // Haversine formula for distance calculation
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Global state and functions for mobile access
+    window.droneState = null;
+    window.droneFocusIncident = null;
+
+    // Operations Center Functions
+    function updateSystemTime() {
+      const now = new Date();
+      const utcTime = now.toISOString().substr(11, 8) + 'Z';
+      const timeElement = document.getElementById('system-time');
+      if (timeElement) {
+        timeElement.textContent = utcTime;
+      }
+    }
+
+    function updateThreatLevel() {
+      const incidents = (window.droneState && window.droneState.incidents) ? window.droneState.incidents : [];
+      let threatLevel = 'low';
+      let threatClass = 'low';
+      let threatText = 'MINIMAL';
+
+      if (incidents.length > 10) {
+        threatLevel = 'critical';
+        threatClass = 'critical';
+        threatText = 'CRITICAL';
+      } else if (incidents.length > 5) {
+        threatLevel = 'high';
+        threatClass = 'high';
+        threatText = 'ELEVATED';
+      } else if (incidents.length > 2) {
+        threatLevel = 'medium';
+        threatClass = 'medium';
+        threatText = 'ELEVATED';
+      }
+
+      const dot = document.getElementById('current-threat-level');
+      if (dot) {
+        dot.className = `threat-level-dot ${threatClass}`;
+      }
+
+      // Update threat level text
+      const indicator = document.querySelector('.threat-level-indicator div:last-child div:first-child');
+      if (indicator) {
+        indicator.textContent = threatText;
+      }
+    }
+
+    function initializeOperationsCenter() {
+      // Start system time updates
+      updateSystemTime();
+      setInterval(updateSystemTime, 1000);
+
+      // Initialize threat level
+      updateThreatLevel();
+
+      // Load infrastructure data for proximity filtering (not display)
+      loadInfrastructureDataForFiltering();
+
+      // Update status indicators based on system state
+      const statusIndicators = document.querySelectorAll('.status-dot');
+      statusIndicators.forEach(dot => {
+        // Simulate random status changes for demo
+        if (Math.random() < 0.1) {
+          dot.className = 'status-dot degraded';
+        }
+      });
+    }
+
+    async function loadInfrastructureData() {
+      console.log('Loading infrastructure data...');
+
+      // Load different infrastructure types
+      const infrastructureTypes = [
+        { name: 'harbours', file: 'harbours.geojson', color: '#3b82f6', icon: '⚓' },
+        { name: 'airports_wikidata', file: 'airports_wikidata.geojson', color: '#10b981', icon: '✈️' },
+        { name: 'fallback', file: 'fallback.geojson', color: '#ef4444', icon: '🏛️' }
+      ];
+
+      for (const infra of infrastructureTypes) {
+        try {
+          const response = await fetch(`data/assets/${infra.file}`);
+          if (!response.ok) {
+            console.warn(`Failed to load ${infra.name}: ${response.status}`);
+            continue;
+          }
+
+          const data = await response.json();
+          console.log(`Loaded ${infra.name}: ${data.features.length} features`);
+
+          // Add to map if map exists
+          if (window.map && data.features.length > 0) {
+            addInfrastructureLayer(infra.name, data, infra.color, infra.icon);
+          }
+
+        } catch (error) {
+          console.error(`Error loading ${infra.name}:`, error);
+        }
+      }
+    }
+
+    function addInfrastructureLayer(name, data, color, icon) {
+      if (!window.map) return;
+
+      // Create marker cluster group for this infrastructure type
+      const cluster = L.markerClusterGroup({
+        iconCreateFunction: function(cluster) {
+          const count = cluster.getChildCount();
+          return L.divIcon({
+            html: `<div style="background:${color};color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:12px;">${count}</div>`,
+            className: 'custom-cluster-icon',
+            iconSize: [40, 40]
+          });
+        }
+      });
+
+      // Add markers for each feature
+      data.features.forEach(feature => {
+        if (feature.geometry.type === 'Point') {
+          const [lng, lat] = feature.geometry.coordinates;
+          const props = feature.properties;
+
+          const marker = L.marker([lat, lng], {
+            icon: L.divIcon({
+              html: `<div style="background:${color};color:white;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;">${icon}</div>`,
+              className: 'infrastructure-marker',
+              iconSize: [20, 20]
+            })
+          });
+
+          // Add popup with facility information
+          const popupContent = `
+            <div style="font-family: 'Inter', sans-serif;">
+              <h3 style="margin:0 0 8px 0;color:#1e293b;font-size:14px;">${props.name || 'Infrastructure Facility'}</h3>
+              <p style="margin:0;color:#64748b;font-size:12px;">Type: ${name}</p>
+              ${props.iata ? `<p style="margin:0;color:#64748b;font-size:12px;">IATA: ${props.iata}</p>` : ''}
+              ${props.icao ? `<p style="margin:0;color:#64748b;font-size:12px;">ICAO: ${props.icao}</p>` : ''}
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+          cluster.addLayer(marker);
+        }
+      });
+
+      // Add cluster to map
+      window.map.addLayer(cluster);
+
+      // Store reference for layer control
+      if (!window.infrastructureLayers) {
+        window.infrastructureLayers = {};
+      }
+      window.infrastructureLayers[name] = cluster;
+
+      console.log(`Added ${name} layer with ${data.features.length} features`);
+    }
+
+    // Wait for DOM to be ready before initializing map
+    function initializeMap() {
+      // Check if map element exists
+      const mapElement = document.getElementById('map');
+      if (!mapElement) {
+        console.error('Map element not found!');
+        setTimeout(initializeMap, 100); // Retry after 100ms
+        return;
+      }
+
+      // CRITICAL: Check if container has actual dimensions
+      const mapContainer = document.getElementById('map-container');
+      if (!mapContainer || mapContainer.offsetWidth === 0 || mapContainer.offsetHeight === 0) {
+        console.log('Map container has no dimensions yet, retrying...');
+        setTimeout(initializeMap, 200);
+        return;
+      }
+
+      console.log('Map container dimensions:', mapContainer.offsetWidth, 'x', mapContainer.offsetHeight);
+      console.log('Initializing map...');
+
+      const assetColors = {
+        airport: getComputedStyle(document.documentElement).getPropertyValue('--air') || '#ef4444',
+        harbour: getComputedStyle(document.documentElement).getPropertyValue('--harbour') || '#3b82f6',
+        energy: getComputedStyle(document.documentElement).getPropertyValue('--energy') || '#f97316',
+        rail: getComputedStyle(document.documentElement).getPropertyValue('--rail') || '#22c55e',
+        border: getComputedStyle(document.documentElement).getPropertyValue('--border-crossing') || '#eab308',
+        military: getComputedStyle(document.documentElement).getPropertyValue('--military') || '#c084fc'
+      };
+
+      // Make map global for debugging
+      window.map = L.map('map', {
+        center: [56, 12],
+        zoom: 4,
+        minZoom: 3,
+        worldCopyJump: true
+      });
+
+      const map = window.map; // Keep local reference
+      console.log('Map reference created, about to continue initialization');
+
+      // CRITICAL: Force map to recalculate size on mobile
+      setTimeout(() => {
+        map.invalidateSize();
+        console.log('Map size invalidated');
+      }, 100);
+
+      // Also invalidate on window resize
+      window.addEventListener('resize', () => {
+        map.invalidateSize();
+      });
+
+      // Force another invalidation after a delay for mobile
+      setTimeout(() => {
+        map.invalidateSize();
+        console.log('Map size invalidated again');
+      }, 500);
+
+      try {
+        console.log('About to create satellite layer');
+        const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Basemap © Esri — Sources: Esri, i-cubed, USDA, USGS, AeroGRID, IGN, IGP'
+        }).addTo(map);
+        const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        });
+        L.control.layers({ 'Satellite': satellite, 'Streets': streets }, null, { collapsed: true }).addTo(map);
+        console.log('Layers created successfully');
+      } catch (error) {
+        console.error('Error creating layers:', error);
+      }
+
+      console.log('Creating cluster groups');
+      const clusterGroups = {
+        airport: L.markerClusterGroup({ disableClusteringAtZoom: 10 }),
+        harbour: L.markerClusterGroup({ disableClusteringAtZoom: 10 }),
+        energy: L.markerClusterGroup({ disableClusteringAtZoom: 8 }),
+        rail: L.markerClusterGroup({ disableClusteringAtZoom: 8 }),
+        border: L.markerClusterGroup({ disableClusteringAtZoom: 8 }),
+        military: L.markerClusterGroup({ disableClusteringAtZoom: 8 })
+      };
+      Object.values(clusterGroups).forEach(group => map.addLayer(group));
+      console.log('Cluster groups created');
+
+      // Risk rings layer group
+      const riskRings = L.layerGroup().addTo(map);
+
+      // Threat heatmap layer group
+      const threatHeatmap = L.layerGroup();
+
+      const state = {
+        data: { generated_utc: null, incidents: [] },
+        markers: new Map(),
+        showRiskRings: true,
+        showThreatHeatmap: false,
+        compareMode: false,
+        hasAutoFocused: false,
+        autoFocusEnabled: true,
+        liveIncidents: new Set(),
+        activityIndicatorVisible: false,
+        allIncidents: [], // Track all incidents for mobile access
+        dataLoaded: false // Flag to track if initial data has been loaded
+      };
+      console.log('State object created');
+
+      // Make state globally accessible for mobile handlers
+      window.state = state;
+      window.droneState = state;
+      console.log('State assigned to window:', !!window.state, !!window.droneState);
+
+      // URL state management for shareable links
+      function saveStateToURL() {
+        const params = new URLSearchParams();
+
+        // Time window
+        params.set('days', document.getElementById('dateRange').value);
+
+        // Asset layers
+        if (document.getElementById('layer-airport').checked) params.append('layers', 'airport');
+        if (document.getElementById('layer-harbour').checked) params.append('layers', 'harbour');
+        if (document.getElementById('layer-energy').checked) params.append('layers', 'energy');
+        if (document.getElementById('layer-rail').checked) params.append('layers', 'rail');
+        if (document.getElementById('layer-border').checked) params.append('layers', 'border');
+        if (document.getElementById('layer-military').checked) params.append('layers', 'military');
+
+        // Status filters
+        const statusOptions = Array.from(document.getElementById('statusSelect').selectedOptions);
+        statusOptions.forEach(opt => params.append('status', opt.value));
+
+        // Evidence filters
+        const evidenceOptions = Array.from(document.getElementById('evidenceSelect').selectedOptions);
+        evidenceOptions.forEach(opt => params.append('evidence', opt.value));
+
+        // Search term
+        const searchTerm = document.getElementById('searchBox').value.trim();
+        if (searchTerm) params.set('search', searchTerm);
+
+        // Risk rings
+        if (state.showRiskRings) params.set('risks', '1');
+
+        // Compare mode
+        if (state.compareMode) params.set('compare', '1');
+
+        // Auto-focus (only save if disabled, since it's enabled by default)
+        if (!state.autoFocusEnabled) params.set('noautofocus', '1');
+
+        // Map view
+        const center = map.getCenter();
+        const zoom = map.getZoom();
+        params.set('lat', center.lat.toFixed(4));
+        params.set('lng', center.lng.toFixed(4));
+        params.set('zoom', zoom);
+
+        // Update URL without reload
+        const newUrl = window.location.pathname + '?' + params.toString();
+        window.history.replaceState({}, '', newUrl);
+      }
+
+    function loadStateFromURL() {
+      const params = new URLSearchParams(window.location.search);
+
+      // Time window
+      if (params.has('days')) {
+        const days = params.get('days');
+        document.getElementById('dateRange').value = days;
+        document.getElementById('dateRangeLabel').textContent = `Showing last ${days} days`;
+        // Update active chip
+        document.querySelectorAll('.chip[data-window]').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.window === days);
+        });
+      }
+
+      // Asset layers
+      const layers = params.getAll('layers');
+      if (layers.length > 0) {
+        document.getElementById('layer-airport').checked = layers.includes('airport');
+        document.getElementById('layer-harbour').checked = layers.includes('harbour');
+        document.getElementById('layer-energy').checked = layers.includes('energy');
+        document.getElementById('layer-rail').checked = layers.includes('rail');
+        document.getElementById('layer-border').checked = layers.includes('border');
+        document.getElementById('layer-military').checked = layers.includes('military');
+      }
+
+      // Status filters
+      const statuses = params.getAll('status');
+      if (statuses.length > 0) {
+        Array.from(document.getElementById('statusSelect').options).forEach(opt => {
+          opt.selected = statuses.includes(opt.value);
+        });
+      }
+
+      // Evidence filters
+      const evidences = params.getAll('evidence');
+      if (evidences.length > 0) {
+        Array.from(document.getElementById('evidenceSelect').options).forEach(opt => {
+          opt.selected = evidences.includes(opt.value);
+        });
+      }
+
+      // Search term
+      if (params.has('search')) {
+        document.getElementById('searchBox').value = params.get('search');
+      }
+
+      // Risk rings
+      if (params.has('risks')) {
+        state.showRiskRings = params.get('risks') === '1';
+        document.getElementById('show-risk-rings').checked = state.showRiskRings;
+      }
+
+      // Compare mode
+      if (params.has('compare')) {
+        state.compareMode = params.get('compare') === '1';
+        document.getElementById('compare-mode').checked = state.compareMode;
+        document.getElementById('compare-controls').style.display = state.compareMode ? 'block' : 'none';
+      }
+
+      // Auto-focus
+      if (params.has('noautofocus')) {
+        state.autoFocusEnabled = false;
+        document.getElementById('auto-focus').checked = false;
+      }
+
+      // Map view
+      if (params.has('lat') && params.has('lng') && params.has('zoom')) {
+        const lat = parseFloat(params.get('lat'));
+        const lng = parseFloat(params.get('lng'));
+        const zoom = parseInt(params.get('zoom'));
+        map.setView([lat, lng], zoom);
+      }
+    }
+
+    function sevBox(score) {
+      const level = Math.min(5, Math.max(1, Number(score) || 1));
+      return `<span class="sev s${level}"></span>`;
+    }
+
+    function markerIcon(color, severity, isPrevious = false) {
+      const size = 10 + (Number(severity) || 1) * 2;
+      const borderStyle = isPrevious ? '2px dashed rgba(15,17,25,0.85)' : '2px solid rgba(15,17,25,0.85)';
+      const opacity = isPrevious ? '0.7' : '1';
+      return L.divIcon({
+        html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color.trim()};border:${borderStyle};box-shadow:0 0 0 1px rgba(0,0,0,.35);opacity:${opacity};"></div>`,
+        className: '',
+        iconSize: [size, size]
+      });
+    }
+
+    function fmtDate(value) {
+      if (!value) return '—';
+      try {
+        return new Date(value).toISOString().slice(0, 16).replace('T', ' ');
+      } catch (err) {
+        return value;
+      }
+    }
+
+    function fmtDuration(minutes) {
+      if (minutes == null) return '—';
+      if (minutes < 60) return `${minutes} min`;
+      return `${(minutes / 60).toFixed(1)} h`;
+    }
+
+    function activeDays() {
+      return parseInt(document.getElementById('dateRange').value, 10) || 365;
+    }
+
+    function selectedValues(select) {
+      const opts = Array.from(select.selectedOptions).map(opt => opt.value);
+      return opts.length ? opts : Array.from(select.options).map(opt => opt.value);
+    }
+
+    function assetToggles() {
+      // Updated to use proximity filters instead of layer toggles
+      const airportEl = document.getElementById('filter-near-airports');
+      const harbourEl = document.getElementById('filter-near-harbours');
+      const militaryEl = document.getElementById('filter-near-military');
+
+      return {
+        airport: airportEl ? airportEl.checked : false,
+        harbour: harbourEl ? harbourEl.checked : false,
+        energy: false, // Not used anymore
+        rail: false,   // Not used anymore
+        border: false, // Not used anymore
+        military: militaryEl ? militaryEl.checked : false
+      };
+    }
+
+    function mapAssetType(assetType) {
+      // Map asset types to filter categories
+      if (assetType === 'nuclear') return 'energy';
+      return assetType;
+    }
+
+    function searchTerm() {
+      return document.getElementById('searchBox').value.trim().toLowerCase();
+    }
+
+    function filterIncidents(period = 'current') {
+      const days = activeDays();
+      let cutoffStart, cutoffEnd;
+
+      if (state.compareMode && period === 'previous') {
+        // Previous period: (2 * days) ago to (days) ago
+        cutoffEnd = Date.now() - days * 24 * 3600 * 1000;
+        cutoffStart = Date.now() - 2 * days * 24 * 3600 * 1000;
+      } else {
+        // Current period: (days) ago to now
+        cutoffEnd = Date.now();
+        cutoffStart = Date.now() - days * 24 * 3600 * 1000;
+      }
+
+      const statuses = new Set(selectedValues(document.getElementById('statusSelect')));
+      const evidences = new Set(selectedValues(document.getElementById('evidenceSelect')));
+      const query = searchTerm();
+
+      return state.data.incidents.filter(item => {
+        const seenTs = Date.parse(item.first_seen_utc || item.last_update_utc || state.data.generated_utc || Date.now());
+
+        if (!Number.isFinite(seenTs)) {
+          console.log('Filter rejected: invalid timestamp for', item.id);
+          return false;
+        }
+        if (seenTs < cutoffStart || seenTs > cutoffEnd) {
+          console.log('Filter rejected: date out of range for', item.id, 'Date:', new Date(seenTs).toISOString());
+          return false;
+        }
+        if (!statuses.has(item.incident.status)) {
+          console.log('Filter rejected: status not selected for', item.id, 'Status:', item.incident.status, 'Selected:', Array.from(statuses));
+          return false;
+        }
+        if (!evidences.has(String(item.evidence.strength))) {
+          console.log('Filter rejected: evidence not selected for', item.id, 'Evidence:', item.evidence.strength, 'Selected:', Array.from(evidences));
+          return false;
+        }
+        if (query) {
+          const haystack = [
+            item.asset.name,
+            item.asset.iata,
+            item.asset.icao,
+            item.incident.narrative,
+            ...(item.evidence.sources || []).map(src => src.publisher)
+          ].join(' ').toLowerCase();
+          if (!haystack.includes(query)) return false;
+        }
+
+        // Check proximity filters
+        const nearHarboursFilter = document.getElementById('filter-near-harbours');
+        const nearMilitaryFilter = document.getElementById('filter-near-military');
+        const nearAirportsFilter = document.getElementById('filter-near-airports');
+
+        // If any proximity filter is active, check if incident matches
+        const anyProximityFilterActive = (nearHarboursFilter && nearHarboursFilter.checked) ||
+                                       (nearMilitaryFilter && nearMilitaryFilter.checked) ||
+                                       (nearAirportsFilter && nearAirportsFilter.checked);
+
+        if (anyProximityFilterActive) {
+          let matchesProximityFilter = false;
+
+          if (nearHarboursFilter && nearHarboursFilter.checked && isIncidentNearInfrastructure(item, 'harbours')) {
+            matchesProximityFilter = true;
+          }
+          if (nearMilitaryFilter && nearMilitaryFilter.checked && isIncidentNearInfrastructure(item, 'military')) {
+            matchesProximityFilter = true;
+          }
+          if (nearAirportsFilter && nearAirportsFilter.checked && isIncidentNearInfrastructure(item, 'airports')) {
+            matchesProximityFilter = true;
+          }
+
+          if (!matchesProximityFilter) return false;
+        }
+
+        return true;
+      });
+    }
+
+    // Global infrastructure data for proximity filtering
+    let infrastructureData = {
+      harbours: [],
+      military: [],
+      airports: []
+    };
+
+    // Calculate distance between two coordinates using Haversine formula
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLng = (lng2 - lng1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLng/2) * Math.sin(dLng/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Check if incident is near infrastructure (within 10km)
+    function isIncidentNearInfrastructure(incident, infrastructureType) {
+      if (!infrastructureData[infrastructureType] || infrastructureData[infrastructureType].length === 0) {
+        return false;
+      }
+
+      const incidentLat = incident.asset.latitude;
+      const incidentLng = incident.asset.longitude;
+
+      if (!incidentLat || !incidentLng) return false;
+
+      return infrastructureData[infrastructureType].some(item => {
+        const distance = calculateDistance(incidentLat, incidentLng, item.lat, item.lng);
+        return distance <= 10; // Within 10km
+      });
+    }
+
+    // Load infrastructure data for proximity filtering
+    async function loadInfrastructureDataForFiltering() {
+      console.log('Loading infrastructure data for proximity filtering...');
+
+      const infrastructureTypes = [
+        { name: 'harbours', file: 'harbours.geojson' },
+        { name: 'military', file: 'military.geojson' },
+        { name: 'airports', file: 'airports_wikidata.geojson' }
+      ];
+
+      for (const infraType of infrastructureTypes) {
+        try {
+          console.log(`Loading ${infraType.name}...`);
+          const response = await fetch(`./data/assets/${infraType.file}`);
+          if (!response.ok) {
+            console.warn(`Failed to load ${infraType.file}: ${response.status}`);
+            continue;
+          }
+
+          const geojson = await response.json();
+          infrastructureData[infraType.name] = geojson.features.map(feature => {
+            const coords = feature.geometry.coordinates;
+            return {
+              lat: coords[1],
+              lng: coords[0],
+              name: feature.properties.name || 'Unknown',
+              type: feature.properties.asset_type || infraType.name
+            };
+          });
+
+          console.log(`Loaded ${infrastructureData[infraType.name].length} ${infraType.name} for proximity filtering`);
+        } catch (error) {
+          console.warn(`Error loading ${infraType.file}:`, error);
+          infrastructureData[infraType.name] = [];
+        }
+      }
+    }
+
+    function popupHtml(incident) {
+      const srcLinks = (incident.evidence.sources || []).slice(0, 2).map(src => {
+        const label = src.publisher || 'source';
+        return `<a href="${src.url}" target="_blank" rel="noopener">${label}</a>`;
+      }).join(' · ');
+      return `
+        <strong>${incident.asset.name}${incident.asset.iata ? ` (${incident.asset.iata})` : ''}</strong><br />
+        <b>Asset:</b> ${incident.asset.type} · ${sevBox(incident.scores.severity)} <b>Severity:</b> ${incident.scores.severity}<br />
+        <b>Status:</b> ${incident.incident.status} · <b>Category:</b> ${incident.incident.category}<br />
+        <b>Window:</b> ${fmtDate(incident.first_seen_utc)} → ${fmtDate(incident.last_update_utc)}<br />
+        <b>Evidence:</b> ${incident.evidence.strength} · ${srcLinks || '<span class="muted">no link</span>'}<br />
+        <div style="text-align: center; margin-top: 8px;">
+          <button class="popup-provenance-btn" style="background: var(--focus); color: #fff; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 11px;">
+            📋 Full Provenance
+          </button>
+        </div>
+      `;
+    }
+
+    function showLoadingSkeletons() {
+      const list = document.getElementById('incidentList');
+      let skeletonHTML = '';
+      for (let i = 0; i < 5; i++) {
+        skeletonHTML += `
+          <div class="skeleton skeleton-card">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-line long"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        `;
+      }
+      list.innerHTML = skeletonHTML;
+    }
+
+    function renderDetails(currentIncidents, previousIncidents = []) {
+      const list = document.getElementById('incidentList');
+      const intro = document.getElementById('detailsIntro');
+      const noDataMessage = document.getElementById('noDataMessage');
+
+      console.log('renderDetails called with', currentIncidents.length, 'current and', previousIncidents.length, 'previous incidents');
+
+      // Show loading skeletons briefly for smooth transition
+      if (list.innerHTML === '' || list.querySelector('.skeleton')) {
+        showLoadingSkeletons();
+        setTimeout(() => {
+          renderDetailsContent(currentIncidents, previousIncidents);
+        }, 300);
+        return;
+      }
+
+      renderDetailsContent(currentIncidents, previousIncidents);
+    }
+
+    function renderDetailsContent(currentIncidents, previousIncidents = []) {
+      const list = document.getElementById('incidentList');
+      const intro = document.getElementById('detailsIntro');
+      const noDataMessage = document.getElementById('noDataMessage');
+
+      list.innerHTML = '';
+
+      const totalCurrent = currentIncidents.length;
+      const totalPrevious = previousIncidents.length;
+
+      if (!totalCurrent && !totalPrevious) {
+        console.log('Showing NO DATA message');
+        intro.style.display = 'none';
+        noDataMessage.style.display = 'block';
+        return;
+      }
+
+      intro.style.display = 'block';
+      noDataMessage.style.display = 'none';
+
+      if (state.compareMode) {
+        intro.innerHTML = `Current period: <strong>${totalCurrent}</strong> incidents | Previous period: <strong>${totalPrevious}</strong> incidents`;
+      } else {
+        intro.textContent = 'Most recent incidents. Click to focus on the map.';
+      }
+
+      // Show current period incidents
+      const currentSorted = currentIncidents.sort((a, b) => Date.parse(b.first_seen_utc) - Date.parse(a.first_seen_utc));
+      currentSorted.slice(0, state.compareMode ? 6 : 12).forEach(incident => {
+        const card = document.createElement('div');
+        card.className = 'incident';
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+            <strong>${incident.asset.name}</strong>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <span class="muted">${incident.asset.type}</span>
+              <button class="provenance-btn" style="background: var(--chip); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; color: var(--focus); cursor: pointer; font-size: 11px;">📋 Info</button>
+            </div>
+          </div>
+          <div class="muted" style="margin:6px 0">${fmtDate(incident.first_seen_utc)} → ${fmtDate(incident.last_update_utc)}</div>
+          <div>Category: <b>${incident.incident.category}</b> • Status: <b>${incident.incident.status}</b> • Evidence: <b>${incident.evidence.strength}</b> • Severity: <b>${incident.scores.severity}</b></div>
+          <div class="muted" style="margin:6px 0">${incident.incident.narrative || ''}</div>
+          <div>Sources: ${(incident.evidence.sources || []).map(src => `<a href="${src.url}" target="_blank" rel="noopener">${src.publisher || 'source'}</a>`).join(' · ') || '<span class="muted">—</span>'}</div>
+        `;
+        card.addEventListener('click', (e) => {
+          if (e.target.classList.contains('provenance-btn')) {
+            e.stopPropagation();
+            showProvenance(incident);
+          } else {
+            focusIncident(incident);
+          }
+        });
+        list.appendChild(card);
+      });
+
+      // Show previous period incidents if in compare mode
+      if (state.compareMode && previousIncidents.length > 0) {
+        const separator = document.createElement('div');
+        separator.style.cssText = 'margin: 16px 0; padding: 8px 0; border-top: 1px solid var(--border); color: var(--severity-2); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;';
+        separator.textContent = 'Previous Period';
+        list.appendChild(separator);
+
+        const previousSorted = previousIncidents.sort((a, b) => Date.parse(b.first_seen_utc) - Date.parse(a.first_seen_utc));
+        previousSorted.slice(0, 6).forEach(incident => {
+          const card = document.createElement('div');
+          card.className = 'incident';
+          card.style.borderColor = 'var(--severity-2)';
+          card.style.opacity = '0.8';
+          card.innerHTML = `
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+              <strong>${incident.asset.name}</strong>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span class="muted">${incident.asset.type}</span>
+                <button class="provenance-btn" style="background: var(--chip); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; color: var(--focus); cursor: pointer; font-size: 11px;">📋 Info</button>
+              </div>
+            </div>
+            <div class="muted" style="margin:6px 0">${fmtDate(incident.first_seen_utc)} → ${fmtDate(incident.last_update_utc)}</div>
+            <div>Category: <b>${incident.incident.category}</b> • Status: <b>${incident.incident.status}</b> • Evidence: <b>${incident.evidence.strength}</b> • Severity: <b>${incident.scores.severity}</b></div>
+            <div class="muted" style="margin:6px 0">${incident.incident.narrative || ''}</div>
+            <div>Sources: ${(incident.evidence.sources || []).map(src => `<a href="${src.url}" target="_blank" rel="noopener">${src.publisher || 'source'}</a>`).join(' · ') || '<span class="muted">—</span>'}</div>
+          `;
+          card.addEventListener('click', (e) => {
+            if (e.target.classList.contains('provenance-btn')) {
+              e.stopPropagation();
+              showProvenance(incident);
+            } else {
+              focusIncident(incident);
+            }
+          });
+          list.appendChild(card);
+        });
+      }
+    }
+
+    function focusIncident(incident) {
+      const marker = window.state.markers.get(incident.id);
+      if (!marker) return;
+
+      // Close mobile bottom sheet if open
+      const bottomSheet = document.getElementById('mobile-bottom-sheet');
+      if (bottomSheet && bottomSheet.classList.contains('open')) {
+        bottomSheet.classList.remove('open');
+      }
+
+      // Set mobile nav back to map tab
+      const mapTab = document.querySelector('.mobile-nav-item[data-tab="map"]');
+      const allTabs = document.querySelectorAll('.mobile-nav-item');
+      if (mapTab && allTabs) {
+        allTabs.forEach(tab => tab.classList.remove('active'));
+        mapTab.classList.add('active');
+      }
+
+      // Pan to incident location with animation
+      window.map.flyTo(marker.getLatLng(), Math.max(window.map.getZoom(), 8), {
+        duration: 1.5,
+        easeLinearity: 0.25
+      });
+
+      // Open popup after a short delay to ensure map has moved
+      setTimeout(() => {
+        marker.openPopup();
+      }, 1500);
+    }
+
+    // Make focusIncident globally accessible for mobile handlers
+    window.focusIncident = focusIncident;
+    window.droneFocusIncident = focusIncident;
+    console.log('FocusIncident assigned to window:', !!window.focusIncident, !!window.droneFocusIncident);
+
+    function showProvenance(incident) {
+      const modal = document.getElementById('provenanceModal');
+      const content = document.getElementById('provenanceContent');
+
+      // Calculate decision factors
+      const evidenceLevel = incident.evidence.strength;
+      const severityScore = incident.scores.severity;
+      const statusClass = incident.incident.status === 'active' ? 'severity-4' : 'muted';
+
+      // Format sources with credibility indicators
+      const sourcesList = (incident.evidence.sources || []).map((source, idx) => {
+        const tier1Sources = ['Reuters', 'AP', 'BBC', 'DR Nyheder', 'NRK', 'SVT Nyheter', 'Swedavia (Official)'];
+        const tier2Sources = ['TV 2 Lorry', 'The Local Sweden', 'The Local Denmark'];
+        const publisherClass = tier1Sources.includes(source.publisher) ? 'severity-3' :
+                              tier2Sources.includes(source.publisher) ? 'severity-2' : 'muted';
+        return `
+          <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin: 8px 0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <strong style="color: var(--${publisherClass});">${source.publisher || 'Unknown Source'}</strong>
+              <span class="muted" style="font-size: 11px;">${source.lang?.toUpperCase() || 'EN'}</span>
+            </div>
+            <div class="muted" style="font-size: 12px; margin-bottom: 8px;">
+              First seen: ${fmtDate(source.first_seen)}
+            </div>
+            <a href="${source.url}" target="_blank" rel="noopener" style="color: var(--focus); text-decoration: none; font-size: 12px;">
+              View source →
+            </a>
+          </div>
+        `;
+      }).join('');
+
+      // Decision logic explanation
+      const decisionFactors = [];
+      if (evidenceLevel >= 3) decisionFactors.push('✓ Official/NOTAM confirmation');
+      else if (evidenceLevel >= 2) decisionFactors.push('✓ Multiple credible sources');
+      else if (evidenceLevel >= 1) decisionFactors.push('⚠ Single source verification');
+      else decisionFactors.push('❌ Unverified reports');
+
+      if (severityScore >= 4) decisionFactors.push('🔴 High operational impact');
+      else if (severityScore >= 3) decisionFactors.push('🟡 Moderate impact');
+      else decisionFactors.push('🟢 Low impact');
+
+      if (incident.incident.status === 'active') decisionFactors.push('🚨 Currently active');
+      if (incident.incident.response?.length) decisionFactors.push(`👮 Response: ${incident.incident.response.join(', ')}`);
+
+      content.innerHTML = `
+        <div class="provenance-section">
+          <h3>${incident.asset.name}</h3>
+          <div class="provenance-badges">
+            <span class="badge" style="background: var(--${statusClass}); color: #fff;">${incident.incident.status.toUpperCase()}</span>
+            <span class="badge" style="background: var(--chip); color: var(--text);">Evidence: ${evidenceLevel}/3</span>
+            <span class="badge" style="background: var(--chip); color: var(--text);">Severity: ${severityScore}/5</span>
+          </div>
+          <div class="muted provenance-narrative">
+            ${incident.incident.narrative || 'No additional details available.'}
+          </div>
+        </div>
+
+        <div class="provenance-section">
+          <h4>Decision Factors</h4>
+          <div class="provenance-factors">
+            ${decisionFactors.map(factor => `<div class="provenance-factor">${factor}</div>`).join('')}
+          </div>
+        </div>
+
+        <div class="provenance-section">
+          <h4>Timeline</h4>
+          <div class="provenance-timeline">
+            <div class="timeline-item">
+              <span class="timeline-label">First detected:</span>
+              <span class="timeline-value">${fmtDate(incident.first_seen_utc)}</span>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-label">Last updated:</span>
+              <span class="timeline-value">${fmtDate(incident.last_update_utc)}</span>
+            </div>
+            ${incident.incident.duration_min ? `
+            <div class="timeline-item">
+              <span class="timeline-label">Duration:</span>
+              <span class="timeline-value">${fmtDuration(incident.incident.duration_min)}</span>
+            </div>` : ''}
+          </div>
+        </div>
+
+        <div class="provenance-section">
+          <h4>Asset Information</h4>
+          <div class="provenance-asset">
+            <div class="asset-item">
+              <span class="asset-label">Type:</span>
+              <span class="asset-value">${incident.asset.type}</span>
+            </div>
+            ${incident.asset.iata ? `
+            <div class="asset-item">
+              <span class="asset-label">IATA:</span>
+              <span class="asset-value">${incident.asset.iata}</span>
+            </div>` : ''}
+            ${incident.asset.icao ? `
+            <div class="asset-item">
+              <span class="asset-label">ICAO:</span>
+              <span class="asset-value">${incident.asset.icao}</span>
+            </div>` : ''}
+            <div class="asset-item">
+              <span class="asset-label">Coordinates:</span>
+              <span class="asset-value">${incident.asset.lat.toFixed(4)}, ${incident.asset.lon.toFixed(4)}</span>
+            </div>
+            ${incident.scores.risk_radius_m ? `
+            <div class="asset-item">
+              <span class="asset-label">Risk radius:</span>
+              <span class="asset-value">${(incident.scores.risk_radius_m/1000).toFixed(1)}km</span>
+            </div>` : ''}
+          </div>
+        </div>
+
+        <div class="provenance-section">
+          <h4>Sources (${incident.evidence.sources?.length || 0})</h4>
+          ${sourcesList || '<div class="muted">No sources available</div>'}
+        </div>
+      `;
+
+      modal.style.display = 'block';
+    }
+
+    function hideProvenance() {
+      document.getElementById('provenanceModal').style.display = 'none';
+    }
+
+    function renderRiskRings() {
+      riskRings.clearLayers();
+      if (!state.showRiskRings) return;
+
+      const toggles = assetToggles();
+      const processedAssets = new Set();
+
+      state.data.incidents.forEach(incident => {
+        const asset = incident.asset;
+        const assetKey = `${asset.type}-${asset.lat}-${asset.lon}`;
+        const mappedType = mapAssetType(asset.type);
+
+        if (processedAssets.has(assetKey) || !toggles[mappedType]) return;
+        processedAssets.add(assetKey);
+
+        // Risk ring sizes based on asset type
+        const ringConfig = {
+          airport: { inner: 2000, outer: 5000, color: '#ef4444' },
+          harbour: { inner: 1000, outer: 3000, color: '#3b82f6' },
+          energy: { inner: 1500, outer: 4000, color: '#f97316' },
+          rail: { inner: 800, outer: 2000, color: '#22c55e' },
+          border: { inner: 500, outer: 1500, color: '#eab308' },
+          military: { inner: 3000, outer: 8000, color: '#c084fc' }
+        };
+
+        const config = ringConfig[mappedType];
+        if (!config) return;
+
+        // Outer ring (restricted zone)
+        const outerRing = L.circle([asset.lat, asset.lon], {
+          radius: config.outer,
+          fillColor: config.color,
+          fillOpacity: 0.08,
+          color: config.color,
+          weight: 1,
+          opacity: 0.3,
+          dashArray: '5, 5'
+        });
+
+        // Inner ring (critical zone)
+        const innerRing = L.circle([asset.lat, asset.lon], {
+          radius: config.inner,
+          fillColor: config.color,
+          fillOpacity: 0.15,
+          color: config.color,
+          weight: 2,
+          opacity: 0.5
+        });
+
+        outerRing.bindTooltip(`${asset.name}<br/>Restricted zone: ${(config.outer/1000)}km`, {
+          permanent: false,
+          className: 'risk-tooltip'
+        });
+
+        innerRing.bindTooltip(`${asset.name}<br/>Critical zone: ${(config.inner/1000)}km`, {
+          permanent: false,
+          className: 'risk-tooltip'
+        });
+
+        riskRings.addLayer(outerRing);
+        riskRings.addLayer(innerRing);
+      });
+    }
+
+    function renderThreatHeatmap() {
+      threatHeatmap.clearLayers();
+
+      if (!state.showThreatHeatmap) {
+        if (map.hasLayer(threatHeatmap)) {
+          map.removeLayer(threatHeatmap);
+        }
+        return;
+      }
+
+      if (!map.hasLayer(threatHeatmap)) {
+        map.addLayer(threatHeatmap);
+      }
+
+      const filtered = filterIncidents('current');
+      if (filtered.length === 0) return;
+
+      // Create grid-based threat analysis
+      const gridSize = 50000; // 50km grid cells
+      const threatGrid = new Map();
+
+      // Group incidents by geographic grid cells
+      filtered.forEach(incident => {
+        const lat = incident.asset.lat;
+        const lon = incident.asset.lon;
+
+        // Calculate grid cell
+        const gridLat = Math.floor(lat * 1000 / (gridSize / 111320)) * (gridSize / 111320) / 1000;
+        const gridLon = Math.floor(lon * 1000 / (gridSize / (111320 * Math.cos(lat * Math.PI / 180)))) * (gridSize / (111320 * Math.cos(lat * Math.PI / 180))) / 1000;
+        const gridKey = `${gridLat},${gridLon}`;
+
+        if (!threatGrid.has(gridKey)) {
+          threatGrid.set(gridKey, {
+            lat: gridLat,
+            lon: gridLon,
+            incidents: [],
+            totalSeverity: 0,
+            maxSeverity: 0,
+            recentIncidents: 0
+          });
+        }
+
+        const cell = threatGrid.get(gridKey);
+        cell.incidents.push(incident);
+        cell.totalSeverity += incident.scores.severity || 1;
+        cell.maxSeverity = Math.max(cell.maxSeverity, incident.scores.severity || 1);
+
+        // Count recent incidents (last 24 hours)
+        const incidentTime = new Date(incident.first_seen_utc);
+        const dayAgo = Date.now() - 24 * 60 * 60 * 1000;
+        if (incidentTime > dayAgo) {
+          cell.recentIncidents++;
+        }
+      });
+
+      // Create heatmap circles for each grid cell
+      threatGrid.forEach(cell => {
+        const incidentCount = cell.incidents.length;
+        if (incidentCount === 0) return;
+
+        // Calculate threat level (0-1)
+        const density = incidentCount / 10; // Normalize by expected max incidents per cell
+        const severity = cell.totalSeverity / incidentCount; // Average severity
+        const recency = cell.recentIncidents / incidentCount; // Recent activity ratio
+
+        const threatLevel = Math.min(1, (density * 0.4 + severity / 5 * 0.4 + recency * 0.2));
+
+        // Determine colors based on threat level
+        const color = threatLevel > 0.7 ? '#dc2626' : // High threat - red
+                     threatLevel > 0.5 ? '#ea580c' : // Medium-high threat - orange
+                     threatLevel > 0.3 ? '#f59e0b' : // Medium threat - yellow
+                     '#3b82f6'; // Low threat - blue
+
+        const opacity = Math.max(0.1, threatLevel * 0.6);
+        const radius = Math.max(15000, threatLevel * 40000); // 15-40km radius
+
+        // Create heatmap circle
+        const circle = L.circle([cell.lat, cell.lon], {
+          radius: radius,
+          fillColor: color,
+          fillOpacity: opacity,
+          color: color,
+          weight: 1,
+          opacity: opacity * 1.5
+        });
+
+        // Create tooltip with threat information
+        const tooltipContent = `
+          <div style="font-size: 12px; line-height: 1.4;">
+            <strong>Threat Level: ${Math.round(threatLevel * 100)}%</strong><br>
+            ${incidentCount} incident${incidentCount > 1 ? 's' : ''}<br>
+            Avg Severity: ${(cell.totalSeverity / incidentCount).toFixed(1)}<br>
+            ${cell.recentIncidents} recent (24h)<br>
+            Max Severity: ${cell.maxSeverity}
+          </div>
+        `;
+
+        circle.bindTooltip(tooltipContent, {
+          permanent: false,
+          className: 'risk-tooltip'
+        });
+
+        threatHeatmap.addLayer(circle);
+      });
+
+      console.log(`Rendered threat heatmap with ${threatGrid.size} grid cells`);
+    }
+
+    function updateStatistics(incidents) {
+      const now = new Date();
+      const twentyFourHoursAgo = new Date(now - 24 * 60 * 60 * 1000);
+      const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000);
+
+      // Active incidents
+      const activeCount = incidents.filter(i => i.incident.status === 'active').length;
+      document.getElementById('stat-active').textContent = activeCount;
+
+      // 24h incidents
+      const last24h = incidents.filter(i => new Date(i.first_seen_utc) >= twentyFourHoursAgo).length;
+      document.getElementById('stat-24h').textContent = last24h;
+
+      // High severity (4-5)
+      const highSeverity = incidents.filter(i => i.scores.severity >= 4).length;
+      document.getElementById('stat-severity').textContent = highSeverity;
+      const severityPercentage = incidents.length > 0 ? (highSeverity / incidents.length) * 100 : 0;
+      document.getElementById('severity-bar').style.width = severityPercentage + '%';
+
+      // Assets affected
+      const uniqueAssets = new Set(incidents.map(i => i.asset.name));
+      document.getElementById('stat-assets').textContent = uniqueAssets.size;
+
+      // Asset breakdown
+      const assetTypes = {};
+      incidents.forEach(i => {
+        assetTypes[i.asset.type] = (assetTypes[i.asset.type] || 0) + 1;
+      });
+      const topType = Object.entries(assetTypes).sort((a, b) => b[1] - a[1])[0];
+      if (topType) {
+        document.getElementById('stat-assets-detail').textContent = `${topType[0]}: ${topType[1]}`;
+      }
+
+      // Calculate changes (compare to previous period)
+      if (state.previousStats) {
+        // Active change
+        const activeChange = activeCount - state.previousStats.active;
+        const activeEl = document.getElementById('stat-active-change');
+        activeEl.textContent = Math.abs(activeChange) + ' vs prev';
+        activeEl.className = activeChange > 0 ? 'stat-change positive' : activeChange < 0 ? 'stat-change negative' : 'stat-change neutral';
+
+        // 24h change
+        const change24h = last24h - state.previousStats.last24h;
+        const el24h = document.getElementById('stat-24h-change');
+        el24h.textContent = Math.abs(change24h) + ' vs yesterday';
+        el24h.className = change24h > 0 ? 'stat-change positive' : change24h < 0 ? 'stat-change negative' : 'stat-change neutral';
+      }
+
+      // Draw trend chart
+      drawTrendChart(incidents);
+
+      // Store current stats for next comparison
+      state.currentStats = {
+        active: activeCount,
+        last24h: last24h,
+        highSeverity: highSeverity,
+        assets: uniqueAssets.size
+      };
+    }
+
+    function drawTrendChart(incidents) {
+      const canvas = document.getElementById('trend-chart');
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+
+      // Clear canvas
+      ctx.clearRect(0, 0, width, height);
+
+      // Calculate daily counts for last 7 days
+      const dailyCounts = [];
+      for (let i = 6; i >= 0; i--) {
+        const dayStart = new Date();
+        dayStart.setDate(dayStart.getDate() - i);
+        dayStart.setHours(0, 0, 0, 0);
+
+        const dayEnd = new Date(dayStart);
+        dayEnd.setDate(dayEnd.getDate() + 1);
+
+        const count = incidents.filter(inc => {
+          const incDate = new Date(inc.first_seen_utc);
+          return incDate >= dayStart && incDate < dayEnd;
+        }).length;
+
+        dailyCounts.push(count);
+      }
+
+      // Find max for scaling
+      const maxCount = Math.max(...dailyCounts, 1);
+
+      // Draw chart
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent') + '20';
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      dailyCounts.forEach((count, i) => {
+        const x = (i / 6) * (width - 10) + 5;
+        const y = height - (count / maxCount) * (height - 10) - 5;
+
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+
+      // Fill area under line
+      ctx.lineTo(width - 5, height - 5);
+      ctx.lineTo(5, height - 5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw line on top
+      ctx.beginPath();
+      dailyCounts.forEach((count, i) => {
+        const x = (i / 6) * (width - 10) + 5;
+        const y = height - (count / maxCount) * (height - 10) - 5;
+
+        if (i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+
+      // Draw dots
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+      dailyCounts.forEach((count, i) => {
+        const x = (i / 6) * (width - 10) + 5;
+        const y = height - (count / maxCount) * (height - 10) - 5;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function render() {
+      console.log('render() called, total incidents:', state.data.incidents.length);
+      console.log('render() state.data:', state.data);
+
+      // Safety check: don't render if no incident data loaded yet
+      if (!state.dataLoaded) {
+        console.log('render() called but data not loaded yet, skipping');
+        return;
+      }
+      if (!state.data || !Array.isArray(state.data.incidents)) {
+        console.log('render() called but incident data structure not ready yet, skipping');
+        return;
+      }
+
+      // Add debugging for date filtering
+      const days = activeDays();
+      const cutoffStart = Date.now() - days * 24 * 3600 * 1000;
+      const cutoffEnd = Date.now();
+      console.log('Date filter debug:');
+      console.log('- Days:', days);
+      console.log('- Cutoff start:', new Date(cutoffStart).toISOString());
+      console.log('- Cutoff end:', new Date(cutoffEnd).toISOString());
+      console.log('- Now:', new Date().toISOString());
+
+      Object.values(clusterGroups).forEach(group => group.clearLayers());
+      state.markers.clear();
+
+      // TEMPORARY: Use all incidents to test if filtering is the issue
+      const currentFiltered = state.data.incidents; // filterIncidents('current');
+      const previousFiltered = state.compareMode ? filterIncidents('previous') : [];
+
+      console.log('Filtered incidents debug (BYPASSING FILTERS FOR TEST):');
+      console.log('- Total available:', state.data.incidents.length);
+      console.log('- After filtering:', currentFiltered.length);
+
+      // Update statistics dashboard
+      updateStatistics(currentFiltered);
+
+      // Store all current incidents for mobile access
+      state.allIncidents = currentFiltered;
+
+      console.log('current period incidents:', currentFiltered.length);
+      if (state.compareMode) console.log('previous period incidents:', previousFiltered.length);
+
+      // Update status badge and map overlay
+      const statusBadge = document.getElementById('badge-status');
+      const mapOverlay = document.getElementById('mapOverlay');
+
+      if (state.data.incidents.length === 0) {
+        statusBadge.style.display = 'inline-block';
+        statusBadge.textContent = 'NO DATA';
+        mapOverlay.style.display = 'block';
+      } else if (currentFiltered.length === 0 && previousFiltered.length === 0) {
+        statusBadge.style.display = 'inline-block';
+        statusBadge.textContent = 'NO MATCHES';
+        mapOverlay.style.display = 'none';
+      } else {
+        statusBadge.style.display = 'none';
+        mapOverlay.style.display = 'none';
+      }
+
+      const toggles = assetToggles();
+      const mapMarkers = [];
+      let countAir = 0;
+      let countHar = 0;
+      let countAirPrev = 0;
+      let countHarPrev = 0;
+
+      // Render current period incidents
+      currentFiltered.forEach(incident => {
+        const assetType = incident.asset.type;
+        const mappedType = mapAssetType(assetType);
+        if (!toggles[mappedType]) return;
+        const color = assetColors[mappedType] || '#6ea8fe';
+        const marker = L.marker([incident.asset.lat, incident.asset.lon], {
+          icon: markerIcon(color, incident.scores.severity)
+        }).bindPopup(popupHtml(incident));
+
+        marker.incident = incident;
+        marker.on('click', () => renderDetails([incident]));
+        marker.on('popupopen', () => {
+          const provenanceBtn = document.querySelector('.popup-provenance-btn');
+          if (provenanceBtn) {
+            provenanceBtn.addEventListener('click', () => showProvenance(marker.incident));
+          }
+        });
+
+        state.markers.set(incident.id, marker);
+        if (clusterGroups[mappedType]) {
+          clusterGroups[mappedType].addLayer(marker);
+        }
+        mapMarkers.push(marker);
+
+        // Add live animation if incident is live
+        if (isLiveIncident(incident)) {
+          // Add to live incidents set
+          state.liveIncidents.add(incident.id);
+          // Apply animation after marker is added to map
+          setTimeout(() => addLiveMarkerAnimation(marker), 100);
+        }
+
+        if (mappedType === 'airport') countAir += 1;
+        if (mappedType === 'harbour') countHar += 1;
+      });
+
+      // Render previous period incidents with different styling (if compare mode)
+      if (state.compareMode) {
+        previousFiltered.forEach(incident => {
+          const assetType = incident.asset.type;
+          const mappedType = mapAssetType(assetType);
+          if (!toggles[mappedType]) return;
+          const color = '#60a5fa'; // Blue for previous period
+          const marker = L.marker([incident.asset.lat, incident.asset.lon], {
+            icon: markerIcon(color, incident.scores.severity, true) // true = previous period
+          }).bindPopup(`<div style="border-left: 3px solid #60a5fa; padding-left: 8px;"><strong>Previous Period</strong><br/>${popupHtml(incident)}</div>`);
+
+          marker.incident = incident;
+          marker.on('popupopen', () => {
+            const provenanceBtn = document.querySelector('.popup-provenance-btn');
+            if (provenanceBtn) {
+              provenanceBtn.addEventListener('click', () => showProvenance(marker.incident));
+            }
+          });
+
+          state.markers.set('prev-' + incident.id, marker);
+          if (clusterGroups[mappedType]) {
+            clusterGroups[mappedType].addLayer(marker);
+          }
+          mapMarkers.push(marker);
+          if (mappedType === 'airport') countAirPrev += 1;
+          if (mappedType === 'harbour') countHarPrev += 1;
+        });
+      }
+
+      // Update statistics
+      if (state.compareMode) {
+        document.getElementById('stat-total').innerHTML = `${currentFiltered.length} <span class="muted">(vs ${previousFiltered.length})</span>`;
+        document.getElementById('stat-air').innerHTML = `${countAir} <span class="muted">(vs ${countAirPrev})</span>`;
+        document.getElementById('stat-har').innerHTML = `${countHar} <span class="muted">(vs ${countHarPrev})</span>`;
+      } else {
+        document.getElementById('stat-total').textContent = currentFiltered.length;
+        document.getElementById('stat-air').textContent = countAir;
+        document.getElementById('stat-har').textContent = countHar;
+      }
+
+      if (mapMarkers.length) {
+        const group = L.featureGroup(mapMarkers);
+        // Always fit bounds to show ALL incidents, with padding
+        if (mapMarkers.length === 1) {
+          // For single incident, use moderate zoom
+          const incident = mapMarkers[0].incident;
+          let zoomLevel = 7; // City level for single incident
+          if (incident.scores.severity >= 4) zoomLevel = 8;
+          if (incident.incident.status === 'active') zoomLevel = 9;
+          map.setView(mapMarkers[0].getLatLng(), zoomLevel);
+        } else {
+          // For multiple incidents, fit bounds to show all
+          map.fitBounds(group.getBounds().pad(0.2));
+        }
+        // Remove any existing no-data overlay
+        if (map._noDataOverlay) {
+          map.removeControl(map._noDataOverlay);
+          map._noDataOverlay = null;
+        }
+      } else {
+        // Show no data overlay on map if no markers to display
+        if (!map._noDataOverlay) {
+          map._noDataOverlay = L.control({ position: 'topright' });
+          map._noDataOverlay.onAdd = function() {
+            const div = L.DomUtil.create('div', 'no-data-overlay');
+            div.style.cssText = 'padding: 20px 24px; border-radius: 12px; font-size: 18px; font-weight: 900; text-align: center; letter-spacing: 1px; min-width: 120px;';
+            div.innerHTML = 'NO DATA';
+            return div;
+          };
+          map.addControl(map._noDataOverlay);
+        }
+      }
+
+      renderDetails(currentFiltered, previousFiltered);
+      renderRiskRings();
+      renderThreatHeatmap();
+
+      // Update live activity after rendering
+      updateLiveActivity();
+
+      // Check for breaking news after rendering
+      checkForBreakingNews();
+
+      // Render activity timeline
+      renderActivityTimeline();
+    }
+
+    async function fetchIncidents() {
+      console.log('fetchIncidents() called, fetching from:', INCIDENTS_URL);
+
+      // Show refresh indicator
+      const refreshBadge = document.getElementById('badge-refresh');
+      const originalText = refreshBadge.textContent;
+      refreshBadge.textContent = '⟳ Updating...';
+      refreshBadge.style.background = 'var(--focus)';
+
+      try {
+        const res = await fetch(`${INCIDENTS_URL}?_=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        console.log('fetchIncidents() received data:', data);
+        console.log('fetchIncidents() incidents count:', data?.incidents?.length || 0);
+
+        // Demo filtering disabled - now using real incident data
+        state.data = data || { generated_utc: null, incidents: [] };
+        state.dataLoaded = true; // Mark data as loaded
+        console.log('fetchIncidents() after setting state.data.incidents.length:', state.data.incidents.length);
+        document.getElementById('badge-generated').textContent = `Generated: ${new Date(state.data.generated_utc).toLocaleString() || '—'}`;
+
+        // Show success indicator briefly
+        refreshBadge.textContent = '✓ Updated';
+        refreshBadge.style.background = 'var(--severity-3)';
+        setTimeout(() => {
+          refreshBadge.textContent = originalText;
+          refreshBadge.style.background = '';
+        }, 2000);
+
+      } catch (err) {
+        console.error('Failed to fetch incidents.json', err);
+        // Set empty state on error
+        state.data = { generated_utc: null, incidents: [] };
+        document.getElementById('badge-generated').textContent = 'Generated: Failed to load';
+
+        // Show error indicator
+        refreshBadge.textContent = '⚠ Error';
+        refreshBadge.style.background = 'var(--severity-4)';
+        setTimeout(() => {
+          refreshBadge.textContent = originalText;
+          refreshBadge.style.background = '';
+        }, 3000);
+      }
+    }
+
+    // Live Activity Functions
+    function isLiveIncident(incident) {
+      const incidentTime = new Date(incident.first_seen_utc).getTime();
+      const now = Date.now();
+      const oneHour = 60 * 60 * 1000;
+
+      // Incident is "live" if it occurred within the last hour
+      return (now - incidentTime) <= oneHour;
+    }
+
+    function updateLiveActivity() {
+      const currentLive = new Set();
+      const now = Date.now();
+
+      // Find all live incidents
+      state.data.incidents.forEach(incident => {
+        if (isLiveIncident(incident)) {
+          currentLive.add(incident.id);
+        }
+      });
+
+      // Update live incidents set
+      const newLiveIncidents = [...currentLive].filter(id => !state.liveIncidents.has(id));
+      const expiredLiveIncidents = [...state.liveIncidents].filter(id => !currentLive.has(id));
+
+      state.liveIncidents = currentLive;
+
+      // Update activity indicator
+      updateActivityIndicator();
+
+      // Add pulse animation to new live incident markers
+      newLiveIncidents.forEach(incidentId => {
+        const marker = state.markers.get(incidentId);
+        if (marker && marker.getElement) {
+          const element = marker.getElement();
+          if (element) {
+            element.classList.add('live-marker');
+          }
+        }
+      });
+
+      // Remove pulse animation from expired live incidents
+      expiredLiveIncidents.forEach(incidentId => {
+        const marker = state.markers.get(incidentId);
+        if (marker && marker.getElement) {
+          const element = marker.getElement();
+          if (element) {
+            element.classList.remove('live-marker');
+          }
+        }
+      });
+
+      console.log(`Live activity update: ${currentLive.size} active incidents`, {
+        new: newLiveIncidents.length,
+        expired: expiredLiveIncidents.length
+      });
+    }
+
+    function updateActivityIndicator() {
+      const indicator = document.getElementById('activity-indicator');
+      const activityText = document.getElementById('activity-text');
+      const liveCount = state.liveIncidents.size;
+
+      if (liveCount > 0) {
+        if (!state.activityIndicatorVisible) {
+          indicator.classList.add('visible');
+          state.activityIndicatorVisible = true;
+        }
+
+        activityText.textContent = liveCount === 1
+          ? '1 Live Incident'
+          : `${liveCount} Live Incidents`;
+      } else {
+        if (state.activityIndicatorVisible) {
+          indicator.classList.remove('visible');
+          state.activityIndicatorVisible = false;
+        }
+      }
+    }
+
+    function addLiveMarkerAnimation(marker) {
+      if (marker.getElement) {
+        const element = marker.getElement();
+        if (element) {
+          element.classList.add('live-marker');
+        }
+      }
+    }
+
+    // Breaking News Alert Functions
+    let lastAlertTime = 0;
+    let shownAlerts = new Set();
+
+    function checkForBreakingNews() {
+      const now = Date.now();
+      const fifteenMinutes = 15 * 60 * 1000;
+
+      // Find incidents that are less than 15 minutes old and not already shown
+      const breakingIncidents = state.data.incidents.filter(incident => {
+        const incidentTime = new Date(incident.first_seen_utc).getTime();
+        const age = now - incidentTime;
+        return age <= fifteenMinutes &&
+               age >= 0 && // Not in the future
+               !shownAlerts.has(incident.id) &&
+               incident.scores?.severity >= 3; // Only show high severity incidents
+      });
+
+      if (breakingIncidents.length > 0) {
+        // Sort by recency and severity, show the most significant
+        const mostSignificant = breakingIncidents.sort((a, b) => {
+          const aTime = new Date(a.first_seen_utc).getTime();
+          const bTime = new Date(b.first_seen_utc).getTime();
+          const aSeverity = a.scores?.severity || 1;
+          const bSeverity = b.scores?.severity || 1;
+
+          // Prioritize by severity first, then by recency
+          if (bSeverity !== aSeverity) return bSeverity - aSeverity;
+          return bTime - aTime;
+        })[0];
+
+        showBreakingNewsAlert(mostSignificant);
+      }
+    }
+
+    function showBreakingNewsAlert(incident) {
+      // Don't spam alerts - at least 2 minutes between alerts
+      const now = Date.now();
+      if (now - lastAlertTime < 120000) return;
+
+      lastAlertTime = now;
+      shownAlerts.add(incident.id);
+
+      const alert = document.getElementById('breaking-news-alert');
+      const title = document.getElementById('breaking-title');
+      const details = document.getElementById('breaking-details');
+
+      // Create breaking news content
+      const assetName = incident.asset?.name || 'Unknown Location';
+      const assetType = incident.asset?.type || 'facility';
+      const timeAgo = getTimeAgo(new Date(incident.first_seen_utc));
+      const severity = incident.scores?.severity || 1;
+
+      title.textContent = `${assetType.charAt(0).toUpperCase() + assetType.slice(1)} Incident Detected`;
+      details.innerHTML = `
+        <strong>${assetName}</strong><br>
+        Severity ${severity} • ${timeAgo} • Evidence: ${incident.evidence?.attribution || 'Unknown'}
+      `;
+
+      // Show alert with animation
+      alert.classList.add('visible');
+
+      // Play notification sound (if user has interacted with page)
+      playNotificationSound();
+
+      // Auto-hide after 8 seconds
+      setTimeout(() => {
+        hideBreakingNewsAlert();
+      }, 8000);
+
+      console.log('Breaking news alert shown for incident:', incident.id);
+    }
+
+    function hideBreakingNewsAlert() {
+      const alert = document.getElementById('breaking-news-alert');
+      alert.classList.remove('visible');
+    }
+
+    function playNotificationSound() {
+      // Create a subtle notification sound using Web Audio API
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+      } catch (error) {
+        console.log('Audio notification not available:', error.message);
+      }
+    }
+
+    function getTimeAgo(date) {
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / (1000 * 60));
+
+      if (minutes < 1) return 'Just now';
+      if (minutes === 1) return '1 minute ago';
+      if (minutes < 60) return `${minutes} minutes ago`;
+
+      const hours = Math.floor(minutes / 60);
+      if (hours === 1) return '1 hour ago';
+      return `${hours} hours ago`;
+    }
+
+    // Activity Timeline Functions
+    function renderActivityTimeline() {
+      const timeline = document.getElementById('activity-timeline');
+      const filtered = filterIncidents('current');
+
+      if (filtered.length === 0) {
+        timeline.innerHTML = '<div class="timeline-empty">No incidents in selected time window</div>';
+        return;
+      }
+
+      // Group incidents by hour
+      const hourlyGroups = new Map();
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      // Initialize last 12 hours
+      for (let i = 0; i < 12; i++) {
+        const hour = new Date(now.getTime() - i * 60 * 60 * 1000);
+        const key = `${hour.getDate()}-${hour.getHours()}`;
+        hourlyGroups.set(key, {
+          hour: hour,
+          incidents: [],
+          isToday: hour >= today
+        });
+      }
+
+      // Group incidents by hour
+      filtered.forEach(incident => {
+        const incidentDate = new Date(incident.first_seen_utc);
+        const key = `${incidentDate.getDate()}-${incidentDate.getHours()}`;
+
+        if (hourlyGroups.has(key)) {
+          hourlyGroups.get(key).incidents.push(incident);
+        }
+      });
+
+      // Sort groups by time (most recent first)
+      const sortedGroups = Array.from(hourlyGroups.values())
+        .sort((a, b) => b.hour - a.hour);
+
+      // Render timeline
+      let html = '';
+      for (const group of sortedGroups) {
+        if (group.incidents.length === 0) continue;
+
+        const hourLabel = group.isToday
+          ? (group.hour.getHours() === now.getHours() ? 'This hour' : `${group.hour.getHours()}:00`)
+          : group.hour.toLocaleDateString('en-GB', { month: 'short', day: 'numeric', hour: '2-digit' });
+
+        html += `
+          <div class="timeline-hour">
+            <div class="timeline-hour-label">
+              ${hourLabel}
+              <span class="timeline-hour-count">${group.incidents.length}</span>
+            </div>
+            <div class="timeline-incidents">
+        `;
+
+        // Sort incidents within hour by time (most recent first)
+        const sortedIncidents = group.incidents.sort((a, b) =>
+          new Date(b.first_seen_utc) - new Date(a.first_seen_utc)
+        );
+
+        for (const incident of sortedIncidents) {
+          const assetColor = assetColors[mapAssetType(incident.asset.type)] || '#6ea8fe';
+          const assetName = incident.asset.name || 'Unknown Location';
+          const time = new Date(incident.first_seen_utc);
+          const timeStr = time.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+          const isLive = isLiveIncident(incident);
+
+          html += `
+            <div class="timeline-incident ${isLive ? 'live-incident' : ''}" data-incident-id="${incident.id}">
+              <div class="timeline-incident-dot" style="background: ${assetColor};"></div>
+              <div class="timeline-incident-info">
+                <div class="timeline-incident-name" title="${assetName}">
+                  ${assetName}
+                  ${isLive ? ' 🔴' : ''}
+                </div>
+                <div class="timeline-incident-time">
+                  ${timeStr} • Sev ${incident.scores?.severity || 1} • ${incident.evidence?.attribution || 'Unknown'}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        html += `
+            </div>
+          </div>
+        `;
+      }
+
+      if (html === '') {
+        timeline.innerHTML = '<div class="timeline-empty">No recent activity</div>';
+      } else {
+        timeline.innerHTML = html;
+
+        // Add click handlers for timeline incidents
+        timeline.querySelectorAll('.timeline-incident').forEach(element => {
+          element.addEventListener('click', (e) => {
+            const incidentId = e.currentTarget.getAttribute('data-incident-id');
+            const incident = filtered.find(inc => inc.id === incidentId);
+            if (incident) {
+              focusIncident(incident);
+            }
+          });
+        });
+      }
+    }
+
+    function autoFocusOnRecentActivity() {
+      // Don't auto-focus if disabled by user
+      if (!state.autoFocusEnabled) {
+        console.log('Auto-focus disabled by user');
+        return;
+      }
+
+      // Don't auto-focus if user has manually set map position via URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('lat') && params.has('lng')) {
+        console.log('Manual map position detected, skipping auto-focus');
+        return;
+      }
+
+      let targetIncidents = filterIncidents('current');
+
+      // Fallback 1: If no current incidents, try active incidents from any time period
+      if (targetIncidents.length === 0) {
+        targetIncidents = state.data.incidents.filter(inc => inc.incident.status === 'active');
+        console.log('No current incidents, trying active incidents:', targetIncidents.length);
+      }
+
+      // Fallback 2: If no active incidents, try high-severity incidents (4+)
+      if (targetIncidents.length === 0) {
+        targetIncidents = state.data.incidents.filter(inc => inc.scores.severity >= 4);
+        console.log('No active incidents, trying high-severity incidents:', targetIncidents.length);
+      }
+
+      // Fallback 3: If still none, use all available incidents
+      if (targetIncidents.length === 0) {
+        targetIncidents = state.data.incidents;
+        console.log('No high-severity incidents, using all incidents:', targetIncidents.length);
+      }
+
+      // Final fallback: If truly no data, stay with default European view
+      if (targetIncidents.length === 0) {
+        console.log('No incidents available for auto-focus, keeping default view');
+        return;
+      }
+
+      // Find most recent incident from available pool
+      const mostRecent = targetIncidents.reduce((latest, incident) => {
+        const incidentTime = Date.parse(incident.first_seen_utc || incident.last_update_utc);
+        const latestTime = Date.parse(latest.first_seen_utc || latest.last_update_utc);
+        return incidentTime > latestTime ? incident : latest;
+      });
+
+      // Focus on the most recent incident with intelligent zoom level
+      const focusLat = mostRecent.asset.lat;
+      const focusLng = mostRecent.asset.lon;
+
+      // Smart zoom based on priority factors - showing operational area, not street level
+      let zoomLevel = 6; // Regional overview
+      if (mostRecent.scores.severity >= 4) zoomLevel = 7; // High severity = city level
+      if (mostRecent.incident.status === 'active') zoomLevel = Math.max(zoomLevel, 8); // Active = closer but still operational
+      if (mostRecent.asset.type === 'airport') zoomLevel = Math.max(zoomLevel, 7); // Airports = show approaches
+      if (Date.now() - Date.parse(mostRecent.first_seen_utc) < 24 * 3600 * 1000) zoomLevel += 0.5; // Recent = slightly closer
+
+      console.log(`Auto-focusing on: ${mostRecent.asset.name} (${mostRecent.asset.type}) | Severity: ${mostRecent.scores.severity} | Status: ${mostRecent.incident.status} | Zoom: ${zoomLevel}`);
+
+      // Smooth animation to the location
+      map.flyTo([focusLat, focusLng], zoomLevel, {
+        animate: true,
+        duration: 2.0 // 2 second smooth animation
+      });
+
+      // Show a brief notification about the auto-focus
+      showAutoFocusNotification(mostRecent);
+
+      // Open popup after animation completes
+      setTimeout(() => {
+        const marker = state.markers.get(mostRecent.id);
+        if (marker) {
+          marker.openPopup();
+          // Auto-close popup after 4 seconds
+          setTimeout(() => marker.closePopup(), 4000);
+        }
+      }, 2500);
+    }
+
+    function showAutoFocusNotification(incident) {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: var(--surface);
+        border: 2px solid var(--focus);
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+        z-index: 1500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        animation: slideInRight 0.3s ease-out forwards;
+      `;
+
+      const ageDays = Math.floor((Date.now() - Date.parse(incident.first_seen_utc)) / (24 * 3600 * 1000));
+      const ageText = ageDays === 0 ? 'today' : ageDays === 1 ? 'yesterday' : `${ageDays} days ago`;
+
+      notification.innerHTML = `
+        📍 <strong>Focused on most recent activity</strong><br/>
+        <span style="color: var(--muted); font-size: 12px; font-weight: normal;">
+          ${incident.asset.name} • ${ageText}
+        </span>
+      `;
+
+      document.body.appendChild(notification);
+
+      // Remove notification after 5 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 5000);
+    }
+
+    async function refreshAll() {
+      await fetchIncidents();
+      render();
+
+      // Auto-focus on first load only - but let render() handle the map view
+      // The render() function now properly shows ALL incidents with fitBounds
+      state.hasAutoFocused = true;
+    }
+
+    function setupUI() {
+      const dateRange = document.getElementById('dateRange');
+      const dateLabel = document.getElementById('dateRangeLabel');
+
+      // Load state from URL on init
+      loadStateFromURL();
+
+      document.querySelectorAll('.chip[data-window]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.chip[data-window]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          dateRange.value = btn.dataset.window;
+          dateLabel.textContent = `Showing last ${dateRange.value} days`;
+          render();
+          saveStateToURL();
+        });
+      });
+
+      [
+        dateRange,
+        document.getElementById('statusSelect'),
+        document.getElementById('evidenceSelect'),
+        document.getElementById('show-risk-rings'),
+        document.getElementById('show-threat-heatmap'),
+        document.getElementById('compare-mode'),
+        document.getElementById('auto-focus'),
+        document.getElementById('filter-near-harbours'),
+        document.getElementById('filter-near-military'),
+        document.getElementById('filter-near-airports')
+      ].filter(control => control !== null).forEach(control => {
+        control.addEventListener('input', () => {
+          if (control.id === 'show-risk-rings') {
+            state.showRiskRings = control.checked;
+          } else if (control.id === 'compare-mode') {
+            state.compareMode = control.checked;
+            document.getElementById('compare-controls').style.display = control.checked ? 'block' : 'none';
+          } else if (control.id === 'auto-focus') {
+            state.autoFocusEnabled = control.checked;
+          }
+          render();
+          saveStateToURL();
+        });
+        control.addEventListener('change', () => {
+          if (control.id === 'show-risk-rings') {
+            state.showRiskRings = control.checked;
+          } else if (control.id === 'show-threat-heatmap') {
+            state.showThreatHeatmap = control.checked;
+          } else if (control.id === 'compare-mode') {
+            state.compareMode = control.checked;
+            document.getElementById('compare-controls').style.display = control.checked ? 'block' : 'none';
+          } else if (control.id === 'auto-focus') {
+            state.autoFocusEnabled = control.checked;
+          }
+          render();
+          saveStateToURL();
+        });
+      });
+
+      document.getElementById('searchBox').addEventListener('input', () => {
+        render();
+        saveStateToURL();
+      });
+
+      // Breaking news alert close button
+      document.getElementById('breaking-close').addEventListener('click', () => {
+        hideBreakingNewsAlert();
+      });
+
+      // Share button functionality
+      document.getElementById('btn-share').addEventListener('click', async () => {
+        saveStateToURL();
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          const btn = document.getElementById('btn-share');
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '✓ Copied';
+          setTimeout(() => btn.innerHTML = originalText, 2000);
+        } catch (err) {
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = window.location.href;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          alert('Link copied to clipboard');
+        }
+      });
+
+      // Save state on map moves
+      map.on('moveend', saveStateToURL);
+
+      // Modal controls
+      document.getElementById('closeProvenance').addEventListener('click', hideProvenance);
+      document.getElementById('provenanceModal').addEventListener('click', (e) => {
+        if (e.target.id === 'provenanceModal') hideProvenance();
+      });
+
+      // ESC key to close modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') hideProvenance();
+      });
+
+      dateLabel.textContent = `Showing last ${dateRange.value} days`;
+    }
+
+      setupUI();
+      refreshAll();
+      setInterval(refreshAll, REFRESH_MS);
+    } // End of initializeMap function
+
+    // Initialize map when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeMap);
+    } else {
+      // DOM is already ready
+      initializeMap();
+    }
+  </script>
+
+  <!-- Modern Mobile Navigation (2025) -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="#" class="mobile-nav-item active" data-tab="map">
+        <div class="mobile-nav-icon">🗺️</div>
+        <div class="mobile-nav-label">Map</div>
+      </a>
+      <a href="#" class="mobile-nav-item" data-tab="incidents">
+        <div class="mobile-nav-icon">🚨</div>
+        <div class="mobile-nav-label">Incidents</div>
+      </a>
+      <a href="#" class="mobile-nav-item" data-tab="filters">
+        <div class="mobile-nav-icon">⚙️</div>
+        <div class="mobile-nav-label">Filters</div>
+      </a>
+      <a href="#" class="mobile-nav-item" data-tab="stats">
+        <div class="mobile-nav-icon">📊</div>
+        <div class="mobile-nav-label">Stats</div>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Floating Action Button -->
+  <button class="fab" id="mobile-fab" aria-label="Open mobile menu">
+    ⚡
+  </button>
+
+  <!-- Bottom Sheet Modal -->
+  <div class="bottom-sheet" id="mobile-bottom-sheet">
+    <div class="bottom-sheet-handle"></div>
+    <div id="bottom-sheet-content">
+      <!-- Content will be dynamically loaded here -->
+    </div>
+  </div>
+
+  <script>
+    // Setup Modern Mobile UX
+    function setupMobileUX() {
+      const fab = document.getElementById('mobile-fab');
+      const bottomSheet = document.getElementById('mobile-bottom-sheet');
+      const mobileNav = document.getElementById('mobile-nav');
+
+      // FAB click handler
+      if (fab) {
+        fab.addEventListener('click', () => {
+          bottomSheet.classList.toggle('open');
+        });
+      }
+
+      // Mobile navigation
+      if (mobileNav) {
+        const navItems = mobileNav.querySelectorAll('.mobile-nav-item');
+        navItems.forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Update active state
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+
+            // Handle tab switching
+            const tab = item.dataset.tab;
+            handleMobileTabSwitch(tab);
+          });
+        });
+      }
+
+      // Close bottom sheet on backdrop click
+      bottomSheet.addEventListener('click', (e) => {
+        if (e.target === bottomSheet) {
+          bottomSheet.classList.remove('open');
+        }
+      });
+
+      // Swipe gestures for bottom sheet
+      let startY = 0;
+      let currentY = 0;
+
+      bottomSheet.addEventListener('touchstart', (e) => {
+        startY = e.touches[0].clientY;
+      });
+
+      bottomSheet.addEventListener('touchmove', (e) => {
+        currentY = e.touches[0].clientY;
+        const diff = currentY - startY;
+
+        if (diff > 50 && bottomSheet.classList.contains('open')) {
+          bottomSheet.classList.remove('open');
+        }
+      });
+    }
+
+    function handleMobileTabSwitch(tab) {
+      const bottomSheetContent = document.getElementById('bottom-sheet-content');
+      const rightPanel = document.getElementById('right');
+      const leftPanel = document.getElementById('left');
+
+      switch(tab) {
+        case 'incidents':
+          if (rightPanel) {
+            bottomSheetContent.innerHTML = rightPanel.innerHTML;
+            document.getElementById('mobile-bottom-sheet').classList.add('open');
+
+            // Re-attach click handlers for incident cards in bottom sheet
+            const incidentCards = bottomSheetContent.querySelectorAll('.incident');
+            incidentCards.forEach(card => {
+              card.addEventListener('click', (e) => {
+                // Skip if clicking on the provenance button
+                if (e.target.classList.contains('provenance-btn')) {
+                  return;
+                }
+
+                // Find the corresponding incident by matching the asset name
+                const incidentName = card.querySelector('strong')?.textContent;
+                const state = window.droneState || window.state;
+                const focusIncident = window.droneFocusIncident || window.focusIncident;
+
+                if (incidentName && state && state.allIncidents) {
+                  // Find incident by asset name
+                  const incident = state.allIncidents.find(inc =>
+                    inc.asset.name === incidentName
+                  );
+                  if (incident && focusIncident) {
+                    focusIncident(incident);
+                  }
+                }
+              });
+            });
+          }
+          break;
+        case 'filters':
+          if (leftPanel) {
+            bottomSheetContent.innerHTML = leftPanel.innerHTML;
+            document.getElementById('mobile-bottom-sheet').classList.add('open');
+          }
+          break;
+        case 'stats':
+          const statsContent = document.querySelector('.statbar');
+          if (statsContent) {
+            bottomSheetContent.innerHTML = `
+              <div style="padding: var(--space-4);">
+                <h2 style="margin-bottom: var(--space-4);">Statistics Overview</h2>
+                ${statsContent.outerHTML}
+              </div>
+            `;
+            document.getElementById('mobile-bottom-sheet').classList.add('open');
+          }
+          break;
+        case 'map':
+        default:
+          document.getElementById('mobile-bottom-sheet').classList.remove('open');
+          break;
+      }
+    }
+
+    // Initialize mobile UX after DOM is loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupMobileUX);
+    } else {
+      setupMobileUX();
+    }
+
+    // Register Service Worker for PWA functionality
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        // Initialize Operations Center
+        initializeOperationsCenter();
+
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log('Service Worker registered:', registration);
+            // Request background sync for data updates
+            if ('sync' in registration) {
+              registration.sync.register('update-incidents');
+            }
+          })
+          .catch(err => console.error('Service Worker registration failed:', err));
+      });
+
+      // Listen for service worker messages
+      navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data.type === 'incidents-updated') {
+          console.log('New incident data received from service worker');
+          // Optionally reload data without page refresh
+          if (window.droneState && window.droneState.data) {
+            window.droneState.data = event.data.data;
+            render();
+          }
+        }
+      });
+    }
+
+    // 🤖 AI-powered news fetching
+    async function fetchRealTimeNews() {
+      const aiBtn = document.getElementById('ai-fetch-btn');
+      if (!AI_CONFIG.OPENROUTER_API_KEY) {
+        aiBtn.textContent = '⚠️ No API Key';
+        return;
+      }
+
+      try {
+        aiBtn.textContent = '🔄 Fetching...';
+        console.log('🤖 Fetching real-time drone incidents using AI...');
+
+        const prompt = `Search for recent drone incidents in Europe from the last 24 hours. Focus on airport closures, military incidents, critical infrastructure threats. Return JSON array: [{"location":"airport name","lat":latitude,"lon":longitude,"description":"brief description","severity":1-10,"category":"sighting|closure|threat","asset_type":"airport|military"}]`;
+
+        const response = await fetch(AI_CONFIG.OPENROUTER_API_URL, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${AI_CONFIG.OPENROUTER_API_KEY}`,
+            'Content-Type': 'application/json',
+            'HTTP-Referer': window.location.origin,
+            'X-Title': 'DroneWatch'
+          },
+          body: JSON.stringify({
+            model: AI_CONFIG.FREE_MODELS[0], // Use Grok-4 Fast
+            messages: [
+              { role: 'system', content: 'You are a drone incident analyst. Return only valid JSON.' },
+              { role: 'user', content: prompt }
+            ],
+            max_tokens: 1000,
+            temperature: 0.1
+          })
+        });
+
+        if (response.ok) {
+          const aiData = await response.json();
+          const content = aiData.choices[0]?.message?.content;
+          console.log('✅ AI Response:', content);
+
+          try {
+            const incidents = JSON.parse(content);
+            if (Array.isArray(incidents) && incidents.length > 0) {
+              console.log(`🎯 Adding ${incidents.length} AI incidents`);
+
+              // Convert to app format and add
+              const enhancedIncidents = incidents.map((inc, i) => ({
+                id: `ai-${Date.now()}-${i}`,
+                first_seen_utc: new Date().toISOString(),
+                last_update_utc: new Date().toISOString(),
+                asset: { type: inc.asset_type || 'airport', name: inc.location, lat: inc.lat, lon: inc.lon },
+                incident: { category: inc.category || 'sighting', status: 'active', narrative: inc.description },
+                scores: { severity: inc.severity || 5 },
+                tags: ['ai-generated', 'real-time'],
+                data_type: 'ai_enhanced'
+              }));
+
+              state.data.incidents = [...state.data.incidents, ...enhancedIncidents];
+              render();
+              aiBtn.textContent = `✅ +${incidents.length} AI`;
+            } else {
+              aiBtn.textContent = '📭 No new data';
+            }
+          } catch (parseErr) {
+            console.warn('Parse error:', parseErr);
+            aiBtn.textContent = '⚠️ Parse Error';
+          }
+        } else {
+          aiBtn.textContent = '❌ API Error';
+        }
+      } catch (err) {
+        console.error('AI fetch failed:', err);
+        aiBtn.textContent = '❌ Failed';
+      }
+
+      setTimeout(() => aiBtn.textContent = '🤖 AI News', 3000);
+    }
+  </script>
+</body>
+</html>
