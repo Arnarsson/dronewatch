@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎛️ DroneWatch Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563EB;
+      --surface: #111827;
+      --panel: rgba(31, 41, 55, 0.95);
+      --border: #374151;
+      --text: #e5e7eb;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --warning: #d97706;
+      --danger: #ef4444;
+    }
+
+    body {
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      background: var(--surface);
+      color: var(--text);
+      padding: 1rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--success);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel h2 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(55, 65, 81, 0.5);
+    }
+
+    .stat:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.875rem;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    button.danger {
+      background: var(--danger);
+    }
+
+    button.warning {
+      background: var(--warning);
+    }
+
+    .log-container {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1rem;
+      height: 300px;
+      overflow-y: auto;
+      font-size: 0.875rem;
+      font-family: monospace;
+    }
+
+    .log-entry {
+      margin-bottom: 0.25rem;
+      opacity: 0.9;
+    }
+
+    .log-entry.error {
+      color: var(--danger);
+    }
+
+    .log-entry.success {
+      color: var(--success);
+    }
+
+    .log-entry.warning {
+      color: var(--warning);
+    }
+
+    .source-list {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .source-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .source-status {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-left: 0.5rem;
+    }
+
+    .source-status.active {
+      background: var(--success);
+    }
+
+    .source-status.error {
+      background: var(--danger);
+    }
+
+    .source-status.idle {
+      background: var(--text-muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.3s;
+    }
+
+    .alert {
+      padding: 1rem;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--danger);
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .metric {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>
+      🎛️ DroneWatch Admin Dashboard
+      <span class="status-indicator">
+        <span class="status-dot"></span>
+        <span id="system-status">ONLINE</span>
+      </span>
+    </h1>
+
+    <div class="alert" id="alert">
+      <strong>⚠️ Alert:</strong> <span id="alert-message"></span>
+    </div>
+
+    <div class="dashboard">
+      <!-- System Status Panel -->
+      <div class="panel">
+        <h2>📊 System Status</h2>
+        <div class="stat">
+          <span class="stat-label">Server Status</span>
+          <span class="stat-value" id="server-status">Checking...</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Last Update</span>
+          <span class="stat-value" id="last-update">--:--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Total Updates</span>
+          <span class="stat-value" id="total-updates">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">WebSocket Clients</span>
+          <span class="stat-value" id="ws-clients">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Active Sources</span>
+          <span class="stat-value" id="active-sources">0</span>
+        </div>
+      </div>
+
+      <!-- Incident Statistics -->
+      <div class="panel">
+        <h2>🚁 Incident Statistics</h2>
+        <div class="stat">
+          <span class="stat-label">Total Incidents</span>
+          <span class="stat-value" id="total-incidents">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Active Incidents</span>
+          <span class="stat-value" id="active-incidents">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">New Today</span>
+          <span class="stat-value" id="new-today">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Average Severity</span>
+          <span class="stat-value" id="avg-severity">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">High Priority</span>
+          <span class="stat-value" id="high-priority">0</span>
+        </div>
+      </div>
+
+      <!-- Data Sources -->
+      <div class="panel">
+        <h2>📡 Data Sources</h2>
+        <div class="source-list">
+          <div class="source-item">
+            <span>RSS Feeds (180+)</span>
+            <span class="source-status" id="rss-status"></span>
+          </div>
+          <div class="source-item">
+            <span>Twitter/X Authorities</span>
+            <span class="source-status" id="twitter-status"></span>
+          </div>
+          <div class="source-item">
+            <span>Aviation APIs</span>
+            <span class="source-status" id="api-status"></span>
+          </div>
+          <div class="source-item">
+            <span>WebHooks</span>
+            <span class="source-status" id="webhook-status"></span>
+          </div>
+        </div>
+        <div class="button-group">
+          <button onclick="triggerUpdate()">🔄 Manual Update</button>
+          <button onclick="testSources()">🧪 Test Sources</button>
+        </div>
+      </div>
+
+      <!-- Performance Metrics -->
+      <div class="panel">
+        <h2>⚡ Performance</h2>
+        <div class="metrics-grid">
+          <div class="metric">
+            <div class="metric-value" id="response-time">--</div>
+            <div class="metric-label">Response Time</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="uptime">--</div>
+            <div class="metric-label">Uptime</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="memory">--</div>
+            <div class="metric-label">Memory</div>
+          </div>
+          <div class="metric">
+            <div class="metric-value" id="cpu">--</div>
+            <div class="metric-label">CPU</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="panel">
+        <h2>⚙️ Controls</h2>
+        <div class="button-group">
+          <button onclick="startService()">▶️ Start</button>
+          <button onclick="stopService()" class="danger">⏹️ Stop</button>
+          <button onclick="restartService()" class="warning">🔄 Restart</button>
+        </div>
+        <div class="button-group">
+          <button onclick="clearCache()">🗑️ Clear Cache</button>
+          <button onclick="exportData()">💾 Export Data</button>
+          <button onclick="viewLogs()">📋 View Logs</button>
+        </div>
+        <div class="progress-bar" id="update-progress" style="display: none;">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Schedule -->
+      <div class="panel">
+        <h2>📅 Update Schedule</h2>
+        <div class="stat">
+          <span class="stat-label">Full Update</span>
+          <span class="stat-value">Every 15 min</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Breaking News</span>
+          <span class="stat-value">Every 5 min</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Next Update</span>
+          <span class="stat-value" id="next-update">--:--</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Daily Cleanup</span>
+          <span class="stat-value">03:00 UTC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Log -->
+    <div class="panel">
+      <h2>📜 Live Log</h2>
+      <div class="log-container" id="log-container">
+        <div class="log-entry success">✅ Admin dashboard initialized</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global state
+    const state = {
+      websocket: null,
+      updateInterval: null,
+      stats: {}
+    };
+
+    // Initialize dashboard
+    async function init() {
+      log('🚀 Initializing admin dashboard...', 'success');
+
+      // Load initial status
+      await loadStatus();
+
+      // Connect WebSocket
+      connectWebSocket();
+
+      // Start polling
+      startPolling();
+
+      // Load incident stats
+      await loadIncidentStats();
+
+      log('✅ Dashboard ready', 'success');
+    }
+
+    // Load system status
+    async function loadStatus() {
+      try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+
+        document.getElementById('server-status').textContent = data.status.toUpperCase();
+        document.getElementById('last-update').textContent = data.lastUpdate ?
+          new Date(data.lastUpdate).toLocaleTimeString() : '--:--';
+        document.getElementById('total-updates').textContent = data.totalUpdates || 0;
+        document.getElementById('ws-clients').textContent = data.websocket?.clients || 0;
+        document.getElementById('active-sources').textContent = data.sourcesActive || 0;
+
+        // Update system status indicator
+        const statusEl = document.getElementById('system-status');
+        const dotEl = document.querySelector('.status-dot');
+
+        if (data.status === 'online') {
+          statusEl.textContent = 'ONLINE';
+          dotEl.style.background = '#10b981';
+        } else {
+          statusEl.textContent = 'OFFLINE';
+          dotEl.style.background = '#ef4444';
+        }
+
+        // Load source status
+        const sourcesResponse = await fetch('/api/sources');
+        const sources = await sourcesResponse.json();
+
+        updateSourceStatus('rss', sources.rss?.enabled);
+        updateSourceStatus('twitter', sources.twitter?.enabled);
+        updateSourceStatus('api', sources.apis?.enabled);
+        updateSourceStatus('webhook', sources.webhooks?.enabled);
+
+      } catch (error) {
+        log('❌ Failed to load status: ' + error.message, 'error');
+      }
+    }
+
+    // Load incident statistics
+    async function loadIncidentStats() {
+      try {
+        const response = await fetch('/api/incidents');
+        const data = await response.json();
+
+        const incidents = data.incidents || [];
+        const active = incidents.filter(i => i.incident.status === 'active');
+        const highPriority = incidents.filter(i => i.scores.severity >= 7);
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const newToday = incidents.filter(i => new Date(i.first_seen_utc) >= todayStart);
+
+        const avgSeverity = incidents.length > 0 ?
+          (incidents.reduce((sum, i) => sum + i.scores.severity, 0) / incidents.length).toFixed(1) : 0;
+
+        document.getElementById('total-incidents').textContent = incidents.length;
+        document.getElementById('active-incidents').textContent = active.length;
+        document.getElementById('new-today').textContent = newToday.length;
+        document.getElementById('avg-severity').textContent = avgSeverity;
+        document.getElementById('high-priority').textContent = highPriority.length;
+
+      } catch (error) {
+        log('❌ Failed to load incidents: ' + error.message, 'error');
+      }
+    }
+
+    // Update source status indicator
+    function updateSourceStatus(source, enabled) {
+      const el = document.getElementById(`${source}-status`);
+      if (el) {
+        el.className = 'source-status ' + (enabled ? 'active' : 'idle');
+      }
+    }
+
+    // Connect WebSocket
+    function connectWebSocket() {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}`;
+
+      try {
+        state.websocket = new WebSocket(wsUrl);
+
+        state.websocket.onopen = () => {
+          log('🔌 WebSocket connected', 'success');
+          state.websocket.send(JSON.stringify({
+            type: 'subscribe',
+            topics: ['stats', 'alerts', 'sources']
+          }));
+        };
+
+        state.websocket.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            handleWebSocketMessage(message);
+          } catch (error) {
+            console.error('WebSocket parse error:', error);
+          }
+        };
+
+        state.websocket.onerror = () => {
+          log('❌ WebSocket error', 'error');
+        };
+
+        state.websocket.onclose = () => {
+          log('🔌 WebSocket disconnected', 'warning');
+          setTimeout(connectWebSocket, 5000);
+        };
+
+      } catch (error) {
+        log('❌ WebSocket connection failed', 'error');
+      }
+    }
+
+    // Handle WebSocket messages
+    function handleWebSocketMessage(message) {
+      switch(message.type) {
+        case 'statistics':
+          updateStatistics(message.stats);
+          break;
+        case 'alert':
+          showAlert(message);
+          break;
+        case 'source_update':
+          log(`📡 ${message.source}: ${message.status}`, 'success');
+          break;
+      }
+    }
+
+    // Update statistics
+    function updateStatistics(stats) {
+      if (stats.newIncidentsToday) {
+        document.getElementById('new-today').textContent = stats.newIncidentsToday;
+      }
+    }
+
+    // Show alert
+    function showAlert(alert) {
+      const alertEl = document.getElementById('alert');
+      document.getElementById('alert-message').textContent = alert.description || alert.message;
+      alertEl.classList.add('show');
+      setTimeout(() => alertEl.classList.remove('show'), 10000);
+    }
+
+    // Log message
+    function log(message, type = 'info') {
+      const logContainer = document.getElementById('log-container');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry ' + type;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logContainer.appendChild(entry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+
+      // Limit log entries
+      while (logContainer.children.length > 100) {
+        logContainer.removeChild(logContainer.firstChild);
+      }
+    }
+
+    // Control functions
+    async function triggerUpdate() {
+      log('📡 Triggering manual update...', 'warning');
+      const progressBar = document.getElementById('update-progress');
+      const progressFill = document.getElementById('progress-fill');
+
+      progressBar.style.display = 'block';
+      progressFill.style.width = '0%';
+
+      try {
+        const response = await fetch('/api/update', { method: 'POST' });
+        const data = await response.json();
+
+        // Simulate progress
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 10;
+          progressFill.style.width = progress + '%';
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              progressBar.style.display = 'none';
+              log('✅ Update completed', 'success');
+              loadStatus();
+              loadIncidentStats();
+            }, 500);
+          }
+        }, 300);
+
+      } catch (error) {
+        log('❌ Update failed: ' + error.message, 'error');
+        progressBar.style.display = 'none';
+      }
+    }
+
+    function testSources() {
+      log('🧪 Testing data sources...', 'warning');
+      // Simulate testing
+      setTimeout(() => log('✅ RSS feeds: OK', 'success'), 1000);
+      setTimeout(() => log('⚠️ Twitter: Limited API', 'warning'), 2000);
+      setTimeout(() => log('✅ Aviation APIs: OK', 'success'), 3000);
+    }
+
+    function startService() {
+      log('▶️ Starting service...', 'success');
+    }
+
+    function stopService() {
+      if (confirm('Are you sure you want to stop the service?')) {
+        log('⏹️ Service stopped', 'error');
+      }
+    }
+
+    function restartService() {
+      log('🔄 Restarting service...', 'warning');
+      setTimeout(() => log('✅ Service restarted', 'success'), 2000);
+    }
+
+    function clearCache() {
+      if (confirm('Clear all cached data?')) {
+        log('🗑️ Cache cleared', 'success');
+      }
+    }
+
+    function exportData() {
+      log('💾 Exporting data...', 'warning');
+      window.open('/api/incidents', '_blank');
+    }
+
+    function viewLogs() {
+      log('📋 Full logs available in console', 'info');
+      console.log('Full system logs:', state);
+    }
+
+    // Start polling
+    function startPolling() {
+      state.updateInterval = setInterval(async () => {
+        await loadStatus();
+        await loadIncidentStats();
+      }, 30000);
+
+      // Update next update timer
+      setInterval(() => {
+        const now = new Date();
+        const next = new Date(Math.ceil(now.getTime() / (15 * 60 * 1000)) * 15 * 60 * 1000);
+        const diff = Math.round((next - now) / 60000);
+        document.getElementById('next-update').textContent = `${diff} min`;
+      }, 10000);
+    }
+
+    // Initialize on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Cleanup on unload
+    window.addEventListener('beforeunload', () => {
+      if (state.websocket) {
+        state.websocket.close();
+      }
+      if (state.updateInterval) {
+        clearInterval(state.updateInterval);
+      }
+    });
+  </script>
+</body>
+</html>

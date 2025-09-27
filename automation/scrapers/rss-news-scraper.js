@@ -3,10 +3,18 @@ import { parseStringPromise } from 'xml2js';
 import { europeanInfrastructure } from '../data/european-infrastructure.js';
 import { europeanNewsSources } from '../data/european-news-sources.js';
 import { criticalInfrastructure } from '../data/critical-infrastructure.js';
+import { AIAnalyzer } from '../ai-analyzer.js';
+import { GeocodingService } from '../geocoding-service.js';
 
 export class RSSNewsScraper {
-  constructor() {
+  constructor(config = {}) {
     this.rssSources = europeanNewsSources;
+
+    // Initialize AI analyzer and geocoding
+    this.aiAnalyzer = config.aiAnalyzer || null;
+    this.geocodingService = config.geocodingService || null;
+    this.useAIAnalysis = config.useAI !== false && this.aiAnalyzer !== null;
+    this.useGeocoding = config.useGeocoding !== false && this.geocodingService !== null;
 
     // Combine all infrastructure
     this.allAssets = {
@@ -98,43 +106,62 @@ export class RSSNewsScraper {
       const batch = sourceEntries.slice(i, i + batchSize);
 
       const batchPromises = batch.map(async ([sourceName, rssUrl]) => {
-        try {
-          console.log(`📡 Scraping ${sourceName}...`);
-          const articles = await this.fetchRSSFeed(rssUrl, sourceName);
-
-          // Filter for drone incidents
-          const droneArticles = this.filterDroneIncidents(articles, cutoffDate);
-
-          // Validate against simulations
-          const realIncidents = droneArticles.filter(article => {
-            if (!article.link || processedUrls.has(article.link)) return false;
-            processedUrls.add(article.link);
-            return this.validateRealIncident(article);
-          });
-
-          // Convert to incident objects
-          const sourceIncidents = await this.processArticles(realIncidents, sourceName);
-          return sourceIncidents;
-        } catch (error) {
-          console.error(`❌ Error scraping ${sourceName}:`, error.message);
-          return [];
-        }
+        return this.scrapeSourceWithRetry(sourceName, rssUrl, cutoffDate, processedUrls);
       });
 
-      const batchResults = await Promise.all(batchPromises);
-      batchResults.forEach(results => incidents.push(...results));
-
-      // Rate limiting
-      if (i + batchSize < sourceEntries.length) {
-        await this.sleep(500); // Shorter delay between batches
-      }
+      const batchResults = await Promise.allSettled(batchPromises);
+      batchResults.forEach((result, index) => {
+        if (result.status === 'fulfilled' && result.value) {
+          incidents.push(...result.value);
+        } else if (result.status === 'rejected') {
+          const [sourceName] = batch[index];
+          console.error(`RSS fetch error for ${sourceName}:`, result.reason.message);
+        }
+      });
     }
 
-    // De-duplicate and merge similar incidents
-    const mergedIncidents = this.mergeIncidents(incidents);
+    console.log(`📊 Enhanced Scraper: Found ${incidents.length} unique REAL incidents from ${incidents.length > 0 ? new Set(incidents.map(i => i.publisher)).size : 0} total reports`);
+    return incidents;
+  }
 
-    console.log(`📊 Enhanced Scraper: Found ${mergedIncidents.length} unique REAL incidents from ${incidents.length} total reports`);
-    return mergedIncidents;
+  async scrapeSourceWithRetry(sourceName, rssUrl, cutoffDate, processedUrls, maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        return await this.scrapeSingleSource(sourceName, rssUrl, cutoffDate, processedUrls);
+      } catch (error) {
+        if (attempt === maxRetries) {
+          if (error.message.includes('HTTP 404') ||
+              error.message.includes('HTTP 403') ||
+              error.message.includes('HTTP 410') ||
+              error.message.includes('fetch failed')) {
+            // Don't retry on permanent failures
+            throw error;
+          }
+        }
+
+        // Wait before retry (exponential backoff)
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      }
+    }
+  }
+
+  async scrapeSingleSource(sourceName, rssUrl, cutoffDate, processedUrls) {
+    console.log(`📡 Scraping ${sourceName}...`);
+    const articles = await this.fetchRSSFeed(rssUrl, sourceName);
+
+    // Filter for drone incidents
+    const droneArticles = this.filterDroneIncidents(articles, cutoffDate);
+
+    // Validate against simulations
+    const realIncidents = droneArticles.filter(article => {
+      if (!article.link || processedUrls.has(article.link)) return false;
+      processedUrls.add(article.link);
+      return this.validateRealIncident(article);
+    });
+
+    // Convert to incident objects
+    const sourceIncidents = await this.processArticles(realIncidents, sourceName);
+    return sourceIncidents;
   }
 
   async fetchRSSFeed(url, sourceName) {
@@ -302,16 +329,58 @@ export class RSSNewsScraper {
   async createIncidentFromArticle(article, sourceName) {
     const text = article.title + ' ' + article.description;
 
-    // Extract location information
-    const location = this.extractLocationInfo(text);
+    // Use AI analysis if available
+    let aiAnalysis = null;
+    if (this.useAIAnalysis) {
+      try {
+        aiAnalysis = await this.aiAnalyzer.analyzeArticle(article);
+
+        // Skip if AI determines this is not a real incident
+        if (aiAnalysis && !aiAnalysis.is_real_incident) {
+          console.log(`🤖 AI excluded simulation/exercise: ${article.title.substring(0, 60)}...`);
+          return null;
+        }
+      } catch (error) {
+        console.warn('AI analysis failed, using fallback:', error.message);
+      }
+    }
+
+    // Extract location information (AI-enhanced or fallback)
+    let location = null;
+    if (aiAnalysis?.locations?.length > 0) {
+      location = {
+        name: aiAnalysis.locations[0].name,
+        type: aiAnalysis.locations[0].type,
+        lat: null,
+        lon: null
+      };
+    } else {
+      location = this.extractLocationInfo(text);
+    }
+
     if (!location) return null;
+
+    // Use geocoding service if available
+    if (this.useGeocoding && location && (!location.lat || !location.lon)) {
+      try {
+        const geocoded = await this.geocodingService.geocode(location.name);
+        if (geocoded) {
+          location.lat = geocoded.lat;
+          location.lon = geocoded.lon;
+          location.geocode_confidence = geocoded.confidence;
+          location.geocode_source = geocoded.source;
+        }
+      } catch (error) {
+        console.warn('Geocoding failed:', error.message);
+      }
+    }
 
     // Generate incident ID
     const incidentId = this.generateIncidentId(article, location);
 
-    // Determine incident category and severity
-    const category = this.categorizeIncident(text);
-    const severity = this.assessSeverity(text, category, location);
+    // Determine incident category and severity (AI-enhanced or fallback)
+    const category = aiAnalysis?.incident_type || this.categorizeIncident(text);
+    const severity = aiAnalysis?.severity || this.assessSeverity(text, category, location);
 
     // Calculate credibility
     const credibility = this.sourceCredibility[sourceName] || this.sourceCredibility['default'];
@@ -332,11 +401,13 @@ export class RSSNewsScraper {
       incident: {
         category: category,
         status: this.determineStatus(text),
-        duration_min: this.estimateDuration(text),
-        uav_count: this.estimateUAVCount(text),
+        duration_min: aiAnalysis?.duration_minutes || this.estimateDuration(text),
+        uav_count: aiAnalysis?.uav_count || this.estimateUAVCount(text),
         uav_characteristics: this.extractUAVCharacteristics(text),
-        response: this.extractResponseTeams(text),
-        narrative: this.createNarrative(article.title, location.name, text)
+        response: aiAnalysis?.response_teams || this.extractResponseTeams(text),
+        narrative: this.createNarrative(article.title, location.name, text),
+        ai_verified: !!aiAnalysis,
+        ai_confidence: aiAnalysis?.verification_confidence || null
       },
       evidence: {
         strength: Math.min(3, Math.floor(credibility / 2)),

@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚁 DroneWatch LIVE - Real-Time Drone Incident Monitoring</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <style>
+    /* Base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #2563EB;
+      --surface: #111827;
+      --glass-panel: rgba(31, 41, 55, 0.95);
+      --border: #374151;
+      --text: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-accent: #3b82f6;
+      --danger: #dc2626;
+      --success: #059669;
+      --warning: #d97706;
+      --live: #10b981;
+      --pulse: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* Header with live indicator */
+    .header {
+      background: var(--glass-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      backdrop-filter: blur(10px);
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Live indicator */
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--live);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--live);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .stat-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 4px;
+    }
+
+    .stat-badge.new {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      animation: highlight 3s;
+    }
+
+    @keyframes highlight {
+      0% { background: rgba(239, 68, 68, 0.3); }
+      100% { background: rgba(239, 68, 68, 0.1); }
+    }
+
+    /* Main container */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 400px;
+      background: var(--glass-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      backdrop-filter: blur(10px);
+    }
+
+    .sidebar-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Filter controls */
+    .filter-controls {
+      padding: 1rem;
+      background: rgba(0,0,0,0.2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-group {
+      margin-bottom: 0.75rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .filter-btn {
+      padding: 0.25rem 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Incident list */
+    .incident-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .incident-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .incident-card.new {
+      border-color: var(--pulse);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .incident-card:hover {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: var(--primary);
+      transform: translateX(2px);
+    }
+
+    .incident-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-title {
+      font-weight: 600;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .incident-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .incident-meta {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-badges {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .incident-status {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-active { background: var(--danger); color: white; }
+    .status-resolved { background: var(--success); color: white; }
+    .status-unconfirmed { background: var(--warning); color: white; }
+
+    .severity-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      background: rgba(59, 130, 246, 0.2);
+      color: var(--text-accent);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .evidence-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      background: rgba(156, 163, 175, 0.2);
+      color: var(--text-muted);
+    }
+
+    /* Live feed panel */
+    .live-feed {
+      padding: 1rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .feed-item {
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.3);
+      border-left: 3px solid var(--live);
+      margin-bottom: 0.5rem;
+      border-radius: 4px;
+    }
+
+    .feed-item.new {
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(-20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .feed-source {
+      font-size: 0.75rem;
+      color: var(--live);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .feed-text {
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    .feed-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Map container */
+    .map-wrapper {
+      flex: 1;
+      position: relative;
+      background: var(--surface);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Map overlay controls */
+    .map-overlay {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--glass-panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      min-width: 200px;
+    }
+
+    .map-control-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .map-control-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0;
+      font-size: 0.875rem;
+    }
+
+    .map-control-item input[type="checkbox"] {
+      cursor: pointer;
+    }
+
+    /* Update notification */
+    .update-notification {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--glass-panel);
+      border: 1px solid var(--live);
+      border-radius: 6px;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+      animation: slideUp 0.5s ease;
+    }
+
+    .update-notification.show {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .update-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--live);
+    }
+
+    .update-text {
+      font-size: 0.875rem;
+      color: var(--text);
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(17, 24, 39, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .loading-content {
+      text-align: center;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        left: -100%;
+        width: 100%;
+        z-index: 1001;
+        transition: left 0.3s;
+      }
+
+      .sidebar.open {
+        left: 0;
+      }
+
+      .header-stats {
+        display: none;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+        padding: 0.5rem;
+        background: none;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--text);
+        cursor: pointer;
+      }
+    }
+
+    /* Hide mobile button on desktop */
+    .mobile-menu-btn {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <h1>
+      🚁 DroneWatch LIVE
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>Live Updates</span>
+      </div>
+    </h1>
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <div class="header-stats">
+      <div class="stat-badge" id="new-incidents-badge">
+        <span>New:</span>
+        <span id="new-count">0</span>
+      </div>
+      <div class="stat-badge">
+        <span>Active:</span>
+        <span id="active-count">0</span>
+      </div>
+      <div class="stat-badge">
+        <span>Total:</span>
+        <span id="total-count">0</span>
+      </div>
+      <div class="stat-badge">
+        <span>Updated:</span>
+        <span id="last-update">--:--</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs">
+          <button class="tab-btn active" onclick="switchTab('incidents')">Incidents</button>
+          <button class="tab-btn" onclick="switchTab('live')">Live Feed</button>
+          <button class="tab-btn" onclick="switchTab('filters')">Filters</button>
+        </div>
+      </div>
+
+      <!-- Incidents Tab -->
+      <div class="tab-content active" id="incidents-tab">
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label>Status</label>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="status" data-value="all">All</button>
+              <button class="filter-btn" data-filter="status" data-value="active">Active</button>
+              <button class="filter-btn" data-filter="status" data-value="resolved">Resolved</button>
+              <button class="filter-btn" data-filter="status" data-value="unconfirmed">Unconfirmed</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Time Range</label>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="time" data-value="24h">24 Hours</button>
+              <button class="filter-btn" data-filter="time" data-value="7d">7 Days</button>
+              <button class="filter-btn" data-filter="time" data-value="30d">30 Days</button>
+            </div>
+          </div>
+        </div>
+        <div class="incident-list" id="incident-list">
+          <!-- Incidents will be added here -->
+        </div>
+      </div>
+
+      <!-- Live Feed Tab -->
+      <div class="tab-content" id="live-tab">
+        <div class="live-feed" id="live-feed">
+          <!-- Live updates will appear here -->
+        </div>
+      </div>
+
+      <!-- Filters Tab -->
+      <div class="tab-content" id="filters-tab">
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label>Severity</label>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="severity" data-value="all">All</button>
+              <button class="filter-btn" data-filter="severity" data-value="high">High (7-10)</button>
+              <button class="filter-btn" data-filter="severity" data-value="medium">Medium (4-6)</button>
+              <button class="filter-btn" data-filter="severity" data-value="low">Low (1-3)</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Evidence</label>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="evidence" data-value="all">All</button>
+              <button class="filter-btn" data-filter="evidence" data-value="official">Official</button>
+              <button class="filter-btn" data-filter="evidence" data-value="verified">Verified</button>
+              <button class="filter-btn" data-filter="evidence" data-value="unverified">Unverified</button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <label>Location Type</label>
+            <div class="filter-buttons">
+              <button class="filter-btn active" data-filter="location" data-value="all">All</button>
+              <button class="filter-btn" data-filter="location" data-value="airport">Airports</button>
+              <button class="filter-btn" data-filter="location" data-value="harbour">Harbours</button>
+              <button class="filter-btn" data-filter="location" data-value="military">Military</button>
+              <button class="filter-btn" data-filter="location" data-value="urban">Urban</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="map-wrapper">
+      <div id="map-loading" class="loading-overlay">
+        <div class="loading-content">
+          <div class="spinner"></div>
+          <div>Loading real-time data...</div>
+        </div>
+      </div>
+      <div id="map"></div>
+
+      <!-- Map overlay controls -->
+      <div class="map-overlay">
+        <div class="map-control-title">Map Layers</div>
+        <div class="map-control-item">
+          <input type="checkbox" id="show-airports" checked>
+          <label for="show-airports">Show Airports</label>
+        </div>
+        <div class="map-control-item">
+          <input type="checkbox" id="show-harbours">
+          <label for="show-harbours">Show Harbours</label>
+        </div>
+        <div class="map-control-item">
+          <input type="checkbox" id="show-military">
+          <label for="show-military">Show Military</label>
+        </div>
+        <div class="map-control-item">
+          <input type="checkbox" id="show-heatmap">
+          <label for="show-heatmap">Risk Heatmap</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update notification -->
+  <div class="update-notification" id="update-notification">
+    <div class="update-title">🔄 New Data Available</div>
+    <div class="update-text">
+      <span id="update-message">Found new incidents</span>
+    </div>
+  </div>
+
+  <script>
+    // Global state
+    const state = {
+      map: null,
+      incidents: [],
+      markers: new Map(),
+      clusterGroup: null,
+      filters: {
+        status: 'all',
+        time: '24h',
+        severity: 'all',
+        evidence: 'all',
+        location: 'all'
+      },
+      lastUpdate: null,
+      newIncidents: [],
+      liveFeed: [],
+      updateInterval: null,
+      websocket: null,
+      wsReconnectAttempts: 0,
+      infrastructureLayers: {
+        airports: null,
+        harbours: null,
+        military: null
+      }
+    };
+
+    // Initialize application
+    async function init() {
+      console.log('🚀 Initializing DroneWatch LIVE...');
+
+      // Initialize map first
+      initMap();
+
+      // Load initial data
+      await loadIncidents();
+
+      // Setup UI interactions
+      setupFilters();
+      setupMapControls();
+
+      // Connect WebSocket for real-time updates
+      connectWebSocket();
+
+      // Start traditional polling as fallback
+      startLiveUpdates();
+
+      console.log('✅ DroneWatch LIVE initialized');
+    }
+
+    // WebSocket connection
+    function connectWebSocket() {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${wsProtocol}//${window.location.host}`;
+
+      console.log('🔌 Connecting to WebSocket:', wsUrl);
+
+      try {
+        state.websocket = new WebSocket(wsUrl);
+
+        state.websocket.onopen = () => {
+          console.log('✅ WebSocket connected');
+          state.wsReconnectAttempts = 0;
+
+          // Subscribe to all topics
+          state.websocket.send(JSON.stringify({
+            type: 'subscribe',
+            topics: ['all']
+          }));
+
+          // Update UI indicator
+          document.querySelector('.live-dot').style.background = '#10b981';
+        };
+
+        state.websocket.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data);
+            handleWebSocketMessage(message);
+          } catch (error) {
+            console.error('WebSocket message parse error:', error);
+          }
+        };
+
+        state.websocket.onerror = (error) => {
+          console.error('❌ WebSocket error:', error);
+          document.querySelector('.live-dot').style.background = '#ef4444';
+        };
+
+        state.websocket.onclose = () => {
+          console.log('🔌 WebSocket disconnected');
+          document.querySelector('.live-dot').style.background = '#d97706';
+
+          // Attempt to reconnect
+          if (state.wsReconnectAttempts < 5) {
+            state.wsReconnectAttempts++;
+            console.log(`Reconnecting... (attempt ${state.wsReconnectAttempts})`);
+            setTimeout(connectWebSocket, 5000 * state.wsReconnectAttempts);
+          }
+        };
+
+      } catch (error) {
+        console.error('Failed to create WebSocket:', error);
+      }
+    }
+
+    // Handle WebSocket messages
+    function handleWebSocketMessage(message) {
+      console.log('📨 WebSocket message:', message.type);
+
+      switch(message.type) {
+        case 'welcome':
+          console.log('Connected as:', message.clientId);
+          addToLiveFeed([{
+            source: '🔌 System',
+            text: 'Connected to live updates',
+            time: message.timestamp
+          }]);
+          break;
+
+        case 'new_incidents':
+          console.log(`📢 ${message.count} new incidents received`);
+          handleNewIncidents(message.data);
+          break;
+
+        case 'update':
+          console.log('📊 Update:', message.updateType);
+          if (message.updateType === 'data_refresh') {
+            loadIncidents(true);
+          }
+          break;
+
+        case 'alert':
+          console.log('🚨 Alert:', message.title);
+          showAlert(message);
+          break;
+
+        case 'source_update':
+          console.log('📡 Source update:', message.source, message.status);
+          addToLiveFeed([{
+            source: `📡 ${message.source}`,
+            text: `Status: ${message.status}`,
+            time: message.timestamp
+          }]);
+          break;
+
+        case 'statistics':
+          console.log('📊 Statistics update');
+          updateStatistics(message.stats);
+          break;
+
+        case 'shutdown':
+          console.log('🛑 Server shutting down');
+          showUpdateNotification(0, 'Server is shutting down');
+          break;
+      }
+    }
+
+    // Handle new incidents from WebSocket
+    function handleNewIncidents(incidents) {
+      state.newIncidents = incidents;
+      showUpdateNotification(incidents.length);
+
+      // Add to live feed
+      incidents.forEach(incident => {
+        addToLiveFeed([{
+          source: '🚨 New Incident',
+          text: `${incident.asset.name} - ${incident.incident.category}`,
+          time: new Date().toISOString()
+        }]);
+      });
+
+      // Reload full data
+      loadIncidents(true);
+    }
+
+    // Show alert notification
+    function showAlert(alert) {
+      const notification = document.getElementById('update-notification');
+      notification.style.background = 'var(--glass-panel)';
+      notification.style.borderColor = alert.severity === 'high' ? '#ef4444' : '#d97706';
+
+      document.getElementById('update-message').innerHTML = `
+        <strong>${alert.title}</strong><br>
+        <small>${alert.description}</small>
+      `;
+
+      notification.classList.add('show');
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 10000);
+    }
+
+    // Update statistics from WebSocket
+    function updateStatistics(stats) {
+      if (stats.newIncidentsToday) {
+        document.getElementById('new-count').textContent = stats.newIncidentsToday;
+      }
+      if (stats.lastUpdate) {
+        document.getElementById('last-update').textContent = new Date(stats.lastUpdate).toLocaleTimeString();
+      }
+    }
+
+    // Initialize map
+    function initMap() {
+      console.log('🗺️ Initializing map...');
+
+      try {
+        // Create map
+        state.map = L.map('map').setView([54.5, 15.0], 5);
+
+        // Add dark tile layer
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '© OpenStreetMap contributors © CARTO',
+          maxZoom: 19
+        }).addTo(state.map);
+
+        // Create cluster group
+        state.clusterGroup = L.markerClusterGroup({
+          chunkedLoading: true,
+          disableClusteringAtZoom: 10,
+          spiderfyOnMaxZoom: true,
+          showCoverageOnHover: false,
+          iconCreateFunction: function(cluster) {
+            const count = cluster.getChildCount();
+            let size = 'small';
+            let color = 'rgba(16, 185, 129, 0.8)'; // green
+
+            if (count > 10) {
+              size = 'medium';
+              color = 'rgba(217, 119, 6, 0.8)'; // orange
+            }
+            if (count > 25) {
+              size = 'large';
+              color = 'rgba(220, 38, 38, 0.8)'; // red
+            }
+
+            return L.divIcon({
+              html: `<div style="background: ${color}; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid rgba(255,255,255,0.5);">${count}</div>`,
+              className: 'custom-cluster-icon',
+              iconSize: [40, 40]
+            });
+          }
+        });
+        state.map.addLayer(state.clusterGroup);
+
+        // Hide loading overlay
+        document.getElementById('map-loading').style.display = 'none';
+
+        // Force size recalculation
+        setTimeout(() => {
+          state.map.invalidateSize();
+        }, 100);
+
+        console.log('✅ Map initialized');
+      } catch (error) {
+        console.error('❌ Map initialization failed:', error);
+      }
+    }
+
+    // Load incidents
+    async function loadIncidents(isUpdate = false) {
+      console.log('📡 Loading incidents...');
+
+      try {
+        const response = await fetch('./incidents.json?_=' + Date.now());
+        const data = await response.json();
+
+        // Check for new incidents
+        if (isUpdate && state.incidents.length > 0) {
+          const existingIds = new Set(state.incidents.map(i => i.id));
+          state.newIncidents = data.incidents.filter(i => !existingIds.has(i.id));
+
+          if (state.newIncidents.length > 0) {
+            showUpdateNotification(state.newIncidents.length);
+            addToLiveFeed(state.newIncidents);
+            highlightNewIncidents();
+          }
+        }
+
+        state.incidents = data.incidents || [];
+        state.lastUpdate = new Date();
+
+        console.log(`✅ Loaded ${state.incidents.length} incidents`);
+
+        // Update UI
+        updateStats();
+        renderIncidents();
+
+      } catch (error) {
+        console.error('❌ Failed to load incidents:', error);
+      }
+    }
+
+    // Render incidents on map and sidebar
+    function renderIncidents() {
+      // Clear existing markers
+      state.clusterGroup.clearLayers();
+      state.markers.clear();
+
+      // Apply filters
+      const filtered = filterIncidents(state.incidents);
+
+      // Render sidebar
+      const listEl = document.getElementById('incident-list');
+      listEl.innerHTML = '';
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No incidents match filters</div>';
+        return;
+      }
+
+      // Add markers and cards
+      filtered.forEach((incident, index) => {
+        // Create marker with custom icon
+        const color = incident.incident.status === 'active' ? '#dc2626' :
+                     incident.incident.status === 'resolved' ? '#059669' : '#d97706';
+
+        const isNew = state.newIncidents.some(ni => ni.id === incident.id);
+
+        const marker = L.circleMarker([incident.asset.lat, incident.asset.lon], {
+          radius: 6 + incident.scores.severity * 0.5,
+          fillColor: color,
+          color: isNew ? '#ef4444' : '#fff',
+          weight: isNew ? 3 : 2,
+          fillOpacity: 0.8
+        });
+
+        // Rich popup content
+        marker.bindPopup(`
+          <div style="min-width: 250px;">
+            <strong style="font-size: 1.1em;">${incident.asset.name}</strong><br>
+            <div style="margin: 0.5rem 0; padding: 0.5rem 0; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;">
+              <span style="display: inline-block; margin-right: 1rem;">Type: <strong>${incident.asset.type}</strong></span>
+              <span>Status: <strong style="color: ${color};">${incident.incident.status}</strong></span>
+            </div>
+            <div style="margin: 0.5rem 0;">
+              Severity: <strong>${incident.scores.severity}/10</strong><br>
+              Risk Radius: <strong>${incident.scores.risk_radius_m}m</strong><br>
+              Evidence: <strong>${getEvidenceLevel(incident.evidence.strength)}</strong>
+            </div>
+            <small style="color: #666;">${incident.incident.narrative || 'No additional details'}</small>
+            <div style="margin-top: 0.5rem; font-size: 0.8em; color: #999;">
+              First seen: ${new Date(incident.first_seen_utc).toLocaleString()}
+            </div>
+          </div>
+        `);
+
+        state.clusterGroup.addLayer(marker);
+        state.markers.set(incident.id, marker);
+
+        // Create sidebar card
+        const card = document.createElement('div');
+        card.className = 'incident-card' + (isNew ? ' new' : '');
+        card.innerHTML = `
+          <div class="incident-header">
+            <div class="incident-title">${incident.asset.name}</div>
+            <div class="incident-time">${getRelativeTime(incident.first_seen_utc)}</div>
+          </div>
+          <div class="incident-meta">
+            ${incident.asset.type} • ${incident.asset.iata || incident.asset.icao || 'N/A'}
+            ${incident.incident.duration_min ? ` • ${incident.incident.duration_min} min` : ''}
+          </div>
+          <div class="incident-badges">
+            <span class="incident-status status-${incident.incident.status}">
+              ${incident.incident.status}
+            </span>
+            <span class="severity-badge">
+              Severity: ${incident.scores.severity}/10
+            </span>
+            <span class="evidence-badge">
+              ${getEvidenceLevel(incident.evidence.strength)}
+            </span>
+          </div>
+        `;
+
+        card.onclick = () => {
+          state.map.setView([incident.asset.lat, incident.asset.lon], 10);
+          marker.openPopup();
+        };
+
+        listEl.appendChild(card);
+      });
+
+      // Fit bounds if we have markers
+      if (filtered.length > 0 && !state.lastUpdate) {
+        const bounds = L.latLngBounds(filtered.map(i => [i.asset.lat, i.asset.lon]));
+        state.map.fitBounds(bounds.pad(0.1));
+      }
+    }
+
+    // Filter incidents based on current filters
+    function filterIncidents(incidents) {
+      return incidents.filter(incident => {
+        // Status filter
+        if (state.filters.status !== 'all' && incident.incident.status !== state.filters.status) {
+          return false;
+        }
+
+        // Time filter
+        const now = Date.now();
+        const incidentTime = new Date(incident.first_seen_utc).getTime();
+        const timeDiff = now - incidentTime;
+
+        if (state.filters.time === '24h' && timeDiff > 24 * 60 * 60 * 1000) return false;
+        if (state.filters.time === '7d' && timeDiff > 7 * 24 * 60 * 60 * 1000) return false;
+        if (state.filters.time === '30d' && timeDiff > 30 * 24 * 60 * 60 * 1000) return false;
+
+        // Severity filter
+        if (state.filters.severity === 'high' && incident.scores.severity < 7) return false;
+        if (state.filters.severity === 'medium' && (incident.scores.severity < 4 || incident.scores.severity > 6)) return false;
+        if (state.filters.severity === 'low' && incident.scores.severity > 3) return false;
+
+        // Evidence filter
+        if (state.filters.evidence === 'official' && incident.evidence.strength < 3) return false;
+        if (state.filters.evidence === 'verified' && incident.evidence.strength < 2) return false;
+        if (state.filters.evidence === 'unverified' && incident.evidence.strength > 1) return false;
+
+        // Location filter
+        if (state.filters.location !== 'all' && incident.asset.type !== state.filters.location) {
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    // Get evidence level text
+    function getEvidenceLevel(strength) {
+      switch(strength) {
+        case 3: return 'Official';
+        case 2: return 'Verified';
+        case 1: return 'Reported';
+        default: return 'Unconfirmed';
+      }
+    }
+
+    // Get relative time
+    function getRelativeTime(timestamp) {
+      const now = Date.now();
+      const time = new Date(timestamp).getTime();
+      const diff = now - time;
+
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return `${days}d ago`;
+    }
+
+    // Update statistics
+    function updateStats() {
+      const active = state.incidents.filter(i => i.incident.status === 'active').length;
+      document.getElementById('active-count').textContent = active;
+      document.getElementById('total-count').textContent = state.incidents.length;
+      document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+
+      if (state.newIncidents.length > 0) {
+        document.getElementById('new-count').textContent = state.newIncidents.length;
+        document.getElementById('new-incidents-badge').classList.add('new');
+        setTimeout(() => {
+          document.getElementById('new-incidents-badge').classList.remove('new');
+          state.newIncidents = [];
+          document.getElementById('new-count').textContent = '0';
+        }, 10000);
+      }
+    }
+
+    // Setup filter buttons
+    function setupFilters() {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filterType = btn.dataset.filter;
+          const value = btn.dataset.value;
+
+          // Update active state for this filter group
+          document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+
+          // Update filter state
+          state.filters[filterType] = value;
+
+          // Re-render
+          renderIncidents();
+        });
+      });
+    }
+
+    // Setup map controls
+    function setupMapControls() {
+      // Airports layer
+      document.getElementById('show-airports').addEventListener('change', async (e) => {
+        if (e.target.checked && !state.infrastructureLayers.airports) {
+          // Load airports data
+          try {
+            const response = await fetch('./data/assets/airports_wikidata.geojson');
+            const data = await response.json();
+            state.infrastructureLayers.airports = L.geoJSON(data, {
+              pointToLayer: (feature, latlng) => {
+                return L.circleMarker(latlng, {
+                  radius: 3,
+                  fillColor: '#3b82f6',
+                  color: '#fff',
+                  weight: 1,
+                  opacity: 0.5,
+                  fillOpacity: 0.3
+                });
+              },
+              onEachFeature: (feature, layer) => {
+                layer.bindPopup(`✈️ ${feature.properties.name || 'Airport'}`);
+              }
+            });
+          } catch (error) {
+            console.error('Failed to load airports:', error);
+          }
+        }
+
+        if (state.infrastructureLayers.airports) {
+          if (e.target.checked) {
+            state.map.addLayer(state.infrastructureLayers.airports);
+          } else {
+            state.map.removeLayer(state.infrastructureLayers.airports);
+          }
+        }
+      });
+
+      // Similar for harbours and military - placeholder for now
+    }
+
+    // Switch tabs
+    function switchTab(tab) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById(`${tab}-tab`).classList.add('active');
+    }
+
+    // Toggle sidebar (mobile)
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // Start live updates
+    function startLiveUpdates() {
+      console.log('🔄 Starting live update cycle...');
+
+      // Check for updates every 30 seconds
+      state.updateInterval = setInterval(async () => {
+        await loadIncidents(true);
+      }, 30000);
+
+      // Simulate real-time feed updates
+      setInterval(() => {
+        simulateLiveFeed();
+      }, 15000);
+    }
+
+    // Add to live feed
+    function addToLiveFeed(items) {
+      const feedEl = document.getElementById('live-feed');
+      if (!feedEl) return;
+
+      items.forEach(item => {
+        const feedItem = document.createElement('div');
+        feedItem.className = 'feed-item new';
+
+        if (item.source && item.text) {
+          // WebSocket format
+          feedItem.innerHTML = `
+            <div class="feed-source">${item.source}</div>
+            <div class="feed-text">${item.text}</div>
+            <div class="feed-time">${new Date(item.time || Date.now()).toLocaleTimeString()}</div>
+          `;
+        } else if (item.asset) {
+          // Incident format
+          feedItem.innerHTML = `
+            <div class="feed-source">📡 New Incident</div>
+            <div class="feed-text">
+              ${item.asset.name} - ${item.incident.category} reported
+            </div>
+            <div class="feed-time">${new Date().toLocaleTimeString()}</div>
+          `;
+        }
+
+        feedEl.insertBefore(feedItem, feedEl.firstChild);
+
+        // Remove old items
+        while (feedEl.children.length > 20) {
+          feedEl.removeChild(feedEl.lastChild);
+        }
+      });
+    }
+
+    // Simulate live feed updates
+    function simulateLiveFeed() {
+      const sources = ['RSS Feed', 'Twitter/X', 'Aviation API', 'News Alert'];
+      const messages = [
+        'Monitoring European airspace...',
+        'Scanning authority accounts...',
+        'Processing incident reports...',
+        'Analyzing severity patterns...',
+        'Checking NOTAM updates...'
+      ];
+
+      const feedEl = document.getElementById('live-feed');
+      const feedItem = document.createElement('div');
+      feedItem.className = 'feed-item new';
+      feedItem.innerHTML = `
+        <div class="feed-source">🔍 ${sources[Math.floor(Math.random() * sources.length)]}</div>
+        <div class="feed-text">
+          ${messages[Math.floor(Math.random() * messages.length)]}
+        </div>
+        <div class="feed-time">${new Date().toLocaleTimeString()}</div>
+      `;
+
+      feedEl.insertBefore(feedItem, feedEl.firstChild);
+
+      // Remove old items
+      while (feedEl.children.length > 20) {
+        feedEl.removeChild(feedEl.lastChild);
+      }
+    }
+
+    // Show update notification
+    function showUpdateNotification(count, customMessage = null) {
+      const notification = document.getElementById('update-notification');
+
+      if (customMessage) {
+        document.getElementById('update-message').textContent = customMessage;
+      } else {
+        document.getElementById('update-message').textContent = `${count} new incident${count !== 1 ? 's' : ''} detected`;
+      }
+
+      notification.classList.add('show');
+
+      setTimeout(() => {
+        notification.classList.remove('show');
+      }, 5000);
+    }
+
+    // Highlight new incidents
+    function highlightNewIncidents() {
+      // Add visual indicator to new incident cards
+      document.querySelectorAll('.incident-card').forEach((card, index) => {
+        if (index < state.newIncidents.length) {
+          card.classList.add('new');
+          setTimeout(() => {
+            card.classList.remove('new');
+          }, 5000);
+        }
+      });
+    }
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (state.map) state.map.invalidateSize();
+    });
+
+    // Start application when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+      if (state.updateInterval) {
+        clearInterval(state.updateInterval);
+      }
+    });
+  </script>
+</body>
+</html>
