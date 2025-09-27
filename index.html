@@ -13,58 +13,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #111827;
-      --bg-gradient: linear-gradient(180deg, #111827 0%, #0f172a 100%);
-      --glass-panel: rgba(17, 24, 39, 0.92);
-      --glass-surface: rgba(30, 41, 59, 0.85);
-      --glass-card: rgba(31, 41, 55, 0.9);
-      --glass-backdrop: rgba(15, 23, 42, 0.65);
-      --panel: #162132;
-      --surface: #1b2535;
-      --card: #1f2c40;
-      --text: #f9fafb;
-      --text-secondary: #e2e8f0;
-      --text-muted: #94a3b8;
-      --text-accent: #bfdbfe;
-      --muted: #94a3b8;
+      --bg: #0b1220;
+      --panel: rgba(17, 24, 39, 0.92);
+      --panel-solid: #111c30;
+      --surface: #152338;
+      --card: #1b2940;
       --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --accent-light: rgba(37, 99, 235, 0.18);
-      --accent-glow: rgba(37, 99, 235, 0.28);
-      --border: rgba(148, 163, 184, 0.22);
-      --border-light: rgba(148, 163, 184, 0.16);
-      --border-focus: rgba(37, 99, 235, 0.55);
-      --focus: #2563eb;
-      --chip: rgba(37, 99, 235, 0.12);
-      --chip-active: rgba(37, 99, 235, 0.22);
-      --success: #34d399;
-      --success-light: rgba(52, 211, 153, 0.18);
+      --accent-strong: #1d4ed8;
+      --accent-muted: rgba(37, 99, 235, 0.18);
+      --accent-border: rgba(37, 99, 235, 0.4);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-subtle: #cbd5f5;
+      --border: rgba(148, 163, 184, 0.18);
+      --border-strong: rgba(37, 99, 235, 0.4);
+      --success: #38bdf8;
       --warning: #f59e0b;
-      --warning-light: rgba(245, 158, 11, 0.18);
-      --danger: #f97316;
-      --danger-light: rgba(239, 68, 68, 0.2);
-      --severity-1: #38bdf8;
-      --severity-2: #60a5fa;
-      --severity-3: #2563eb;
-      --severity-4: #1d4ed8;
-      --severity-5: #ef4444;
-      --status-operational: #34d399;
-      --status-degraded: #fbbf24;
-      --status-offline: #f87171;
-      --status-maintenance: #818cf8;
-      --shadow-sm: 0 1px 2px rgba(8, 15, 30, 0.35);
-      --shadow: 0 12px 32px rgba(8, 15, 30, 0.55);
-      --shadow-md: 0 20px 45px rgba(8, 15, 30, 0.6);
-      --shadow-glow: 0 0 40px rgba(37, 99, 235, 0.25);
+      --danger: #ef4444;
+      --good: #34d399;
+      --shadow: 0 30px 60px rgba(8, 15, 30, 0.45);
+      --shadow-soft: 0 12px 30px rgba(9, 17, 32, 0.35);
       --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      --font-size-xs: 0.75rem;
-      --font-size-sm: 0.875rem;
-      --font-size-base: 1rem;
-      --font-size-lg: 1.125rem;
-      --font-size-xl: 1.25rem;
-      --font-size-2xl: 1.5rem;
-      --line-height-tight: 1.25;
-      --line-height-normal: 1.5;
+      --font-xs: 0.75rem;
+      --font-sm: 0.875rem;
+      --font-md: 1rem;
+      --font-lg: 1.125rem;
+      --font-xl: 1.5rem;
       --space-1: 0.25rem;
       --space-2: 0.5rem;
       --space-3: 0.75rem;
@@ -72,20 +46,22 @@
       --space-5: 1.25rem;
       --space-6: 1.5rem;
       --space-8: 2rem;
-      --space-10: 2.5rem;
-      --space-12: 3rem;
+      --radius: 18px;
     }
 
-    *, *::before, *::after { box-sizing: border-box; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
     html, body {
-      height: 100%;
       margin: 0;
+      height: 100%;
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-family);
-      font-size: var(--font-size-base);
-      line-height: var(--line-height-normal);
+      font-size: var(--font-md);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
@@ -97,280 +73,835 @@
     a { color: inherit; text-decoration: none; }
     button { font: inherit; }
 
-    input, select, textarea {
-      background: none;
-      border: none;
-      color: inherit;
-    }
-
-    input[type='text'], input[type='search'], select, textarea {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid var(--border-light);
-      background: var(--panel);
-      padding: 0.65rem 0.75rem;
-      color: var(--text);
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-
-    input[type='text']:focus, input[type='search']:focus, select:focus, textarea:focus {
-      border-color: var(--border-focus);
-      outline: none;
-      background: rgba(37, 99, 235, 0.08);
-    }
-
-    select[multiple] { min-height: 8rem; }
-
-    input[type='range'] {
-      width: 100%;
-      margin-top: var(--space-3);
-    }
-
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.04); }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 999px; }
-
     .classification-banner {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       text-transform: uppercase;
       letter-spacing: 0.18em;
-      font-size: 0.68rem;
+      font-size: var(--font-xs);
       font-weight: 600;
-      padding: 0.45rem 1rem;
-      background: rgba(37, 99, 235, 0.18);
-      color: var(--text-secondary);
+      text-align: center;
+      padding: var(--space-2) var(--space-3);
+      background: rgba(31, 41, 55, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    .realtime-indicator {
+    .shell {
+      width: min(1280px, 92vw);
+      margin: var(--space-6) auto var(--space-8);
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      flex-direction: column;
+      gap: var(--space-5);
+    }
+
+    header.masthead {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: var(--space-5);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .masthead__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .brand-block h1 {
+      margin: 0;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-block p {
+      margin: 0;
+      font-size: var(--font-sm);
       color: var(--text-muted);
     }
 
-    .realtime-indicator .realtime-pulse {
-      width: 0.7rem;
-      height: 0.7rem;
-      border-radius: 50%;
-      background: var(--success);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
-      animation: pulse 2.4s infinite;
-    }
-
-    #app {
-      flex: 1;
-      display: grid;
-      grid-template-rows: auto auto 1fr;
-      gap: var(--space-4);
-      padding: 0 var(--space-6) var(--space-6);
-      min-height: 0;
-    }
-
-    header {
+    .masthead__meta {
       display: flex;
-      flex-direction: column;
-      gap: var(--space-3);
-      background: var(--panel);
-      border-radius: 18px;
-      padding: var(--space-5);
-      border: 1px solid var(--border-light);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .header-row {
-      display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
-      gap: var(--space-4);
+      gap: var(--space-3);
     }
-
-    .brand-stack { display: flex; flex-direction: column; gap: 0.35rem; }
-    .brand-stack h1 { margin: 0; font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; }
-    .brand-stack p { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
-
-    .ops-status { display: flex; gap: 1.25rem; align-items: center; flex-wrap: wrap; }
-    .status-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
-    .status-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--success); box-shadow: 0 0 12px rgba(52, 211, 153, 0.5); }
 
     .time-chip {
       display: inline-flex;
       align-items: center;
-      padding: 0.35rem 0.75rem;
+      padding: var(--space-2) var(--space-4);
       border-radius: 999px;
-      border: 1px solid var(--border-light);
-      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      font-size: var(--font-xs);
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-secondary);
+      color: var(--text-subtle);
     }
-
-    .header-actions { display: flex; align-items: center; gap: 0.75rem; }
 
     .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.55rem 1rem;
+      padding: var(--space-2) var(--space-4);
       border-radius: 999px;
-      background: rgba(37, 99, 235, 0.12);
-      border: 1px solid rgba(37, 99, 235, 0.32);
+      border: 1px solid var(--accent-border);
+      background: rgba(37, 99, 235, 0.16);
       color: var(--text);
       cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
+      transition: 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
     }
-    .share-btn:hover { background: rgba(37, 99, 235, 0.22); transform: translateY(-1px); }
 
-    .header-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .share-btn:hover {
+      background: rgba(37, 99, 235, 0.28);
+      border-color: rgba(37, 99, 235, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .masthead__status {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: var(--font-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: var(--space-2);
+      background: var(--good);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+      display: inline-block;
+    }
+
+    .status-dot.degraded { background: var(--warning); box-shadow: 0 0 12px rgba(245, 158, 11, 0.4); }
+
+    .badge-row {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
     .badge {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 0.45rem 0.85rem;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
       border-radius: 999px;
-      border: 1px solid var(--border-light);
-      background: rgba(255, 255, 255, 0.03);
-      color: var(--text-muted);
-      font-size: 0.75rem;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: var(--font-xs);
       letter-spacing: 0.08em;
       text-transform: uppercase;
+      color: var(--text-muted);
     }
-    .badge.live { background: rgba(52, 211, 153, 0.18); color: #bbf7d0; border-color: rgba(52, 211, 153, 0.4); }
-    .badge-action { cursor: pointer; border-color: rgba(37, 99, 235, 0.3); background: rgba(37, 99, 235, 0.15); color: var(--text); transition: background 0.2s ease, transform 0.2s ease; }
-    .badge-action:hover { background: rgba(37, 99, 235, 0.25); transform: translateY(-1px); }
 
-    .stats-strip {
-      background: var(--panel);
-      border-radius: 18px;
+    .badge.live {
+      background: rgba(52, 211, 153, 0.18);
+      color: #bbf7d0;
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+
+    .badge.badge-action {
+      cursor: pointer;
+      background: var(--accent-muted);
+      border-color: var(--accent-border);
+      color: var(--text);
+      transition: 0.2s ease;
+    }
+
+    .badge.badge-action:hover {
+      background: rgba(37, 99, 235, 0.26);
+    }
+
+    .breaking-banner {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-2);
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.38);
+      border-radius: var(--radius);
       padding: var(--space-4);
-      border: 1px solid var(--border-light);
     }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
-    .stat-card { background: var(--surface); border-radius: 16px; padding: 1rem 1.25rem; border: 1px solid rgba(255, 255, 255, 0.04); display: flex; flex-direction: column; gap: 0.45rem; min-height: 120px; }
-    .stat-card .stat-value { font-size: 1.85rem; font-weight: 600; letter-spacing: -0.02em; }
-    .stat-card .stat-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
 
-    .layout { display: grid; grid-template-columns: 320px minmax(0, 1fr) 360px; gap: var(--space-4); min-height: 0; }
-    aside.sidebar { display: flex; flex-direction: column; gap: var(--space-3); overflow: hidden; min-height: 0; }
-    .sidebar-scroll { overflow-y: auto; padding-right: 0.35rem; min-height: 0; }
+    .breaking-banner.visible { display: flex; }
 
-    .activity-callout {
+    .breaking-news-header {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      background: rgba(37, 99, 235, 0.12);
-      border: 1px solid rgba(37, 99, 235, 0.3);
-      border-radius: 16px;
-      padding: 0.75rem 1rem;
-      opacity: 0.65;
-      transition: opacity 0.2s ease, box-shadow 0.2s ease;
+      gap: var(--space-3);
+      font-size: var(--font-sm);
     }
-    .activity-callout.visible { opacity: 1; box-shadow: var(--shadow-glow); }
-    .activity-callout .activity-pulse { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px rgba(37, 99, 235, 0.5); animation: pulse 2.4s infinite; }
 
-    .breaking-banner { display: none; flex-direction: column; gap: 0.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 16px; padding: 0.75rem 1rem; }
-    .breaking-banner.visible { display: flex; }
-    .breaking-badge { background: rgba(239, 68, 68, 0.25); color: #fecaca; padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
-    .breaking-news-header { display: flex; align-items: center; gap: 0.5rem; }
-    .breaking-close { margin-left: auto; width: 1.8rem; height: 1.8rem; border-radius: 999px; border: 1px solid rgba(239, 68, 68, 0.4); background: transparent; color: var(--text); cursor: pointer; }
-    .breaking-close:hover { background: rgba(239, 68, 68, 0.18); }
-    .breaking-details { font-size: 0.85rem; color: var(--text-muted); }
+    .breaking-badge {
+      text-transform: uppercase;
+      font-size: var(--font-xs);
+      padding: var(--space-1) var(--space-3);
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.3);
+      color: #fecaca;
+    }
 
-    details.module { background: var(--panel); border-radius: 18px; border: 1px solid var(--border-light); overflow: hidden; }
-    details.module summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 0.65rem; padding: 0.95rem 1.1rem; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
-    details.module summary::-webkit-details-marker { display: none; }
-    details.module summary::after { content: '\25BE'; margin-left: auto; font-size: 0.8rem; transition: transform 0.2s ease; }
-    details.module[open] summary::after { transform: rotate(180deg); }
-    details.module .module-content { border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 1rem 1.1rem 1.2rem; display: grid; gap: 0.75rem; }
+    .breaking-close {
+      margin-left: auto;
+      background: transparent;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--text);
+      border-radius: 999px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+    }
 
-    .threat-level-indicator { display: flex; align-items: center; gap: 0.75rem; }
-    .threat-level-dot { width: 1rem; height: 1rem; border-radius: 50%; background: var(--warning); box-shadow: 0 0 14px rgba(245, 158, 11, 0.4); }
+    .critical-strip {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+    }
 
-    .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .chip { padding: 0.45rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-light); background: rgba(255, 255, 255, 0.03); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
-    .chip.active { background: var(--accent); border-color: rgba(37, 99, 235, 0.6); color: #fff; }
+    .critical-strip > header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
 
-    .toggle-group { display: grid; gap: 0.5rem; }
-    .toggle { display: flex; gap: 0.65rem; align-items: center; font-size: 0.85rem; }
-    .toggle input { width: 1rem; height: 1rem; accent-color: var(--accent); }
+    .critical-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-3);
+    }
 
-    .legend { display: grid; gap: 0.35rem; font-size: 0.8rem; color: var(--text-muted); }
-    .legend .dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block; }
-    .legend span { display: flex; align-items: center; gap: 0.5rem; }
+    .critical-card {
+      background: rgba(37, 99, 235, 0.12);
+      border: 1px solid var(--accent-border);
+      border-radius: 14px;
+      padding: var(--space-3);
+      display: grid;
+      gap: var(--space-2);
+      text-align: left;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
 
-    .statbar { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .statbar .stat { flex: 1 1 90px; background: var(--surface); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.04); padding: 0.75rem 0.9rem; }
-    .statbar .k { font-size: 1.35rem; font-weight: 600; }
+    .critical-card:hover {
+      border-color: rgba(37, 99, 235, 0.6);
+      background: rgba(37, 99, 235, 0.2);
+    }
 
-    .map-shell { position: relative; background: var(--panel); border-radius: 22px; border: 1px solid var(--border-light); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
-    #map-container { position: relative; flex: 1; min-height: 0; border-radius: inherit; overflow: hidden; }
+    .critical-card__header {
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+      font-weight: 600;
+    }
+
+    .critical-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+    }
+
+    .critical-dot.severity-4 { background: var(--accent-strong); }
+    .critical-dot.severity-5 { background: var(--danger); box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
+
+    .critical-time {
+      margin-left: auto;
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+    }
+
+    .critical-meta { font-size: var(--font-xs); color: var(--text-muted); }
+
+    .stats-strip {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .stat-card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      display: grid;
+      gap: var(--space-2);
+      min-height: 140px;
+    }
+
+    .stat-label {
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .stat-change {
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
+      gap: var(--space-4);
+    }
+
+    .map-panel {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .map-panel__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    #activity-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: rgba(37, 99, 235, 0.12);
+      padding: var(--space-2) var(--space-4);
+      border-radius: 999px;
+      border: 1px solid var(--accent-border);
+      color: var(--text-muted);
+      font-size: var(--font-xs);
+      transition: 0.2s ease;
+    }
+
+    .activity-pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+      animation: pulse 2.4s infinite;
+    }
+
+    .threat-level-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .threat-level-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--warning);
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+    }
+
+    #activity-indicator.visible {
+      background: rgba(37, 211, 102, 0.16);
+      border-color: rgba(37, 211, 102, 0.4);
+      color: #bbf7d0;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+    }
+
+    .filters-toggle {
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+      padding: var(--space-2) var(--space-4);
+      border-radius: 999px;
+      font-size: var(--font-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .filters-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .map-shell {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      min-height: 520px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    #map-container { position: relative; height: 100%; }
     #map { width: 100%; height: 100%; }
 
-    .map-hint { position: absolute; top: 1rem; left: 1rem; background: rgba(17, 24, 39, 0.7); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 999px; padding: 0.4rem 0.9rem; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; z-index: 500; display: flex; gap: 0.5rem; align-items: center; }
+    .map-hint {
+      position: absolute;
+      top: var(--space-3);
+      left: var(--space-3);
+      padding: var(--space-2) var(--space-4);
+      border-radius: 999px;
+      background: rgba(10, 17, 33, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: var(--font-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 10;
+    }
 
-    #mapOverlay { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 0.65rem; background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(4px); z-index: 600; text-align: center; padding: 2rem; }
-    #mapOverlay h3 { margin: 0; font-size: 2rem; letter-spacing: 0.2em; }
+    #mapOverlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: var(--space-2);
+      background: rgba(11, 18, 32, 0.82);
+      backdrop-filter: blur(6px);
+      z-index: 20;
+      text-align: center;
+    }
 
-    #incidentList { display: grid; gap: 0.75rem; }
-    .incident { display: grid; gap: 0.65rem; padding: 0.85rem 1rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.06); background: var(--surface); cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease; }
-    .incident:hover { border-color: rgba(37, 99, 235, 0.45); transform: translateY(-1px); }
-    .incident-header { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; font-weight: 600; }
-    .incident-meta { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; font-size: 0.78rem; color: var(--text-muted); }
-    .incident-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
-    .incident-tags span { padding: 0.25rem 0.5rem; border-radius: 999px; background: rgba(255, 255, 255, 0.06); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; }
-    .incident .provenance-btn { font-size: 0.75rem; padding: 0.35rem 0.6rem; border-radius: 6px; border: 1px solid rgba(37, 99, 235, 0.4); background: rgba(37, 99, 235, 0.12); color: var(--text); cursor: pointer; }
+    #mapOverlay h3 {
+      margin: 0;
+      letter-spacing: 0.2em;
+      font-size: 1.75rem;
+    }
 
-    .critical-panel { display: grid; gap: 0.75rem; }
-    .critical-card { display: grid; gap: 0.45rem; padding: 0.75rem 0.9rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(37, 99, 235, 0.08); text-align: left; cursor: pointer; transition: background 0.2s ease, border-color 0.2s ease; }
-    .critical-card:hover { background: rgba(37, 99, 235, 0.16); border-color: rgba(37, 99, 235, 0.35); }
-    .critical-card__header { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; }
-    .critical-dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
-    .critical-dot.severity-3 { background: var(--severity-3); }
-    .critical-dot.severity-4 { background: var(--severity-4); }
-    .critical-dot.severity-5 { background: var(--severity-5); box-shadow: 0 0 12px rgba(239, 68, 68, 0.6); }
-    .critical-time { margin-left: auto; font-size: 0.75rem; color: var(--text-muted); }
-    .critical-meta { font-size: 0.78rem; color: var(--text-muted); }
+    .side-area {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-soft);
+      display: grid;
+    }
 
-    .news-feed { display: grid; gap: 0.6rem; }
-    .news-item { text-align: left; display: grid; gap: 0.4rem; padding: 0.7rem 0.85rem; border-radius: 14px; border: 1px solid rgba(255, 255, 255, 0.05); background: rgba(255, 255, 255, 0.03); cursor: pointer; transition: border-color 0.2s ease, transform 0.2s ease; }
-    .news-item:hover { border-color: rgba(37, 99, 235, 0.4); transform: translateY(-1px); }
-    .news-item__header { display: flex; align-items: center; gap: 0.5rem; }
-    .news-headline { font-weight: 600; font-size: 0.9rem; }
-    .news-meta { margin-left: auto; font-size: 0.72rem; color: var(--text-muted); }
-    .news-body { font-size: 0.8rem; color: var(--text-muted); }
-    .news-footer { display: flex; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--text-muted); }
-    .news-tag { margin-left: auto; padding: 0.2rem 0.5rem; border-radius: 999px; background: rgba(37, 99, 235, 0.18); border: 1px solid rgba(37, 99, 235, 0.35); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .panel-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: var(--space-2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
 
-    .empty-state { margin: 0; font-size: 0.8rem; color: var(--text-muted); }
-    #noDataMessage { display: none; border-radius: 18px; border: 1px dashed rgba(148, 163, 184, 0.3); padding: 2.5rem 1.5rem; text-align: center; background: rgba(255, 255, 255, 0.02); }
+    .panel-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: var(--space-2) var(--space-3);
+      border-radius: 12px;
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
 
-    .activity-timeline { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 12px; background: rgba(255, 255, 255, 0.02); }
-    .timeline-loading { padding: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); }
-    .timeline-hour { border-bottom: 1px solid rgba(255, 255, 255, 0.04); padding: 0.75rem 0.9rem; }
-    .timeline-hour:last-child { border-bottom: none; }
-    .timeline-hour-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 0.5rem; }
-    .timeline-hour-count { background: rgba(255, 255, 255, 0.08); padding: 0.15rem 0.45rem; border-radius: 999px; font-size: 0.68rem; }
-    .timeline-incidents { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.6rem; }
-    .timeline-incident { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 0.55rem; border-radius: 8px; transition: background 0.2s ease; cursor: pointer; }
-    .timeline-incident.live-incident { background: rgba(37, 99, 235, 0.15); }
-    .timeline-incident:hover { background: rgba(37, 99, 235, 0.2); }
-    .timeline-incident-dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; }
-    .timeline-incident-name { font-size: 0.78rem; font-weight: 600; }
-    .timeline-incident-time { font-size: 0.72rem; color: var(--text-muted); }
-    .timeline-empty { padding: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-muted); }
+    .panel-tab.active {
+      background: rgba(37, 99, 235, 0.2);
+      color: var(--text);
+    }
 
-    .provenance-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); display: flex; align-items: center; justify-content: center; padding: 2rem; z-index: 1200; }
-    .provenance-modal-content { background: var(--panel); border-radius: 22px; border: 1px solid rgba(255, 255, 255, 0.06); width: min(720px, 100%); max-height: 90vh; display: flex; flex-direction: column; }
-    .provenance-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-    .provenance-modal-body { padding: 1.5rem; overflow-y: auto; }
-    .provenance-modal-close { background: rgba(255, 255, 255, 0.08); border-radius: 999px; width: 2.25rem; height: 2.25rem; border: none; color: var(--text); cursor: pointer; }
+    .panel-panes {
+      padding: var(--space-4);
+      display: grid;
+    }
+
+    .panel-pane { display: none; gap: var(--space-3); }
+    .panel-pane.active { display: grid; }
+
+    .muted { color: var(--text-muted); font-size: var(--font-sm); }
+
+    #noDataMessage {
+      display: none;
+      border: 1px dashed rgba(148, 163, 184, 0.3);
+      border-radius: 16px;
+      padding: var(--space-5) var(--space-3);
+      text-align: center;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    #incidentList {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .incident {
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: var(--surface);
+      padding: var(--space-3);
+      display: grid;
+      gap: var(--space-2);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .incident:hover {
+      border-color: rgba(37, 99, 235, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .incident-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    .incident-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2) var(--space-3);
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+    }
+
+    .incident-tags {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .incident-tags span {
+      padding: var(--space-1) var(--space-3);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      font-size: var(--font-xs);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .news-feed {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .news-item {
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.03);
+      padding: var(--space-3);
+      display: grid;
+      gap: var(--space-2);
+      text-align: left;
+      transition: 0.2s ease;
+      cursor: pointer;
+    }
+
+    .news-item:hover { border-color: rgba(37, 99, 235, 0.4); }
+
+    .news-item__header { display: flex; gap: var(--space-2); align-items: center; }
+    .news-headline { font-weight: 600; }
+    .news-meta { margin-left: auto; font-size: var(--font-xs); color: var(--text-muted); }
+    .news-body { font-size: var(--font-xs); color: var(--text-muted); }
+    .news-footer { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-xs); color: var(--text-muted); }
+    .news-tag { margin-left: auto; padding: var(--space-1) var(--space-3); border-radius: 999px; background: var(--accent-muted); border: 1px solid var(--accent-border); text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--font-xs); }
+
+    .activity-timeline {
+      max-height: 280px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      overflow-y: auto;
+    }
+
+    .timeline-loading { padding: var(--space-4); text-align: center; font-size: var(--font-xs); color: var(--text-muted); }
+
+    .statbar-section { display: none; }
+    .statbar {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .statbar .stat {
+      background: var(--panel);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: var(--space-3);
+      flex: 1 1 140px;
+    }
+
+    .statbar .k {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .filters-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 13, 23, 0.75);
+      backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: flex-start;
+      padding: var(--space-6);
+      z-index: 1200;
+    }
+
+    .filters-overlay.open { display: flex; }
+
+    .filters-sheet {
+      width: min(360px, 92vw);
+      max-height: 100%;
+      overflow-y: auto;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: var(--space-5);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filters-header h2 {
+      margin: 0;
+      font-size: 1.125rem;
+      letter-spacing: -0.01em;
+    }
+
+    .filters-close {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      width: 32px;
+      height: 32px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    details.module {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    details.module summary {
+      list-style: none;
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-xs);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    details.module summary::-webkit-details-marker { display: none; }
+    details.module summary::after { content: '\25BC'; margin-left: auto; font-size: 0.75rem; transition: transform 0.2s ease; }
+    details.module[open] summary::after { transform: rotate(-180deg); }
+
+    details.module .module-content {
+      padding: var(--space-3) var(--space-4) var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .chips {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: var(--space-2) var(--space-4);
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .chip.active { background: var(--accent); border-color: rgba(37, 99, 235, 0.6); color: #fff; }
+
+    .toggle-group { display: grid; gap: var(--space-2); }
+    .toggle { display: flex; align-items: center; gap: var(--space-2); font-size: var(--font-sm); color: var(--text-muted); }
+
+    input[type='checkbox'] { accent-color: var(--accent); }
+
+    select, input[type='text'], input[type='search'], input[type='range'] {
+      width: 100%;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 10px;
+      padding: var(--space-3);
+      background: rgba(13, 20, 36, 0.72);
+      color: var(--text);
+    }
+
+    select[multiple] { min-height: 140px; }
+
+    input[type='range'] {
+      height: 4px;
+      background: transparent;
+    }
+
+    .bottom-sheet, .mobile-nav, .fab { display: none; }
+
+    #provenanceModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 13, 23, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      z-index: 1400;
+    }
+
+    #provenanceModal.open { display: flex; }
+
+    .provenance-modal-content {
+      width: min(720px, 96vw);
+      max-height: 90vh;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .provenance-modal-header {
+      padding: var(--space-4);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .provenance-modal-body { padding: var(--space-4); overflow-y: auto; }
+
+    @media (max-width: 1080px) {
+      .layout { grid-template-columns: 1fr; }
+      .map-shell { min-height: 420px; }
+      .side-area { order: 2; }
+    }
+
+    @media (max-width: 900px) {
+      .shell { width: min(96vw, 720px); margin: var(--space-4) auto var(--space-10); }
+      header.masthead { padding: var(--space-4); }
+      .critical-list { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+      .stats-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+      .panel-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .bottom-sheet, .mobile-nav, .fab { display: block; }
+      body.filters-open { overflow: hidden; }
+    }
+
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(9, 15, 28, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: var(--space-2);
+      z-index: 1300;
+      backdrop-filter: blur(18px);
+    }
+
+    .mobile-nav-items {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-2);
+    }
+
+    .mobile-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-2);
+      border-radius: 12px;
+      font-size: var(--font-xs);
+      color: var(--text-muted);
+    }
+
+    .mobile-nav-item.active { background: rgba(37, 99, 235, 0.22); color: var(--text); }
+
+    .fab {
+      position: fixed;
+      bottom: 4.5rem;
+      right: 1.25rem;
+      width: 3.25rem;
+      height: 3.25rem;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      z-index: 1300;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -100%;
+      background: rgba(9, 15, 28, 0.96);
+      border-radius: 24px 24px 0 0;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: var(--space-4) var(--space-4) calc(var(--space-6) + 60px);
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: transform 0.3s ease;
+      z-index: 1350;
+    }
+
+    .bottom-sheet.open { transform: translateY(-100%); }
+
+    .bottom-sheet-handle {
+      width: 46px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.5);
+      margin: 0 auto var(--space-3);
+    }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.45); border-radius: 10px; }
 
     .live-marker {
       animation: markerPulse 1.8s infinite;
@@ -383,51 +914,6 @@
       100% { transform: scale(1); }
     }
 
-    .no-data-overlay {
-      background: rgba(17, 24, 39, 0.85) !important;
-      color: var(--text);
-      border-radius: 12px;
-    }
-
-    .leaflet-control-zoom, .leaflet-bar { border: none !important; }
-    .leaflet-control-zoom a { background: rgba(17, 24, 39, 0.85) !important; color: var(--text) !important; }
-
-    .mobile-nav, .fab, .bottom-sheet { display: none; }
-
-    @media (max-width: 1400px) {
-      .layout { grid-template-columns: 280px minmax(0, 1fr) 320px; }
-    }
-
-    @media (max-width: 1200px) {
-      #app { padding: 0 var(--space-4) var(--space-6); }
-      .layout { grid-template-columns: 260px minmax(0, 1fr); grid-template-areas: 'left map' 'left right'; }
-      #left { grid-area: left; }
-      .map-shell { grid-area: map; }
-      #right { grid-area: right; }
-      #right details.module .module-content { max-height: none; }
-    }
-
-    @media (max-width: 960px) {
-      .layout { grid-template-columns: 1fr; }
-      #left, #right { display: none; }
-      .map-shell { min-height: 60vh; }
-      .mobile-nav, .fab, .bottom-sheet { display: block; }
-      .mobile-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17, 24, 39, 0.95); border-top: 1px solid rgba(255, 255, 255, 0.04); padding: 0.35rem 0.6rem; z-index: 900; backdrop-filter: blur(18px); }
-      .mobile-nav-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.35rem; }
-      .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; padding: 0.65rem 0.5rem; border-radius: 12px; font-size: 0.7rem; color: var(--text-muted); }
-      .mobile-nav-item.active { background: rgba(37, 99, 235, 0.18); color: var(--text); }
-      .fab { position: fixed; bottom: 5rem; right: 1.25rem; width: 3.25rem; height: 3.25rem; border-radius: 50%; background: var(--accent); color: #fff; border: none; font-size: 1.35rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-glow); cursor: pointer; }
-      .bottom-sheet { position: fixed; left: 0; right: 0; bottom: -100%; background: rgba(15, 23, 42, 0.96); border-radius: 22px 22px 0 0; border: 1px solid rgba(255, 255, 255, 0.06); padding: 0.85rem 1rem 1.25rem; max-height: 80vh; overflow-y: auto; z-index: 950; transition: transform 0.3s ease; backdrop-filter: blur(18px); }
-      .bottom-sheet.open { transform: translateY(-100%); }
-      .bottom-sheet-handle { width: 48px; height: 4px; border-radius: 999px; background: rgba(148, 163, 184, 0.5); margin: 0 auto 1rem; }
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.25); opacity: 0.6; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
     @supports (color: color(display-p3 1 1 1)) {
       body { color-scheme: dark; }
     }
@@ -436,245 +922,242 @@
 
 <body>
   <div class="classification-banner unclassified">UNCLASSIFIED // FOR OFFICIAL USE ONLY</div>
-  <div class="realtime-indicator" aria-live="polite">
-    <div class="realtime-pulse"></div>
-    <span>Live monitoring channel</span>
-  </div>
-  <div id="app" role="application" aria-label="DroneWatch threat assessment dashboard">
-    <header>
-      <div class="header-row">
-        <div class="brand-stack">
+  <div class="shell">
+    <header class="masthead">
+      <div class="masthead__top">
+        <div class="brand-block">
           <h1>DroneWatch</h1>
           <p>Minimal operations dashboard for high-stakes drone threat response</p>
         </div>
-        <div class="header-actions">
+        <div class="masthead__meta">
           <div class="time-chip" id="system-time">00:00:00Z</div>
           <button class="share-btn" id="btn-share" type="button">Share secure view</button>
+          <button class="filters-toggle" id="filters-toggle" type="button" aria-expanded="false">Filters</button>
         </div>
       </div>
-      <div class="ops-status">
-        <div class="status-item"><span class="status-dot"></span>Radar Grid</div>
-        <div class="status-item"><span class="status-dot"></span>Comms Link</div>
-        <div class="status-item"><span class="status-dot"></span>Incident Feed</div>
-      </div>
-      <div class="header-badges">
-        <span class="badge live">Live</span>
-        <span class="badge" id="badge-refresh">Auto-sync</span>
-        <span class="badge" id="badge-generated">Updated: —</span>
-        <span class="badge" id="badge-status" style="display:none;">No Data</span>
-        <button class="badge badge-action" id="ai-fetch-btn" type="button">🤖 AI News</button>
+      <div class="masthead__status">
+        <span><span class="status-dot"></span>Radar Grid</span>
+        <span><span class="status-dot"></span>Comms Link</span>
+        <span><span class="status-dot"></span>Incident Feed</span>
       </div>
     </header>
 
-    <section id="stats-dashboard" class="stats-strip">
+    <div class="badge-row">
+      <span class="badge live">Live</span>
+      <span class="badge" id="badge-refresh">Auto-sync</span>
+      <span class="badge" id="badge-generated">Updated: —</span>
+      <span class="badge" id="badge-status" style="display:none;">No Data</span>
+      <button class="badge badge-action" id="ai-fetch-btn" type="button">🤖 AI News</button>
+    </div>
+
+    <div class="breaking-banner" id="breaking-news-alert" role="status" aria-live="assertive">
+      <div class="breaking-news-header">
+        <span class="breaking-badge">Breaking</span>
+        <strong id="breaking-title"></strong>
+        <button id="breaking-close" class="breaking-close" type="button">×</button>
+      </div>
+      <div id="breaking-details" class="breaking-details"></div>
+    </div>
+
+    <section class="critical-strip" aria-label="Critical alerts">
+      <header>Critical alerts</header>
+      <div class="critical-list" id="critical-alerts">
+        <p class="empty-state muted">Awaiting incident data.</p>
+      </div>
+    </section>
+
+    <section class="stats-strip" aria-label="Operational summary">
       <div class="stats-grid">
         <article class="stat-card">
-          <div class="stat-value" id="stat-active">0</div>
-          <div class="stat-label">Active now</div>
-          <div class="stat-change" id="stat-active-change">—</div>
+          <span class="stat-label">Active now</span>
+          <span class="stat-value" id="stat-active">0</span>
+          <span class="stat-change" id="stat-active-change">—</span>
         </article>
         <article class="stat-card">
-          <div class="stat-value" id="stat-24h">0</div>
-          <div class="stat-label">Past 24h</div>
-          <div class="stat-change" id="stat-24h-change">—</div>
+          <span class="stat-label">Past 24 hours</span>
+          <span class="stat-value" id="stat-24h">0</span>
+          <span class="stat-change" id="stat-24h-change">—</span>
         </article>
         <article class="stat-card">
-          <div class="stat-value" id="stat-severity">0</div>
-          <div class="stat-label">High severity</div>
-          <div class="stat-indicator"><div id="severity-bar" style="height:4px;background:var(--accent);border-radius:999px;width:0%"></div></div>
+          <span class="stat-label">High severity</span>
+          <span class="stat-value" id="stat-severity">0</span>
+          <div class="stat-change">
+            <div id="severity-bar" style="height:4px; border-radius: 999px; background: var(--accent); width:0%"></div>
+          </div>
         </article>
         <article class="stat-card">
-          <div class="stat-value" id="stat-assets">0</div>
-          <div class="stat-label">Assets impacted</div>
-          <div class="stat-change" id="stat-assets-detail">—</div>
+          <span class="stat-label">Assets impacted</span>
+          <span class="stat-value" id="stat-assets">0</span>
+          <span class="stat-change" id="stat-assets-detail">—</span>
         </article>
         <article class="stat-card">
-          <canvas id="trend-chart" width="160" height="40"></canvas>
-          <div class="stat-label">7-day trend</div>
+          <span class="stat-label">7-day trend</span>
+          <canvas id="trend-chart" width="200" height="60"></canvas>
         </article>
       </div>
     </section>
 
     <div class="layout">
-      <aside id="left" class="sidebar" aria-label="Filters and controls">
-        <div class="activity-callout" id="activity-indicator">
-          <div class="activity-pulse"></div>
-          <div>
-            <strong id="activity-text">Live activity</strong><br />
-            <span class="muted">Streaming incident telemetry</span>
+      <section class="map-panel">
+        <div class="map-panel__top">
+          <div id="activity-indicator">
+            <span class="activity-pulse"></span>
+            <div>
+              <strong id="activity-text">Live activity</strong>
+              <span class="muted">Streaming incident telemetry</span>
+            </div>
           </div>
         </div>
-
-        <div class="breaking-banner" id="breaking-news-alert" role="status" aria-live="assertive">
-          <div class="breaking-news-header">
-            <span class="breaking-badge">Breaking</span>
-            <strong id="breaking-title"></strong>
-            <button id="breaking-close" class="breaking-close" type="button">×</button>
-          </div>
-          <div id="breaking-details" class="breaking-details"></div>
-        </div>
-
-        <div class="sidebar-scroll">
-          <details class="module" open>
-            <summary>Threat posture</summary>
-            <div class="module-content">
-              <div class="threat-level-indicator">
-                <div class="threat-level-dot medium" id="current-threat-level"></div>
-                <div>
-                  <div style="font-weight:600;">Elevated</div>
-                  <div class="muted" style="font-size:0.78rem;">Monitoring critical European infrastructure</div>
-                </div>
-              </div>
+        <div class="map-shell">
+          <div id="map-container">
+            <div class="map-hint">Scroll to zoom • Shift + drag to focus • Double-click to recenter</div>
+            <div id="map" role="region" aria-label="Incident map"></div>
+            <div id="mapOverlay">
+              <h3>NO DATA</h3>
+              <p class="muted">No incidents match the current filters</p>
             </div>
-          </details>
-
-          <details class="module" open>
-            <summary>Time window</summary>
-            <div class="module-content">
-              <div class="chips">
-                <button class="chip active" data-window="7" type="button">7d</button>
-                <button class="chip" data-window="30" type="button">30d</button>
-                <button class="chip" data-window="90" type="button">90d</button>
-                <button class="chip" data-window="365" type="button">365d</button>
-              </div>
-              <label for="dateRange">Select range (days)</label>
-              <input id="dateRange" type="range" min="1" max="365" value="7" step="1" />
-              <div class="muted" id="dateRangeLabel">Showing last 7 days</div>
-            </div>
-          </details>
-
-          <details class="module" open>
-            <summary>Asset layers</summary>
-            <div class="module-content">
-              <div class="toggle-group">
-                <label class="toggle"><input type="checkbox" id="layer-airport" checked />Airports &amp; aviation</label>
-                <label class="toggle"><input type="checkbox" id="layer-harbour" checked />Harbours</label>
-                <label class="toggle"><input type="checkbox" id="layer-energy" checked />Energy</label>
-                <label class="toggle"><input type="checkbox" id="layer-rail" checked />Rail &amp; transit</label>
-                <label class="toggle"><input type="checkbox" id="layer-border" checked />Border crossings</label>
-                <label class="toggle"><input type="checkbox" id="layer-military" checked />Military</label>
-              </div>
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Infrastructure proximity</summary>
-            <div class="module-content">
-              <p class="muted">Highlight incidents within 10km of key infrastructure</p>
-              <label class="toggle"><input type="checkbox" id="filter-near-harbours" />Near harbours</label>
-              <label class="toggle"><input type="checkbox" id="filter-near-military" />Near military bases</label>
-              <label class="toggle"><input type="checkbox" id="filter-near-airports" />Near airports</label>
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Risk visualisation</summary>
-            <div class="module-content">
-              <label class="toggle"><input type="checkbox" id="show-risk-rings" checked />Show risk rings</label>
-              <label class="toggle"><input type="checkbox" id="show-threat-heatmap" />Threat heatmap</label>
-              <label class="toggle"><input type="checkbox" id="auto-focus" checked />Auto-focus on new incidents</label>
-              <label class="toggle"><input type="checkbox" id="compare-mode" />Compare previous period</label>
-              <div id="compare-controls" class="muted" style="display:none;font-size:0.75rem;">Comparing current vs previous window</div>
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Status &amp; evidence</summary>
-            <div class="module-content">
-              <label for="statusSelect">Status</label>
-              <select id="statusSelect" multiple>
-                <option value="active" selected>Active</option>
-                <option value="resolved" selected>Resolved</option>
-                <option value="unconfirmed" selected>Unconfirmed</option>
-              </select>
-              <label for="evidenceSelect">Evidence strength</label>
-              <select id="evidenceSelect" multiple>
-                <option value="3" selected>3 — Official / NOTAM</option>
-                <option value="2" selected>2 — Tier-1 corroborated</option>
-                <option value="1" selected>1 — Single credible</option>
-                <option value="0" selected>0 — Unconfirmed</option>
-              </select>
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Search</summary>
-            <div class="module-content">
-              <label for="searchBox">Free-text search</label>
-              <input id="searchBox" type="text" placeholder="e.g., Nordhavn, NOTAM, Oslo" />
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Activity timeline</summary>
-            <div class="module-content">
-              <div id="activity-timeline" class="activity-timeline">
-                <div class="timeline-loading">Loading timeline...</div>
-              </div>
-            </div>
-          </details>
-
-          <details class="module">
-            <summary>Summary</summary>
-            <div class="module-content">
-              <div class="statbar">
-                <div class="stat"><div class="k" id="stat-total">0</div><div class="muted">Incidents</div></div>
-                <div class="stat"><div class="k" id="stat-air">0</div><div class="muted">Airspace</div></div>
-                <div class="stat"><div class="k" id="stat-har">0</div><div class="muted">Harbours</div></div>
-              </div>
-            </div>
-          </details>
-
-          <p class="muted" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:0.08em;">Basemap © Esri; OSM contributors. UI refreshes every 5 minutes.</p>
-        </div>
-      </aside>
-
-      <section class="map-shell">
-        <div id="map-container">
-          <div class="map-hint">Scroll to zoom • Shift + drag to focus • Double-click to recenter</div>
-          <div id="map" role="region" aria-label="Incident map"></div>
-          <div id="mapOverlay" class="map-overlay">
-            <h3>NO DATA</h3>
-            <p class="muted">No incidents match the current filters</p>
           </div>
         </div>
       </section>
 
-      <aside id="right" class="sidebar" aria-label="Incident intelligence">
-        <details class="module" open>
-          <summary>Critical alerts</summary>
-          <div class="module-content critical-panel" id="critical-alerts">
-            <p class="empty-state muted">Awaiting incident data.</p>
-          </div>
-        </details>
-
-        <details class="module" open>
-          <summary>Incident feed</summary>
-          <div class="module-content">
+      <aside id="right" class="side-area" aria-label="Incident intelligence">
+        <div class="panel-tabs" role="tablist">
+          <button class="panel-tab active" data-panel="incidents" type="button">Incidents</button>
+          <button class="panel-tab" data-panel="intel" type="button">Intel brief</button>
+          <button class="panel-tab" data-panel="timeline" type="button">Timeline</button>
+        </div>
+        <div class="panel-panes">
+          <section class="panel-pane active" data-panel="incidents">
             <p class="muted" id="detailsIntro">Interactive feed of active incidents. Select a row to focus on the map.</p>
-            <div id="noDataMessage" role="status">
+            <div id="noDataMessage">
               <strong style="letter-spacing:0.2em; text-transform:uppercase;">No matches</strong>
               <p class="muted">Adjust filters or expand the time window to widen coverage.</p>
             </div>
             <div id="incidentList"></div>
-          </div>
-        </details>
-
-        <details class="module">
-          <summary>Intel briefing</summary>
-          <div class="module-content news-feed" id="news-feed">
-            <p class="empty-state muted">AI-assisted news brief will appear here.</p>
-          </div>
-        </details>
+          </section>
+          <section class="panel-pane" data-panel="intel">
+            <p class="muted" style="font-size: var(--font-xs);">Triggered by the AI News button for targeted intelligence. No monetized content.</p>
+            <div class="news-feed" id="news-feed">
+              <p class="empty-state muted">AI-assisted news brief will appear here.</p>
+            </div>
+          </section>
+          <section class="panel-pane" data-panel="timeline">
+            <div id="activity-timeline" class="activity-timeline">
+              <div class="timeline-loading">Loading timeline...</div>
+            </div>
+          </section>
+        </div>
       </aside>
     </div>
+
+    <section class="statbar-section" aria-label="Category summary">
+      <div class="statbar">
+        <div class="stat"><div class="k" id="stat-total">0</div><div class="muted">Incidents</div></div>
+        <div class="stat"><div class="k" id="stat-air">0</div><div class="muted">Airspace</div></div>
+        <div class="stat"><div class="k" id="stat-har">0</div><div class="muted">Harbours</div></div>
+      </div>
+    </section>
   </div>
 
-  <div id="provenanceModal" class="provenance-modal" style="display:none;">
+  <div id="left" class="filters-overlay" aria-hidden="true">
+    <aside class="filters-sheet" role="dialog" aria-labelledby="filters-title">
+      <div class="filters-header">
+        <h2 id="filters-title">Filters</h2>
+        <button id="filters-close" class="filters-close" type="button">×</button>
+      </div>
+      <div class="filters-content">
+        <details class="module" open>
+          <summary>Threat posture</summary>
+          <div class="module-content">
+            <div class="threat-level-indicator">
+              <div class="threat-level-dot medium" id="current-threat-level"></div>
+              <div>
+                <div style="font-weight:600;">Elevated</div>
+                <div class="muted" style="font-size: var(--font-xs);">Monitoring critical European infrastructure</div>
+              </div>
+            </div>
+          </div>
+        </details>
+        <details class="module" open>
+          <summary>Time window</summary>
+          <div class="module-content">
+            <div class="chips">
+              <button class="chip active" data-window="7" type="button">7d</button>
+              <button class="chip" data-window="30" type="button">30d</button>
+              <button class="chip" data-window="90" type="button">90d</button>
+              <button class="chip" data-window="365" type="button">365d</button>
+            </div>
+            <label for="dateRange" class="muted">Select range (days)</label>
+            <input id="dateRange" type="range" min="1" max="365" value="7" step="1" />
+            <div class="muted" id="dateRangeLabel">Showing last 7 days</div>
+          </div>
+        </details>
+        <details class="module" open>
+          <summary>Asset layers</summary>
+          <div class="module-content">
+            <div class="toggle-group">
+              <label class="toggle"><input type="checkbox" id="layer-airport" checked />Airports &amp; aviation</label>
+              <label class="toggle"><input type="checkbox" id="layer-harbour" checked />Harbours</label>
+              <label class="toggle"><input type="checkbox" id="layer-energy" checked />Energy</label>
+              <label class="toggle"><input type="checkbox" id="layer-rail" checked />Rail &amp; transit</label>
+              <label class="toggle"><input type="checkbox" id="layer-border" checked />Border crossings</label>
+              <label class="toggle"><input type="checkbox" id="layer-military" checked />Military</label>
+            </div>
+          </div>
+        </details>
+        <details class="module">
+          <summary>Infrastructure proximity</summary>
+          <div class="module-content">
+            <p class="muted" style="font-size: var(--font-xs);">Highlight incidents within 10km of key infrastructure</p>
+            <label class="toggle"><input type="checkbox" id="filter-near-harbours" />Near harbours</label>
+            <label class="toggle"><input type="checkbox" id="filter-near-military" />Near military bases</label>
+            <label class="toggle"><input type="checkbox" id="filter-near-airports" />Near airports</label>
+          </div>
+        </details>
+        <details class="module">
+          <summary>Risk visualisation</summary>
+          <div class="module-content">
+            <label class="toggle"><input type="checkbox" id="show-risk-rings" checked />Show risk rings</label>
+            <label class="toggle"><input type="checkbox" id="show-threat-heatmap" />Threat heatmap</label>
+            <label class="toggle"><input type="checkbox" id="auto-focus" checked />Auto-focus on new incidents</label>
+            <label class="toggle"><input type="checkbox" id="compare-mode" />Compare previous period</label>
+            <div id="compare-controls" class="muted" style="display:none; font-size: var(--font-xs);">Comparing current vs previous window</div>
+          </div>
+        </details>
+        <details class="module">
+          <summary>Status &amp; evidence</summary>
+          <div class="module-content">
+            <label for="statusSelect" class="muted">Status</label>
+            <select id="statusSelect" multiple>
+              <option value="active" selected>Active</option>
+              <option value="resolved" selected>Resolved</option>
+              <option value="unconfirmed" selected>Unconfirmed</option>
+            </select>
+            <label for="evidenceSelect" class="muted">Evidence strength</label>
+            <select id="evidenceSelect" multiple>
+              <option value="3" selected>3 — Official / NOTAM</option>
+              <option value="2" selected>2 — Tier-1 corroborated</option>
+              <option value="1" selected>1 — Single credible</option>
+              <option value="0" selected>0 — Unconfirmed</option>
+            </select>
+          </div>
+        </details>
+        <details class="module">
+          <summary>Search</summary>
+          <div class="module-content">
+            <label for="searchBox" class="muted">Free-text search</label>
+            <input id="searchBox" type="text" placeholder="e.g., Nordhavn, NOTAM, Oslo" />
+          </div>
+        </details>
+      </div>
+    </aside>
+  </div>
+
+  <div id="provenanceModal" class="provenance-modal" aria-hidden="true">
     <div class="provenance-modal-content">
       <div class="provenance-modal-header">
         <h2 class="provenance-modal-title">Incident provenance</h2>
-        <button id="closeProvenance" class="provenance-modal-close" type="button">✕</button>
+        <button id="closeProvenance" class="filters-close" type="button">✕</button>
       </div>
       <div id="provenanceContent" class="provenance-modal-body"></div>
     </div>
@@ -839,7 +1322,64 @@
       }
     }
 
-    function initializeOperationsCenter() {
+        function setupFilterDrawer(root = document) {
+      const drawer = root.getElementById ? root.getElementById('left') : document.getElementById('left');
+      const openBtn = root.getElementById ? root.getElementById('filters-toggle') : document.getElementById('filters-toggle');
+      const closeBtn = root.getElementById ? root.getElementById('filters-close') : document.getElementById('filters-close');
+
+      if (!drawer || !openBtn) return;
+
+      const toggleDrawer = (open) => {
+        if (open) {
+          drawer.classList.add('open');
+          drawer.setAttribute('aria-hidden', 'false');
+          openBtn.setAttribute('aria-expanded', 'true');
+          document.body.classList.add('filters-open');
+        } else {
+          drawer.classList.remove('open');
+          drawer.setAttribute('aria-hidden', 'true');
+          openBtn.setAttribute('aria-expanded', 'false');
+          document.body.classList.remove('filters-open');
+        }
+      };
+
+      openBtn.addEventListener('click', () => {
+        const isOpen = drawer.classList.contains('open');
+        toggleDrawer(!isOpen);
+      });
+
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => toggleDrawer(false));
+      }
+
+      drawer.addEventListener('click', (event) => {
+        if (event.target === drawer) {
+          toggleDrawer(false);
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && drawer.classList.contains('open')) {
+          toggleDrawer(false);
+        }
+      });
+    }
+
+    function setupPanelTabs(root = document) {
+      const tabButtons = root.querySelectorAll ? root.querySelectorAll('.panel-tab') : [];
+      const panes = root.querySelectorAll ? root.querySelectorAll('.panel-pane') : [];
+      if (!tabButtons.length || !panes.length) return;
+
+      tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const target = button.dataset.panel;
+          tabButtons.forEach(btn => btn.classList.toggle('active', btn === button));
+          panes.forEach(pane => pane.classList.toggle('active', pane.dataset.panel === target));
+        });
+      });
+    }
+
+function initializeOperationsCenter() {
       // Start system time updates
       updateSystemTime();
       setInterval(updateSystemTime, 1000);
@@ -853,11 +1393,14 @@
       // Update status indicators based on system state
       const statusIndicators = document.querySelectorAll('.status-dot');
       statusIndicators.forEach(dot => {
-        // Simulate random status changes for demo
         if (Math.random() < 0.1) {
           dot.className = 'status-dot degraded';
         }
       });
+
+      // Wire up UI helpers
+      setupFilterDrawer();
+      setupPanelTabs();
     }
 
     async function loadInfrastructureData() {
@@ -2963,8 +3506,7 @@
       // DOM is already ready
       initializeMap();
     }
-  </script>
-<script>
+  </script><script>
     // Setup Modern Mobile UX
     function setupMobileUX() {
       const fab = document.getElementById('mobile-fab');
