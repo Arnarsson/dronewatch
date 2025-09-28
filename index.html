@@ -178,14 +178,29 @@
       font-weight: 400;
     }
 
-    /* Clean background - no distracting animations */
+    /* Clean background with subtle texture */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
-      background: linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%);
+      background:
+        linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%),
+        radial-gradient(circle at 20% 80%, rgba(0, 122, 255, 0.03) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
+    }
+
+    /* Subtle micro-interactions */
+    .interactive {
+      transition: var(--transition-fast);
+    }
+
+    .interactive:hover {
+      transform: translateY(-1px);
+    }
+
+    .interactive:active {
+      transform: translateY(0);
     }
 
     /* Monospace for data */
@@ -475,10 +490,49 @@
       backdrop-filter: blur(10px);
     }
 
-    /* Search bar */
+    /* Enhanced Search with suggestions */
     .search-container {
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-4);
       position: relative;
+    }
+
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: var(--z-dropdown);
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .search-suggestion {
+      padding: var(--space-3) var(--space-4);
+      cursor: pointer;
+      border-bottom: 1px solid var(--divider);
+      transition: var(--transition-fast);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .search-suggestion:hover {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+    }
+
+    .search-suggestion:last-child {
+      border-bottom: none;
+    }
+
+    .search-suggestion .match {
+      color: var(--primary);
+      font-weight: 600;
     }
 
     .search-input {
@@ -1358,6 +1412,236 @@
       font-weight: 500;
     }
 
+    /* Data Visualization Cards */
+    .data-cards {
+      padding: var(--space-4);
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-3);
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    .metric-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3);
+      text-align: center;
+      transition: var(--transition-fast);
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .metric-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: var(--space-1);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-1);
+    }
+
+    .metric-trend {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+    }
+
+    .metric-trend.positive {
+      color: var(--status-success);
+      background: rgba(50, 215, 75, 0.1);
+    }
+
+    .metric-trend.negative {
+      color: var(--status-active);
+      background: rgba(255, 69, 58, 0.1);
+    }
+
+    .metric-trend.neutral {
+      color: var(--text-secondary);
+      background: var(--surface-elevated);
+    }
+
+    /* Status Indicators and Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .status-badge.active {
+      color: var(--status-active);
+      background: rgba(255, 69, 58, 0.1);
+      border: 1px solid rgba(255, 69, 58, 0.2);
+    }
+
+    .status-badge.resolved {
+      color: var(--status-success);
+      background: rgba(50, 215, 75, 0.1);
+      border: 1px solid rgba(50, 215, 75, 0.2);
+    }
+
+    .status-badge.monitoring {
+      color: var(--status-warning);
+      background: rgba(255, 159, 10, 0.1);
+      border: 1px solid rgba(255, 159, 10, 0.2);
+    }
+
+    .status-badge.unconfirmed {
+      color: var(--text-secondary);
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Enhanced Live Feed */
+    .live-feed-content {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .feed-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2);
+      border-radius: var(--radius-md);
+      transition: var(--transition-fast);
+    }
+
+    .feed-item:hover {
+      background: var(--surface-elevated);
+    }
+
+    .feed-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--live-indicator);
+      flex-shrink: 0;
+    }
+
+    .feed-text {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+    }
+
+    .feed-time {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Empty States */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-8) var(--space-4);
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: var(--space-4);
+      opacity: 0.4;
+      color: var(--text-secondary);
+    }
+
+    .empty-state-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-state-description {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
+    /* Filter Chips Design */
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-3);
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: var(--text-on-color);
+      border-color: var(--primary);
+    }
+
+    .filter-chip:hover:not(.active) {
+      background: var(--surface-elevated);
+      border-color: var(--border-strong);
+    }
+
+    .filter-chip-remove {
+      margin-left: var(--space-1);
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .filter-chip-remove:hover {
+      opacity: 1;
+    }
+
     /* Mobile Overlay */
     .mobile-overlay {
       display: none;
@@ -1587,6 +1871,33 @@
 
       <!-- Incidents Tab -->
       <div class="tab-content active" id="incidents-tab">
+        <!-- Data Visualization Cards -->
+        <div class="data-cards">
+          <h3 class="section-title">Overview</h3>
+          <div class="metrics-grid">
+            <div class="metric-card interactive">
+              <div class="metric-value" id="metric-total">0</div>
+              <div class="metric-label">Total</div>
+              <div class="metric-trend positive">+5.2%</div>
+            </div>
+            <div class="metric-card interactive">
+              <div class="metric-value" id="metric-active">0</div>
+              <div class="metric-label">Active</div>
+              <div class="metric-trend negative">-2.1%</div>
+            </div>
+            <div class="metric-card interactive">
+              <div class="metric-value" id="metric-critical">0</div>
+              <div class="metric-label">Critical</div>
+              <div class="metric-trend neutral">0%</div>
+            </div>
+            <div class="metric-card interactive">
+              <div class="metric-value" id="metric-resolved">0</div>
+              <div class="metric-label">Resolved</div>
+              <div class="metric-trend positive">+12.3%</div>
+            </div>
+          </div>
+        </div>
+
         <div class="filter-controls">
           <!-- Search Bar -->
           <div class="search-container">
@@ -1594,7 +1905,10 @@
               <circle cx="7" cy="7" r="5"/>
               <path d="M10 10l4 4"/>
             </svg>
-            <input type="text" class="search-input" placeholder="Search incidents, locations..." id="search-input" oninput="searchIncidents(this.value)" aria-label="Search incidents" role="searchbox">
+            <input type="text" class="search-input" placeholder="Search incidents, locations..." id="search-input" oninput="handleSearchInput(this.value)" onfocus="showSearchSuggestions()" onblur="hideSearchSuggestions()" aria-label="Search incidents" role="searchbox">
+            <div class="search-suggestions" id="search-suggestions">
+              <!-- Search suggestions will be populated here -->
+            </div>
           </div>
           <div class="filter-group">
             <label>Status</label>
@@ -2037,6 +2351,78 @@
           showNotification('Exited fullscreen mode', 'info');
         });
       }
+    }
+
+    // Enhanced Search with Suggestions
+    const searchSuggestions = [
+      'Frankfurt Airport', 'Berlin', 'Amsterdam Schiphol', 'Paris CDG',
+      'Copenhagen', 'Stockholm', 'Oslo', 'Helsinki', 'Zurich',
+      'Active incidents', 'Critical alerts', 'Recent sightings',
+      'Airport closures', 'Military zones', 'Nuclear facilities'
+    ];
+
+    function handleSearchInput(value) {
+      searchIncidents(value);
+      updateSearchSuggestions(value);
+    }
+
+    function updateSearchSuggestions(query) {
+      const container = document.getElementById('search-suggestions');
+      if (!query.trim()) {
+        container.style.display = 'none';
+        return;
+      }
+
+      const filtered = searchSuggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 5);
+
+      if (filtered.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.innerHTML = filtered.map(suggestion => {
+        const highlighted = suggestion.replace(
+          new RegExp(query, 'gi'),
+          match => `<span class="match">${match}</span>`
+        );
+        return `<div class="search-suggestion" onclick="selectSuggestion('${suggestion}')">${highlighted}</div>`;
+      }).join('');
+
+      container.style.display = 'block';
+    }
+
+    function selectSuggestion(suggestion) {
+      document.getElementById('search-input').value = suggestion;
+      searchIncidents(suggestion);
+      hideSearchSuggestions();
+    }
+
+    function showSearchSuggestions() {
+      const input = document.getElementById('search-input');
+      if (input.value.trim()) {
+        updateSearchSuggestions(input.value);
+      }
+    }
+
+    function hideSearchSuggestions() {
+      setTimeout(() => {
+        document.getElementById('search-suggestions').style.display = 'none';
+      }, 200);
+    }
+
+    // Update metrics cards
+    function updateMetrics() {
+      const incidents = state.incidents || [];
+      const active = incidents.filter(i => i.incident?.status === 'active').length;
+      const critical = incidents.filter(i => i.scores?.severity >= 7).length;
+      const resolved = incidents.filter(i => i.incident?.status === 'resolved').length;
+
+      document.getElementById('metric-total').textContent = incidents.length;
+      document.getElementById('metric-active').textContent = active;
+      document.getElementById('metric-critical').textContent = critical;
+      document.getElementById('metric-resolved').textContent = resolved;
     }
 
     // Notification system
