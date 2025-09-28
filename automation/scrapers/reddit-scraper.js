@@ -145,7 +145,7 @@ export class RedditScraper {
           id: post.id,
           title: post.title,
           text: post.selftext || '',
-          url: `https://reddit.com${post.permalink}`,
+          url: `https://www.reddit.com${post.permalink}`,
           author: post.author,
           subreddit: post.subreddit,
           created: new Date(post.created_utc * 1000),

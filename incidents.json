@@ -1,12 +1,543 @@
 {
-  "generated_utc": "2025-09-27T23:02:32.456Z",
+  "generated_utc": "2025-09-28T08:58:46.264Z",
   "incidents": [
+    {
+      "id": "rss-lppt-2025-09-28-ypxd2a",
+      "first_seen_utc": "2025-09-28T06:21:54.000Z",
+      "last_update_utc": "2025-09-28T06:21:54.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Warsaw Chopin Airport",
+        "iata": "WAW",
+        "icao": "EPWA",
+        "lat": 52.1657,
+        "lon": 20.9671,
+        "country": "Poland"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "air force"
+        ],
+        "narrative": "Over 90 Russian Drones Headed Toward Poland on Sept. 10, Zelensky Says",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/61012",
+            "publisher": "Kyiv Post",
+            "title": "Over 90 Russian Drones Headed Toward Poland on Sept. 10, Zelensky Says",
+            "snippet": "On the night of September 9-10, around 20 Russian drones flew into Polish skies. Some were shot down by the Polish air force....",
+            "first_seen": "2025-09-28T06:21:54.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:44.027Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/61012"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 4000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "portugal",
+        "night",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "rss-lyni-2025-09-28-sm9c6p",
+      "first_seen_utc": "2025-09-28T05:00:00.000Z",
+      "last_update_utc": "2025-09-28T05:00:00.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Karup Air Base",
+        "iata": null,
+        "icao": "EKKA",
+        "lat": 56.3075,
+        "lon": 9.1247,
+        "country": "Denmark"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "military"
+        ],
+        "narrative": "More drones spotted near Danish military bases",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.azernews.az/region/248060.html",
+            "publisher": "AzerNews",
+            "title": "More drones spotted near Danish military bases",
+            "snippet": "Denmark reported fresh drone sightings above defense sites Friday and Saturday, after a week of chaos in the skies that temporarily shut down major airports, Azernews reports.\r\n\r\n...",
+            "first_seen": "2025-09-28T05:00:00.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:44.346Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "serbia",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "reddit-1ns9nu7-eddf",
+      "first_seen_utc": "2025-09-27T23:36:23.000Z",
+      "last_update_utc": "2025-09-27T23:36:23.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Frankfurt Airport",
+        "iata": "FRA",
+        "icao": "EDDF",
+        "lat": 50.0264,
+        "lon": 8.5431
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "reported",
+        "duration_min": 90,
+        "uav_count": 2,
+        "uav_characteristics": "DJI drone",
+        "response": [
+          "reported"
+        ],
+        "narrative": "Social media report: \"Broken gimbal frame. DJI Matrice 4T.\" - User-reported incident near Frankfurt Airport."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "unconfirmed",
+        "sources": [
+          {
+            "url": "https://www.reddit.com/r/drones/comments/1ns9nu7/broken_gimbal_frame_dji_matrice_4t/",
+            "publisher": "Reddit r/drones",
+            "title": "Broken gimbal frame. DJI Matrice 4T.",
+            "snippet": "I talked to the place I bought from, and they don't stock parts. Suggest I send it to Ohio Drone Repair. I live in MO. \nOnly 1 month old. I left the camera cover on it accidentally. The propeller hit ...",
+            "first_seen": "2025-09-27T23:36:23.000Z",
+            "note": "Real Reddit post by u/Firm-Walk8699 (1 points, 0 comments)",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:44.592Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 2000
+      },
+      "tags": [
+        "social-media",
+        "reddit",
+        "drones",
+        "germany"
+      ],
+      "keywords_matched": [
+        "drone",
+        "DJI"
+      ],
+      "data_type": "real",
+      "source_type": "reddit",
+      "collection_timestamp": "2025-09-28T08:51:36.621Z",
+      "social_metrics": {
+        "platform": "reddit",
+        "score": 1,
+        "comments": 0,
+        "upvote_ratio": 1,
+        "subreddit": "drones",
+        "author": "Firm-Walk8699"
+      },
+      "sources": [],
+      "source_types": [
+        "reddit"
+      ]
+    },
+    {
+      "id": "rss-lgir-2025-09-27-uebwak",
+      "first_seen_utc": "2025-09-27T11:55:45.000Z",
+      "last_update_utc": "2025-09-27T11:55:45.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Heraklion Airport",
+        "iata": "HER",
+        "icao": "LGIR",
+        "lat": 35.3397,
+        "lon": 25.1803,
+        "country": "Greece"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "security"
+        ],
+        "narrative": "NATO to increase Baltic presence after drone incidents",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 2,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.rte.ie/news/europe/2025/0927/1535627-denmark-drone-sighting/",
+            "publisher": "RTE",
+            "title": "NATO to increase Baltic presence after drone incidents",
+            "snippet": "NATO has said it is upgrading its mission in the Baltic Sea with an air-defence frigate and other assets in response to drone incursions in Denmark....",
+            "first_seen": "2025-09-27T11:55:45.000Z",
+            "credibility": 5,
+            "note": "Real news article - validated",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:44.703Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 3000,
+        "credibility": 5
+      },
+      "tags": [
+        "sighting",
+        "greece",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "rss-lyni-2025-09-27-g4d6l3",
+      "first_seen_utc": "2025-09-27T10:00:00.000Z",
+      "last_update_utc": "2025-09-27T10:00:00.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Karup Air Base",
+        "iata": null,
+        "icao": "EKKA",
+        "lat": 56.3075,
+        "lon": 9.1247,
+        "country": "Denmark"
+      },
+      "incident": {
+        "category": "threat",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 3,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "military"
+        ],
+        "narrative": "Denmark reports new drone sightings near its biggest military base",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.dailysabah.com/world/europe/denmark-reports-new-drone-sightings-near-its-biggest-military-base",
+            "publisher": "Daily Sabah",
+            "title": "Denmark reports new drone sightings near its biggest military base",
+            "snippet": "Unexplained drone flights were reported Saturday over several Danish military sites, including the country’s biggest base, in what officials describe as a “hybrid attack,” with pos......",
+            "first_seen": "2025-09-27T10:00:00.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:45.261Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 7,
+        "risk_radius_m": 7000,
+        "credibility": 3
+      },
+      "tags": [
+        "threat",
+        "serbia",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "reddit-1nrs7dn-loww",
+      "first_seen_utc": "2025-09-27T10:51:03.000Z",
+      "last_update_utc": "2025-09-27T10:51:03.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Vienna Airport",
+        "iata": "VIE",
+        "icao": "LOWW",
+        "lat": 48.1103,
+        "lon": 16.5697
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "reported",
+        "duration_min": 39,
+        "uav_count": 1,
+        "uav_characteristics": "DJI drone",
+        "response": [
+          "reported"
+        ],
+        "narrative": "Social media report: \"Dji mini 3 in Vietnam?\" - User-reported incident near Vienna Airport."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "unconfirmed",
+        "sources": [
+          {
+            "url": "https://www.reddit.com/r/drones/comments/1nrs7dn/dji_mini_3_in_vietnam/",
+            "publisher": "Reddit r/drones",
+            "title": "Dji mini 3 in Vietnam?",
+            "snippet": "Hi! I’ll be in Vietnam this November with my DJI Mini 3.\nDo I need a permit to fly it, or is it exempt since it’s under 250g?\nI’ve seen a lot of mixed info online — any recent experiences?\n\nThanks! 🙏...",
+            "first_seen": "2025-09-27T10:51:03.000Z",
+            "note": "Real Reddit post by u/Virtual_Secretary_15 (2 points, 2 comments)",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:45.735Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 2000
+      },
+      "tags": [
+        "social-media",
+        "reddit",
+        "drones",
+        "austria"
+      ],
+      "keywords_matched": [
+        "drone",
+        "DJI"
+      ],
+      "data_type": "real",
+      "source_type": "reddit",
+      "collection_timestamp": "2025-09-28T08:51:36.621Z",
+      "social_metrics": {
+        "platform": "reddit",
+        "score": 2,
+        "comments": 2,
+        "upvote_ratio": 1,
+        "subreddit": "drones",
+        "author": "Virtual_Secretary_15"
+      }
+    },
+    {
+      "id": "rss-edds-2025-09-27-ypwwwd",
+      "first_seen_utc": "2025-09-27T06:58:24.000Z",
+      "last_update_utc": "2025-09-27T06:58:24.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Stuttgart Airport",
+        "iata": "STR",
+        "icao": "EDDS",
+        "lat": 48.6899,
+        "lon": 9.2219,
+        "country": "Germany"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 115,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "security"
+        ],
+        "narrative": "Russia Launches 115 Drones, Strikes Critical Infrastructure in Vinnytsia",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60979",
+            "publisher": "Kyiv Post",
+            "title": "Russia Launches 115 Drones, Strikes Critical Infrastructure in Vinnytsia",
+            "snippet": "Russian forces launched 115 drones overnight on Sept. 27, hitting critical infrastructure in Vinnytsia...",
+            "first_seen": "2025-09-27T06:58:24.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:45.791Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/60979"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 3000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "germany",
+        "night",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "rss-lgir-2025-09-26-7mvojq",
+      "first_seen_utc": "2025-09-26T10:02:00.000Z",
+      "last_update_utc": "2025-09-26T10:02:00.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Copenhagen Airport",
+        "iata": "CPH",
+        "icao": "EKCH",
+        "lat": 55.6181,
+        "lon": 12.6561,
+        "country": "Denmark"
+      },
+      "incident": {
+        "category": "closure",
+        "status": "resolved",
+        "duration_min": 120,
+        "uav_count": 1,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "police"
+        ],
+        "narrative": "Hybrid Threats Escalate: Unidentified Drones Ground Flights in Denmark Again",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.novinite.com/view_news.php?id=234588",
+            "publisher": "Novinite",
+            "title": "Hybrid Threats Escalate: Unidentified Drones Ground Flights in Denmark Again",
+            "snippet": "The airspace over Aalborg Airport in northern Denmark was once again closed overnight on September 25-26 following reports of unidentified drones. According to Danish TV channel TV2, police received a report of a drone-like object at 11:40 p.m.......",
+            "first_seen": "2025-09-26T10:02:00.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated",
+            "url_verified": true,
+            "url_status": 200,
+            "last_verified": "2025-09-28T08:58:45.998Z"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 6,
+        "risk_radius_m": 6000,
+        "credibility": 3
+      },
+      "tags": [
+        "closure",
+        "greece",
+        "night",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z",
+      "sources": [],
+      "source_types": [
+        "rss_news"
+      ]
+    },
     {
       "id": "rss-cern-2025-09-26-ypwwqb",
       "first_seen_utc": "2025-09-26T07:36:21.000Z",
       "last_update_utc": "2025-09-26T07:36:21.000Z",
       "asset": {
-        "type": "airport",
+        "type": "research",
         "name": "Aalborg Airport",
         "iata": "AAL",
         "icao": "EKYT",
@@ -38,7 +569,12 @@
             "snippet": "Denmark’s Aalborg Airport was briefly closed Sept. 25 after drones were spotted in the airspace, forcing one flight to return and another to be canceled amid safety concerns....",
             "first_seen": "2025-09-26T07:36:21.000Z",
             "credibility": 3,
-            "note": "Real news article - validated"
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:46.077Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/60908"
           }
         ]
       },
@@ -61,29 +597,236 @@
       "data_type": "real",
       "source_type": "rss_news",
       "validation_status": "verified",
-      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "rss-ukoo-2025-09-26-ypwwq4",
+      "first_seen_utc": "2025-09-26T06:18:40.000Z",
+      "last_update_utc": "2025-09-26T06:18:40.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Odesa Airport",
+        "iata": "ODS",
+        "icao": "UKOO",
+        "lat": 46.4268,
+        "lon": 30.6765,
+        "country": "Ukraine"
+      },
+      "incident": {
+        "category": "disruption",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 154,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "security"
+        ],
+        "narrative": "Russia’s Drone Barrage Hits Homes in Sumy, Dnipropetrovsk, Disrupts Rail Service",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60901",
+            "publisher": "Kyiv Post",
+            "title": "Russia’s Drone Barrage Hits Homes in Sumy, Dnipropetrovsk, Disrupts Rail Service",
+            "snippet": "Russia launched 154 drones overnight, damaging civilian residential neighborhoods and infrastructure, and forcing rail disruptions in the Odesa region....",
+            "first_seen": "2025-09-26T06:18:40.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:46.142Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/60901"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 4,
+        "risk_radius_m": 4000,
+        "credibility": 3
+      },
+      "tags": [
+        "disruption",
+        "ukraine",
+        "night",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z"
+    },
+    {
+      "id": "rss-lyni-2025-09-25-ypww6d",
+      "first_seen_utc": "2025-09-25T22:42:08.000Z",
+      "last_update_utc": "2025-09-25T22:42:08.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Copenhagen Airport",
+        "iata": "CPH",
+        "icao": "EKCH",
+        "lat": 55.6181,
+        "lon": 12.6561,
+        "country": "Denmark"
+      },
+      "incident": {
+        "category": "threat",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "security"
+        ],
+        "narrative": "Denmark Says Airport Drone Flights Were ‘Hybrid Attacks’",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60883",
+            "publisher": "Kyiv Post",
+            "title": "Denmark Says Airport Drone Flights Were ‘Hybrid Attacks’",
+            "snippet": "“Over recent days, Denmark has been the victim of hybrid attacks,” Prime Minister Mette Frederiksen said in a video message on social media and warned that such drone flights “could multiply”....",
+            "first_seen": "2025-09-25T22:42:08.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:46.199Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/60883"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "threat",
+        "serbia",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z",
+      "sources": [],
+      "source_types": [
+        "rss_news"
+      ]
+    },
+    {
+      "id": "rss-lgir-2025-09-25-ypww4t",
+      "first_seen_utc": "2025-09-25T13:41:55.000Z",
+      "last_update_utc": "2025-09-25T13:41:55.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Kyiv Boryspil Airport",
+        "iata": "KBP",
+        "icao": "UKBB",
+        "lat": 50.345,
+        "lon": 30.8947,
+        "country": "Ukraine"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "security"
+        ],
+        "narrative": "Russian Drone Barrage Cuts Power and Water in Northern Ukraine, Sparks Criticism Over Preparedness",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60869",
+            "publisher": "Kyiv Post",
+            "title": "Russian Drone Barrage Cuts Power and Water in Northern Ukraine, Sparks Criticism Over Preparedness",
+            "snippet": "Russian drone strikes hit critical infrastructure in Chernihiv and Nizhyn on Sept. 25, leaving 30,000 without power and prompting sharp criticism over paucity of Ukraine’s air defenses in the area....",
+            "first_seen": "2025-09-25T13:41:55.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated [URL may have changed - check archive]",
+            "url_verified": false,
+            "url_status": 404,
+            "url_error": "Not found",
+            "last_verified": "2025-09-28T08:58:46.264Z",
+            "archive_url": "https://web.archive.org/web/*/https://www.kyivpost.com/post/60869"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 3,
+        "risk_radius_m": 3000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "greece",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-28T08:51:07.528Z",
+      "sources": [],
+      "source_types": [
+        "rss_news"
+      ]
     }
   ],
   "data_notice": "LIVE DATA: Real drone incidents collected from multiple sources including news, official NOTAMs, social media, and aviation authorities.",
   "metadata": {
-    "collection_timestamp": "2025-09-27T23:02:32.454Z",
+    "collection_timestamp": "2025-09-28T08:51:36.628Z",
     "total_sources": 2,
     "source_breakdown": {
-      "rss_news": 12,
-      "reddit": 3
+      "rss_news": 13,
+      "reddit": 4
     },
     "quality_stats": {
-      "raw": 15,
+      "raw": 17,
       "deduplicated": 13,
       "enriched": 13,
-      "final": 13
+      "final": 12
     },
-    "last_cleaned": "2025-09-28T08:16:30.082Z",
-    "cleaning_stats": {
-      "original_count": 13,
-      "removed_count": 12,
-      "kept_count": 1,
-      "cleaning_timestamp": "2025-09-28T08:16:30.085Z"
+    "urls_verified": "2025-09-28T08:58:46.264Z",
+    "url_stats": {
+      "total": 12,
+      "valid": 6,
+      "fixed": 2,
+      "broken": 6
     }
   }
 }

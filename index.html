@@ -13,6 +13,8 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Leaflet Heat Map Plugin -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <style>
     /* Base styles */
@@ -160,34 +162,36 @@
 
     .stat-badge {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.375rem 0.875rem;
       background: var(--glass-light);
       border: 1px solid var(--border);
-      border-radius: 0;
+      border-radius: 8px;
       backdrop-filter: blur(10px);
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8125rem;
+      min-width: 65px;
     }
 
     .stat-badge:hover {
-      background: rgba(14, 165, 233, 0.1);
-      border-color: rgba(14, 165, 233, 0.3);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     }
 
     .stat-badge span:first-child {
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.625rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 0.125rem;
     }
 
     .stat-badge span:last-child {
       color: var(--text);
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 1.125rem;
     }
 
     .stat-badge.new {
@@ -381,18 +385,20 @@
       scroll-behavior: smooth;
     }
 
-    /* Enhanced incident cards with glassmorphism */
+    /* Ultra-Enhanced Professional Incident Cards */
     .incident-card {
-      background: var(--glass-light);
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9));
       border: 1px solid var(--border);
-      border-radius: 0;
-      padding: 1.125rem;
-      margin-bottom: 0.875rem;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       overflow: hidden;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
     }
 
     .incident-card::before {
@@ -434,12 +440,22 @@
     }
 
     .incident-card:hover {
-      background: rgba(14, 165, 233, 0.08);
-      border-color: rgba(14, 165, 233, 0.3);
-      transform: translateX(4px);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(30, 41, 59, 0.95));
+      border-color: rgba(37, 99, 235, 0.5);
+      transform: translateY(-2px) translateX(2px) scale(1.01);
       box-shadow:
-        0 4px 20px rgba(14, 165, 233, 0.15),
+        0 12px 24px rgba(37, 99, 235, 0.2),
+        0 8px 16px rgba(0, 0, 0, 0.4),
         inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .incident-card:hover::before {
+      animation: severityPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes severityPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
 
     .incident-header {
@@ -615,6 +631,38 @@
     #map {
       width: 100%;
       height: 100%;
+      background: #0a0e1a;
+    }
+
+    /* Animated Risk Zones */
+    .leaflet-interactive.active-risk-zone {
+      animation: riskPulse 3s ease-in-out infinite;
+    }
+
+    .leaflet-interactive.critical-zone {
+      animation: criticalPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes riskPulse {
+      0%, 100% {
+        fill-opacity: 0.05;
+        stroke-opacity: 0.8;
+      }
+      50% {
+        fill-opacity: 0.15;
+        stroke-opacity: 1;
+      }
+    }
+
+    @keyframes criticalPulse {
+      0%, 100% {
+        fill-opacity: 0.15;
+        stroke-opacity: 0.9;
+      }
+      50% {
+        fill-opacity: 0.25;
+        stroke-opacity: 1;
+      }
     }
 
     /* Enhanced Map Controls Panel */
@@ -1029,67 +1077,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
-  <div class="header">
-    <h1>
-      <div class="logo">
-        <!-- Professional DroneWatch Logo -->
-        <svg width="32" height="32" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g stroke-linecap="round" stroke-linejoin="round">
-            <!-- Concentric rings -->
-            <circle cx="160" cy="160" r="116" stroke="#2563eb" stroke-width="2"
-                    stroke-dasharray="180 60 50 30 40 40" stroke-dashoffset="8" fill="none"/>
-            <circle cx="160" cy="160" r="80" stroke="#60a5fa" stroke-width="2"
-                    stroke-dasharray="90 30 38 24 20 28" stroke-dashoffset="4" fill="none"/>
-            <circle cx="160" cy="160" r="48" stroke="#60a5fa" stroke-width="2"
-                    stroke-dasharray="64 22 20 18" stroke-dashoffset="2" fill="none"/>
-            <!-- Radials -->
-            <path d="M199.32 187.53 L255.02 226.53" stroke="#60a5fa" stroke-width="2"/>
-            <path d="M118.43 136.00 L59.54 102.00" stroke="#60a5fa" stroke-width="2"/>
-            <!-- Scan wedge -->
-            <path d="M198.04,147.64 A40,40 0 0 1 198.04,172.36 L270.32,195.85 A116,116 0 0 0 270.32,124.15 Z"
-                  fill="#2563eb" opacity="0.25"/>
-            <!-- Incident marker -->
-            <circle cx="225.53" cy="205.89" r="5.2" fill="none" stroke="#FFC247" stroke-width="1.5" opacity=".9"/>
-            <rect x="222.93" y="203.29" width="5.2" height="5.2" fill="#FF8A00"
-                  transform="rotate(45 225.53 205.89)" rx="0.6"/>
-          </g>
-        </svg>
-      </div>
-      <span>Dronewatch<span style="font-weight: 600; font-size: 0.75em; opacity: 0.8; margin-left: 0.25rem;">.cc</span></span>
-      <div class="live-indicator">
-        <span class="live-dot"></span>
-        <span>Live</span>
-      </div>
-    </h1>
-    <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-        <path d="M3 6h14M3 10h14M3 14h14"/>
-      </svg>
-    </button>
-    <div class="header-stats">
-      <div class="stat-badge" id="risk-level-badge" style="background: rgba(220, 38, 38, 0.1); border-color: rgba(220, 38, 38, 0.3);">
-        <span>Risk:</span>
-        <span id="current-risk-level">HIGH</span>
-      </div>
-      <div class="stat-badge" id="new-incidents-badge">
-        <span>New:</span>
-        <span id="new-count">0</span>
-      </div>
-      <div class="stat-badge">
-        <span>Active:</span>
-        <span id="active-count">0</span>
-      </div>
-      <div class="stat-badge">
-        <span>Total:</span>
-        <span id="total-count">0</span>
-      </div>
-      <div class="stat-badge">
-        <span>Updated:</span>
-        <span id="last-update">--:--</span>
-      </div>
-    </div>
-  </div>
 
   <!-- Main Container -->
   <div class="main-container">
@@ -1310,6 +1297,37 @@
             </div>
           </div>
         </div>
+        <!-- AI-Powered Live Feed Section -->
+        <div class="sidebar-section" style="margin-top: 1rem; border-top: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+            <h3 style="font-size: 0.875rem; font-weight: 600; color: var(--text);">
+              <span style="color: #22c55e;">●</span> Live Activity Feed
+            </h3>
+            <button class="filter-btn" onclick="toggleAIAnalysis()" id="ai-toggle"
+                    style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: linear-gradient(45deg, #8b5cf6, #ec4899);">
+              🤖 AI On
+            </button>
+          </div>
+
+          <div class="live-feed" id="live-feed" style="max-height: 300px; overflow-y: auto;">
+            <!-- Dynamic live feed items will be inserted here -->
+          </div>
+
+          <!-- AI Threat Assessment Panel -->
+          <div id="ai-panel" class="ai-assessment" style="margin-top: 1rem; padding: 1rem; background: var(--surface); border-radius: 8px; display: none;">
+            <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">AI Threat Analysis</h4>
+            <div id="ai-threat-level" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+              <div style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; animation: pulse 2s infinite;"></div>
+              <span style="font-size: 0.9rem;">Current Threat: <strong id="threat-text">Low</strong></span>
+            </div>
+            <div id="ai-prediction" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+              <!-- AI predictions will appear here -->
+            </div>
+            <div id="ai-recommendations" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border); font-size: 0.8rem;">
+              <!-- AI recommendations will appear here -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1430,7 +1448,8 @@
         time: '30d',  // Show last 30 days by default to see all real incidents
         severity: 'all',
         evidence: 'all',
-        location: 'all'
+        location: 'all',
+        hideOldIncidents: true  // Hide old incidents being reported as new by default
       },
       lastUpdate: null,
       newIncidents: [],
@@ -1722,6 +1741,336 @@
       }
     }
 
+    // Initialize Live Feed with clickable links
+    function initializeLiveFeed() {
+      console.log('📺 Initializing Live Feed...');
+
+      // Add initial welcome message
+      const feedContainer = document.getElementById('live-feed');
+      if (feedContainer) {
+        feedContainer.innerHTML = `
+          <div class="feed-item" style="padding: 0.75rem; border-bottom: 1px solid var(--border); animation: fadeIn 0.5s;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+              ${new Date().toLocaleTimeString()}
+            </div>
+            <div style="font-size: 0.875rem; color: var(--text);">
+              🚀 DroneWatch Live Feed Activated
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">
+              Monitoring European airspace for drone incidents...
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Add incidents to live feed with clickable links
+    function addToLiveFeed(incidents) {
+      const feedContainer = document.getElementById('live-feed');
+      if (!feedContainer) return;
+
+      incidents.forEach(incident => {
+        const feedItem = document.createElement('div');
+        feedItem.className = 'feed-item';
+        feedItem.style.cssText = 'padding: 0.75rem; border-bottom: 1px solid var(--border); animation: slideIn 0.5s; cursor: pointer;';
+
+        // Get source URL
+        const source = incident.evidence?.sources?.[0];
+        const url = source?.url_verified !== false ? source?.url : source?.archive_url;
+        const isArchive = source?.url_verified === false;
+
+        feedItem.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.25rem;">
+                ${new Date(incident.first_seen_utc).toLocaleTimeString()} • ${incident.asset?.country || 'Unknown'}
+              </div>
+              <div style="font-size: 0.875rem; color: var(--text); font-weight: 500; margin-bottom: 0.25rem;">
+                ${getSeverityEmoji(incident.scores?.severity)} ${incident.incident?.narrative?.substring(0, 100)}...
+              </div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">
+                📍 ${incident.asset?.name || 'Unknown Location'} •
+                ${incident.incident?.category || 'Unknown'} •
+                ${incident.incident?.uav_count || '?'} UAV(s)
+              </div>
+              ${url ? `
+                <div style="margin-top: 0.5rem;">
+                  <a href="${url}" target="_blank" rel="noopener noreferrer"
+                     style="font-size: 0.75rem; color: #3b82f6; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem;"
+                     onclick="event.stopPropagation();">
+                    ${isArchive ? '📚 View Archive' : '🔗 View Source'}
+                    <svg width="10" height="10" fill="currentColor" style="opacity: 0.7;">
+                      <path d="M8.5 0v1.5H2.7L9 7.8l-1 1L1.5 2.3V8H0V0h8.5z"/>
+                    </svg>
+                  </a>
+                  ${source?.publisher ? `<span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 0.5rem;">${source.publisher}</span>` : ''}
+                </div>
+              ` : ''}
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+              <div style="padding: 0.25rem 0.5rem; background: ${getSeverityColor(incident.scores?.severity)}20;
+                          color: ${getSeverityColor(incident.scores?.severity)}; border-radius: 4px;
+                          font-size: 0.7rem; font-weight: 600;">
+                SEV ${incident.scores?.severity || '?'}
+              </div>
+              ${incident.evidence?.sources?.[0]?.url_verified === false ?
+                '<div style="font-size: 0.6rem; color: #f59e0b;">⚠️ Broken Link</div>' : ''}
+            </div>
+          </div>
+        `;
+
+        // Add click handler to zoom to incident
+        feedItem.onclick = () => {
+          if (incident.asset?.lat && incident.asset?.lon) {
+            state.map.setView([incident.asset.lat, incident.asset.lon], 10);
+            // Flash the marker
+            const marker = state.markers.get(incident.id);
+            if (marker) {
+              marker.openPopup();
+            }
+          }
+        };
+
+        // Add to top of feed
+        feedContainer.insertBefore(feedItem, feedContainer.firstChild);
+
+        // Limit feed to 20 items
+        while (feedContainer.children.length > 20) {
+          feedContainer.removeChild(feedContainer.lastChild);
+        }
+      });
+    }
+
+    // Initialize AI System
+    let aiEnabled = false;
+    function initializeAISystem() {
+      console.log('🤖 Initializing AI System...');
+
+      // Start AI threat analysis
+      analyzeThreats();
+
+      // Update AI predictions every 30 seconds
+      setInterval(() => {
+        if (aiEnabled) {
+          analyzeThreats();
+          generatePredictions();
+        }
+      }, 30000);
+    }
+
+    // Toggle AI Analysis
+    function toggleAIAnalysis() {
+      aiEnabled = !aiEnabled;
+      const aiPanel = document.getElementById('ai-panel');
+      const aiToggle = document.getElementById('ai-toggle');
+
+      if (aiEnabled) {
+        aiPanel.style.display = 'block';
+        aiToggle.textContent = '🤖 AI On';
+        aiToggle.style.background = 'linear-gradient(45deg, #8b5cf6, #ec4899)';
+        analyzeThreats();
+        generatePredictions();
+      } else {
+        aiPanel.style.display = 'none';
+        aiToggle.textContent = '🤖 AI Off';
+        aiToggle.style.background = 'var(--surface)';
+      }
+    }
+
+    // AI Threat Analysis
+    function analyzeThreats() {
+      const incidents = state.incidents;
+      if (!incidents.length) return;
+
+      // Calculate threat metrics
+      const recentIncidents = incidents.filter(i => {
+        const hoursSince = (Date.now() - new Date(i.first_seen_utc).getTime()) / (1000 * 60 * 60);
+        return hoursSince < 72; // Last 72 hours
+      });
+
+      const threatScore = calculateThreatScore(recentIncidents);
+      updateThreatLevel(threatScore);
+
+      // Generate recommendations
+      generateRecommendations(recentIncidents, threatScore);
+    }
+
+    // Calculate threat score based on incidents
+    function calculateThreatScore(incidents) {
+      let score = 0;
+
+      incidents.forEach(incident => {
+        // Base score from severity
+        score += (incident.scores?.severity || 3) * 0.5;
+
+        // Category multipliers
+        if (incident.incident?.category === 'breach') score += 2;
+        if (incident.incident?.category === 'closure') score += 1.5;
+        if (incident.incident?.category === 'threat') score += 1;
+
+        // Location multipliers
+        if (incident.asset?.type === 'military') score += 1.5;
+        if (incident.asset?.type === 'airport') score += 1;
+
+        // UAV count factor
+        const uavCount = incident.incident?.uav_count || 1;
+        if (uavCount > 5) score += 2;
+        else if (uavCount > 2) score += 1;
+      });
+
+      // Normalize to 0-100
+      return Math.min(100, Math.round(score));
+    }
+
+    // Update threat level display
+    function updateThreatLevel(score) {
+      const threatText = document.getElementById('threat-text');
+      const threatIndicator = document.querySelector('#ai-threat-level div');
+
+      let level, color;
+      if (score < 20) {
+        level = 'Low';
+        color = '#22c55e';
+      } else if (score < 40) {
+        level = 'Moderate';
+        color = '#3b82f6';
+      } else if (score < 60) {
+        level = 'Elevated';
+        color = '#f59e0b';
+      } else if (score < 80) {
+        level = 'High';
+        color = '#f97316';
+      } else {
+        level = 'Critical';
+        color = '#dc2626';
+      }
+
+      if (threatText) threatText.textContent = level;
+      if (threatIndicator) threatIndicator.style.background = color;
+    }
+
+    // Generate AI predictions
+    function generatePredictions() {
+      const predictionDiv = document.getElementById('ai-prediction');
+      if (!predictionDiv) return;
+
+      const incidents = state.incidents;
+      const patterns = analyzePatterns(incidents);
+
+      const predictions = [
+        `📊 Pattern Analysis: ${patterns.timePattern} activity detected`,
+        `🎯 Hotspots: ${patterns.hotspots.join(', ') || 'No clear hotspots identified'}`,
+        `📈 Trend: ${patterns.trend} in drone incidents over the past week`,
+        `⏰ Peak Activity: Most incidents occur around ${patterns.peakTime}`,
+        `🔮 Next 24h: ${patterns.riskLevel} probability of incidents in monitored areas`
+      ];
+
+      predictionDiv.innerHTML = predictions.map(p =>
+        `<div style="margin-bottom: 0.25rem;">• ${p}</div>`
+      ).join('');
+    }
+
+    // Analyze incident patterns
+    function analyzePatterns(incidents) {
+      const patterns = {
+        timePattern: 'Normal',
+        hotspots: [],
+        trend: 'Stable',
+        peakTime: '20:00-22:00',
+        riskLevel: 'Moderate'
+      };
+
+      if (!incidents.length) return patterns;
+
+      // Time pattern analysis
+      const nightIncidents = incidents.filter(i => {
+        const hour = new Date(i.first_seen_utc).getHours();
+        return hour < 6 || hour > 20;
+      });
+      if (nightIncidents.length > incidents.length * 0.6) {
+        patterns.timePattern = 'Increased nighttime';
+      }
+
+      // Hotspot analysis
+      const locationCounts = {};
+      incidents.forEach(i => {
+        const country = i.asset?.country || 'Unknown';
+        locationCounts[country] = (locationCounts[country] || 0) + 1;
+      });
+      patterns.hotspots = Object.entries(locationCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 3)
+        .filter(([_, count]) => count > 1)
+        .map(([country, _]) => country);
+
+      // Trend analysis
+      const recentCount = incidents.filter(i => {
+        const daysSince = (Date.now() - new Date(i.first_seen_utc).getTime()) / (1000 * 60 * 60 * 24);
+        return daysSince < 7;
+      }).length;
+      const previousCount = incidents.filter(i => {
+        const daysSince = (Date.now() - new Date(i.first_seen_utc).getTime()) / (1000 * 60 * 60 * 24);
+        return daysSince >= 7 && daysSince < 14;
+      }).length;
+
+      if (recentCount > previousCount * 1.5) patterns.trend = 'Significant increase';
+      else if (recentCount > previousCount * 1.2) patterns.trend = 'Moderate increase';
+      else if (recentCount < previousCount * 0.8) patterns.trend = 'Decrease';
+
+      return patterns;
+    }
+
+    // Generate AI recommendations
+    function generateRecommendations(incidents, threatScore) {
+      const recDiv = document.getElementById('ai-recommendations');
+      if (!recDiv) return;
+
+      const recommendations = [];
+
+      if (threatScore > 60) {
+        recommendations.push('🚨 Heightened alert recommended for all monitored facilities');
+      }
+      if (threatScore > 40) {
+        recommendations.push('⚡ Increase monitoring frequency and response readiness');
+      }
+
+      // Location-specific recommendations
+      const militaryIncidents = incidents.filter(i => i.asset?.type === 'military');
+      if (militaryIncidents.length > 0) {
+        recommendations.push('🛡️ Enhanced security protocols for military installations');
+      }
+
+      const airportIncidents = incidents.filter(i => i.asset?.type === 'airport');
+      if (airportIncidents.length > 2) {
+        recommendations.push('✈️ Consider temporary airspace restrictions in affected regions');
+      }
+
+      if (recommendations.length === 0) {
+        recommendations.push('✅ Continue standard monitoring procedures');
+      }
+
+      recDiv.innerHTML = `
+        <div style="font-weight: 600; margin-bottom: 0.25rem;">Recommendations:</div>
+        ${recommendations.map(r => `<div style="margin-bottom: 0.25rem;">• ${r}</div>`).join('')}
+      `;
+    }
+
+    // Helper function to get severity emoji
+    function getSeverityEmoji(severity) {
+      if (severity >= 8) return '🔴';
+      if (severity >= 6) return '🟠';
+      if (severity >= 4) return '🟡';
+      return '🟢';
+    }
+
+    // Helper function to get severity color
+    function getSeverityColor(severity) {
+      if (severity >= 8) return '#dc2626';
+      if (severity >= 6) return '#f97316';
+      if (severity >= 4) return '#f59e0b';
+      return '#22c55e';
+    }
+
     // Load incidents
     async function loadIncidents(isUpdate = false) {
       console.log('📡 Loading incidents...');
@@ -1762,6 +2111,11 @@
       state.clusterGroup.clearLayers();
       state.markers.clear();
 
+      // Remove existing heat layer if it exists
+      if (state.heatLayer) {
+        state.map.removeLayer(state.heatLayer);
+      }
+
       // Apply filters
       const filtered = filterIncidents(state.incidents);
 
@@ -1772,6 +2126,30 @@
       if (filtered.length === 0) {
         listEl.innerHTML = '<div style="color: var(--text-muted); text-align: center; padding: 2rem;">No incidents match filters</div>';
         return;
+      }
+
+      // Prepare heat map data
+      const heatData = filtered.map(incident => {
+        const intensity = incident.scores.severity / 10;
+        return [incident.asset.lat, incident.asset.lon, intensity];
+      });
+
+      // Create heat map layer
+      if (heatData.length > 0) {
+        state.heatLayer = L.heatLayer(heatData, {
+          radius: 35,
+          blur: 25,
+          maxZoom: 10,
+          gradient: {
+            0.0: '#0000ff',
+            0.2: '#00ffff',
+            0.4: '#00ff00',
+            0.6: '#ffff00',
+            0.8: '#ff9900',
+            1.0: '#ff0000'
+          },
+          minOpacity: 0.3
+        }).addTo(state.map);
       }
 
       // Add markers and cards
@@ -1995,54 +2373,159 @@
                          incident.scores.severity >= 4 ? 'medium' : 'low';
 
         card.innerHTML = `
-          <div class="incident-header">
-            <div class="incident-title">${incident.asset.name}</div>
-            <div class="incident-time mono">${getRelativeTime(incident.first_seen_utc)}</div>
+          <!-- Enhanced Card Header with Severity Indicator -->
+          <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+                      background: ${riskLevel === 'critical' ? 'linear-gradient(180deg, #dc2626, #b91c1c)' :
+                                   riskLevel === 'high' ? 'linear-gradient(180deg, #f97316, #ea580c)' :
+                                   riskLevel === 'medium' ? 'linear-gradient(180deg, #facc15, #eab308)' :
+                                   'linear-gradient(180deg, #84cc16, #65a30d)'};
+                      box-shadow: 0 0 10px ${riskLevel === 'critical' ? 'rgba(220, 38, 38, 0.5)' :
+                                            riskLevel === 'high' ? 'rgba(249, 115, 22, 0.5)' :
+                                            riskLevel === 'medium' ? 'rgba(250, 204, 21, 0.5)' :
+                                            'rgba(132, 204, 22, 0.5)'};">
           </div>
-          <div class="incident-meta">
-            <span class="mono">${incident.asset.iata || incident.asset.icao || 'UNKNOWN'}</span>
-            <span style="color: var(--text-dim);">•</span>
-            <span>${incident.asset.type}</span>
-            ${incident.incident.duration_min ? `<span style="color: var(--text-dim);">•</span> <span class="mono">${incident.incident.duration_min}min</span>` : ''}
-          </div>
-          <div style="margin: 0.75rem 0; padding: 0.75rem; background: rgba(30, 41, 59, 0.3); border-radius: 6px; border: 1px solid var(--border);">
-            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-              <span style="color: var(--text-muted); font-size: 0.875rem;">📰</span>
-              <span style="color: var(--text); font-size: 0.8125rem; font-weight: 500;">${newsSource}</span>
+
+          <div class="incident-header" style="margin-bottom: 0.875rem;">
+            <div style="flex: 1;">
+              <div class="incident-title" style="font-size: 1.125rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.25rem;">
+                ${incident.asset.name}
+                ${isNew ? '<span style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 0.125rem 0.375rem; border-radius: 999px; font-size: 0.625rem; font-weight: 600; margin-left: 0.5rem; vertical-align: middle;">NEW</span>' : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 0.8125rem; color: #94a3b8;">
+                <span class="mono" style="font-weight: 600;">${incident.asset.iata || incident.asset.icao || 'UNKNOWN'}</span>
+                <span style="color: #475569;">•</span>
+                <span>${incident.asset.type.toUpperCase()}</span>
+                ${incident.incident.duration_min ? `<span style="color: #475569;">•</span> <span class="mono">${incident.incident.duration_min} MIN</span>` : ''}
+              </div>
             </div>
-            ${incident.incident.narrative ? `<div style="font-size: 0.8125rem; color: var(--text-muted); line-height: 1.5;">${incident.incident.narrative.substring(0, 120)}...</div>` : ''}
+            <div class="incident-time mono" style="text-align: right; color: #64748b;">
+              <div style="font-size: 0.875rem; font-weight: 600;">${getRelativeTime(incident.first_seen_utc)}</div>
+              <div style="font-size: 0.6875rem; opacity: 0.8;">${new Date(incident.first_seen_utc).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</div>
+            </div>
           </div>
-          <div class="incident-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
-            <span class="incident-status status-${incident.incident.status}" style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">
-              ${incident.incident.status}
+
+          <!-- Rich Status and Severity Badges -->
+          <div class="incident-badges" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem;">
+            <span class="incident-status status-${incident.incident.status}" style="
+              background: ${incident.incident.status === 'active' ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #22c55e, #16a34a)'};
+              color: white;
+              padding: 0.375rem 0.875rem;
+              border-radius: 999px;
+              font-size: 0.6875rem;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.1em;
+              box-shadow: 0 2px 8px ${incident.incident.status === 'active' ? 'rgba(239, 68, 68, 0.4)' : 'rgba(34, 197, 94, 0.4)'};">
+              ${incident.incident.status === 'active' ? '⚡ ACTIVE' : '✓ RESOLVED'}
             </span>
-            <span style="background: ${riskLevel === 'critical' ? 'rgba(220, 38, 38, 0.2)' :
-                                      riskLevel === 'high' ? 'rgba(249, 115, 22, 0.2)' :
-                                      riskLevel === 'medium' ? 'rgba(250, 204, 21, 0.2)' : 'rgba(132, 204, 22, 0.2)'};
-                         color: ${riskLevel === 'critical' ? 'var(--risk-critical)' :
-                                 riskLevel === 'high' ? 'var(--risk-high)' :
-                                 riskLevel === 'medium' ? 'var(--risk-medium)' : 'var(--risk-low)'};
-                         padding: 0.25rem 0.625rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
-                         border: 1px solid ${riskLevel === 'critical' ? 'rgba(220, 38, 38, 0.3)' :
-                                           riskLevel === 'high' ? 'rgba(249, 115, 22, 0.3)' :
-                                           riskLevel === 'medium' ? 'rgba(250, 204, 21, 0.3)' : 'rgba(132, 204, 22, 0.3)'};">
-              SEV ${incident.scores.severity}/10
+
+            <span style="
+              background: linear-gradient(135deg, ${riskLevel === 'critical' ? 'rgba(220, 38, 38, 0.25), rgba(220, 38, 38, 0.15)' :
+                                                   riskLevel === 'high' ? 'rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.15)' :
+                                                   riskLevel === 'medium' ? 'rgba(250, 204, 21, 0.25), rgba(250, 204, 21, 0.15)' :
+                                                   'rgba(132, 204, 22, 0.25), rgba(132, 204, 22, 0.15)'});
+              color: ${riskLevel === 'critical' ? '#ef4444' :
+                      riskLevel === 'high' ? '#f97316' :
+                      riskLevel === 'medium' ? '#facc15' : '#84cc16'};
+              padding: 0.375rem 0.75rem;
+              border-radius: 8px;
+              font-size: 0.75rem;
+              font-weight: 700;
+              border: 1px solid ${riskLevel === 'critical' ? 'rgba(220, 38, 38, 0.4)' :
+                                riskLevel === 'high' ? 'rgba(249, 115, 22, 0.4)' :
+                                riskLevel === 'medium' ? 'rgba(250, 204, 21, 0.4)' :
+                                'rgba(132, 204, 22, 0.4)'};">
+              <span style="font-size: 0.625rem; opacity: 0.8;">SEVERITY</span> ${incident.scores.severity}/10
             </span>
-            <span style="background: rgba(14, 165, 233, 0.15); color: var(--text-accent);
-                         padding: 0.25rem 0.625rem; border-radius: 6px; font-size: 0.75rem;
-                         border: 1px solid rgba(14, 165, 233, 0.3);">
-              ${getEvidenceLevel(incident.evidence.strength)}
+
+            <span style="
+              background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.1));
+              color: #38bdf8;
+              padding: 0.375rem 0.75rem;
+              border-radius: 8px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              border: 1px solid rgba(14, 165, 233, 0.3);">
+              📊 ${getEvidenceLevel(incident.evidence.strength).toUpperCase()}
             </span>
-            <span style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
-                         color: #ff6b6b; padding: 0.25rem 0.75rem; border-radius: 999px;
-                         font-size: 0.75rem; font-weight: 600;
-                         border: 1px solid rgba(239, 68, 68, 0.3);
-                         display: flex; align-items: center; gap: 0.375rem;">
+
+            <span style="
+              background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.1));
+              color: #c084fc;
+              padding: 0.375rem 0.875rem;
+              border-radius: 999px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              border: 1px solid rgba(168, 85, 247, 0.3);
+              display: flex;
+              align-items: center;
+              gap: 0.375rem;">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="7" cy="7" r="5" stroke-dasharray="2 2"/>
+                <circle cx="7" cy="7" r="6"/>
+                <circle cx="7" cy="7" r="3" stroke-dasharray="2 1"/>
               </svg>
               <span class="mono">${(incident.scores.risk_radius_m / 1000).toFixed(1)}km</span>
             </span>
+
+            <span style="
+              background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(251, 146, 60, 0.1));
+              color: #fb923c;
+              padding: 0.375rem 0.75rem;
+              border-radius: 8px;
+              font-size: 0.75rem;
+              font-weight: 600;
+              border: 1px solid rgba(251, 146, 60, 0.3);">
+              📍 ${incident.incident.category.toUpperCase()}
+            </span>
+
+            ${incident.date_verification ? `
+              <span style="
+                background: linear-gradient(135deg, ${
+                  incident.date_verification.status === 'verified' ? 'rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1)' :
+                  incident.date_verification.status === 'probable' ? 'rgba(250, 204, 21, 0.2), rgba(250, 204, 21, 0.1)' :
+                  'rgba(156, 163, 175, 0.2), rgba(156, 163, 175, 0.1)'
+                });
+                color: ${
+                  incident.date_verification.status === 'verified' ? '#22c55e' :
+                  incident.date_verification.status === 'probable' ? '#facc15' :
+                  '#9ca3af'
+                };
+                padding: 0.375rem 0.75rem;
+                border-radius: 8px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                border: 1px solid ${
+                  incident.date_verification.status === 'verified' ? 'rgba(34, 197, 94, 0.3)' :
+                  incident.date_verification.status === 'probable' ? 'rgba(250, 204, 21, 0.3)' :
+                  'rgba(156, 163, 175, 0.3)'
+                };
+                display: flex;
+                align-items: center;
+                gap: 0.375rem;
+                cursor: help;"
+                title="${incident.date_verification.is_old_incident ?
+                  `Incident occurred ${incident.date_verification.days_since_incident} days ago (${incident.date_verification.extracted_date || 'date extracted'})` :
+                  `Date verification: ${incident.date_verification.confidence}% confidence`}">
+                ${incident.date_verification.status === 'verified' ? '✅' :
+                  incident.date_verification.status === 'probable' ? '⚠️' : '❔'}
+                ${incident.date_verification.is_old_incident ?
+                  `${incident.date_verification.days_since_incident}d old` :
+                  'RECENT'}
+              </span>
+            ` : ''}
+          </div>
+
+          <!-- Incident Narrative with Enhanced Styling -->
+          <div style="margin-bottom: 1rem; padding: 0.875rem; background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(15, 23, 42, 0.5)); border-radius: 8px; border: 1px solid rgba(148, 163, 184, 0.15);">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.625rem;">
+              <span style="color: #60a5fa; font-size: 0.875rem;">📰</span>
+              <span style="color: #cbd5e1; font-size: 0.8125rem; font-weight: 600;">${newsSource}</span>
+            </div>
+            ${incident.incident.narrative ? `
+              <div style="font-size: 0.8125rem; color: #94a3b8; line-height: 1.6;">
+                ${incident.incident.narrative.substring(0, 150)}${incident.incident.narrative.length > 150 ? '...' : ''}
+              </div>
+            ` : ''}
           </div>
           ${incident.evidence?.sources?.length ? `
             <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(148, 163, 184, 0.15);">
@@ -2113,6 +2596,14 @@
         // Location filter
         if (state.filters.location !== 'all' && incident.asset.type !== state.filters.location) {
           return false;
+        }
+
+        // Date verification filter - filter out old incidents being reported as new
+        if (state.filters.hideOldIncidents && incident.date_verification) {
+          // Hide incidents older than 14 days that are being reported as new
+          if (incident.date_verification.is_old_incident && incident.date_verification.days_since_incident > 14) {
+            return false;
+          }
         }
 
         return true;
@@ -2826,6 +3317,10 @@
     function updateRiskIndicator() {
       const activeIncidents = state.incidents.filter(i => i.incident.status === 'active');
       const activeCount = activeIncidents.length;
+      const newIncidents = state.incidents.filter(i => {
+        const hoursSince = (Date.now() - new Date(i.first_seen_utc).getTime()) / (1000 * 60 * 60);
+        return hoursSince <= 24;
+      });
 
       // Calculate weighted severity (active incidents count more)
       const weightedSeverity = state.incidents.reduce((acc, i) => {
@@ -2844,26 +3339,43 @@
                        riskScore >= 5 ? 'high' :
                        riskScore >= 3 ? 'medium' : 'low';
 
-      const indicator = document.getElementById('risk-indicator');
-      const levelElement = document.getElementById('current-risk-level');
+      // Update global threat level indicator
+      const threatLevelText = document.getElementById('threat-level-text');
+      const threatPulse = document.getElementById('threat-pulse');
+      if (threatLevelText) {
+        const threatLevel = riskLevel === 'critical' ? 'CRITICAL' :
+                          riskLevel === 'high' ? 'ELEVATED' :
+                          riskLevel === 'medium' ? 'MODERATE' : 'LOW';
 
-      if (indicator && levelElement) {
-        indicator.style.display = 'flex';
-        levelElement.className = `risk-level ${riskLevel}`;
-
-        // Add pulsing animation for critical levels
-        const pulseSpeed = riskLevel === 'critical' ? 'animation: pulse 1s infinite;' :
-                          riskLevel === 'high' ? 'animation: pulse 2s infinite;' : '';
-
-        levelElement.innerHTML = `
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor; ${pulseSpeed}"></span>
-          <span>${riskLevel.toUpperCase()} (${riskScore.toFixed(1)})</span>
+        threatLevelText.innerHTML = `
+          <span id="threat-pulse" style="width: 8px; height: 8px; border-radius: 50%;
+                background: ${riskLevel === 'critical' ? '#dc2626' :
+                            riskLevel === 'high' ? '#f97316' :
+                            riskLevel === 'medium' ? '#facc15' : '#84cc16'};
+                animation: pulse ${riskLevel === 'critical' ? '1s' : '2s'} infinite;"></span>
+          <span>${threatLevel}</span>
         `;
+
+        // Update threat level container colors
+        const threatContainer = document.getElementById('global-threat-level');
+        if (threatContainer) {
+          const color = riskLevel === 'critical' ? '220, 38, 38' :
+                       riskLevel === 'high' ? '249, 115, 22' :
+                       riskLevel === 'medium' ? '250, 204, 21' : '132, 204, 22';
+          threatContainer.style.background = `linear-gradient(135deg, rgba(${color}, 0.15), rgba(${color}, 0.05))`;
+          threatContainer.style.borderColor = `rgba(${color}, 0.3)`;
+        }
       }
 
-      // Update stats with real calculations
-      document.getElementById('active-zones-count').textContent = activeCount;
-      document.getElementById('risk-score').textContent = riskScore.toFixed(1);
+      // Update header statistics
+      const activeCountEl = document.getElementById('active-count');
+      const newCountEl = document.getElementById('new-count');
+      const affectedZonesEl = document.getElementById('affected-zones');
+      const coverageEl = document.getElementById('coverage-km');
+
+      if (activeCountEl) activeCountEl.textContent = activeCount;
+      if (newCountEl) newCountEl.textContent = newIncidents.length;
+      if (affectedZonesEl) affectedZonesEl.textContent = state.incidents.length;
 
       // Calculate actual coverage area
       const totalCoverage = state.incidents.reduce((acc, i) => {
@@ -2871,12 +3383,37 @@
         const areaKm2 = Math.PI * Math.pow(radiusKm, 2);
         return acc + areaKm2;
       }, 0);
-      document.getElementById('coverage-area').textContent = Math.round(totalCoverage);
 
-      // Calculate average response time based on incident data
-      const avgDuration = state.incidents.reduce((acc, i) =>
-        acc + (i.incident.duration_min || 60), 0) / (state.incidents.length || 1);
-      document.getElementById('response-time').textContent = `${Math.round(avgDuration)}min`;
+      if (coverageEl) {
+        coverageEl.innerHTML = `${Math.round(totalCoverage)}<span style="font-size: 0.75rem;">km²</span>`;
+      }
+
+      // Update connection status (simulate latency)
+      const latencyEl = document.getElementById('latency');
+      if (latencyEl) {
+        const simulatedLatency = Math.floor(Math.random() * 20 + 8);
+        latencyEl.textContent = `${simulatedLatency}ms`;
+      }
+
+      // Show alert button if critical
+      const alertBtn = document.getElementById('alert-btn');
+      if (alertBtn && riskLevel === 'critical') {
+        alertBtn.style.display = 'block';
+        alertBtn.style.animation = 'alertPulse 2s infinite';
+      }
+
+      // Update old elements if they exist (for backwards compatibility)
+      const indicator = document.getElementById('risk-indicator');
+      const levelElement = document.getElementById('current-risk-level');
+
+      if (indicator && levelElement) {
+        indicator.style.display = 'flex';
+        levelElement.className = `risk-level ${riskLevel}`;
+        levelElement.innerHTML = `
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+          <span>${riskLevel.toUpperCase()} (${riskScore.toFixed(1)})</span>
+        `;
+      }
     }
 
     // Show detailed risk information
@@ -2965,6 +3502,43 @@
         clearInterval(state.updateInterval);
       }
     });
+
+    // Toggle heat map layer
+    function toggleHeatmap() {
+      if (state.heatLayer) {
+        if (state.map.hasLayer(state.heatLayer)) {
+          state.map.removeLayer(state.heatLayer);
+          // Update button appearance
+          const btn = document.querySelector('[onclick="toggleHeatmap()"]');
+          if (btn) btn.style.opacity = '0.5';
+        } else {
+          state.map.addLayer(state.heatLayer);
+          // Update button appearance
+          const btn = document.querySelector('[onclick="toggleHeatmap()"]');
+          if (btn) btn.style.opacity = '1';
+        }
+      }
+    }
+
+    // Center on active incidents
+    function centerOnActive() {
+      const activeIncidents = state.incidents.filter(i => i.incident.status === 'active');
+      if (activeIncidents.length > 0) {
+        const bounds = L.latLngBounds(activeIncidents.map(i => [i.asset.lat, i.asset.lon]));
+        state.map.fitBounds(bounds.pad(0.1), {
+          animate: true,
+          duration: 1
+        });
+      }
+    }
+
+    // Reset map view to Europe
+    function resetMapView() {
+      state.map.setView([54.5, 15.0], 5, {
+        animate: true,
+        duration: 1
+      });
+    }
 
     // Mobile sidebar functions
     function toggleMobileSidebar() {

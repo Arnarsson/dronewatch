@@ -339,6 +339,3 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('   Ctrl/Cmd + T: Toggle Trends');
   console.log('   Ctrl/Cmd + R: Refresh All');
 });
-
-// Export for manual initialization
-export { initializeNewsFeatures };

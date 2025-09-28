@@ -27,7 +27,12 @@ export class IncidentValidator {
       // Temporal incident markers
       'incident occurred', 'incident reported', 'incident at',
       'drone incident', 'uav incident', 'uas incident',
-      'happened at', 'took place', 'occurred on'
+      'happened at', 'took place', 'occurred on',
+
+      // Location-based indicators (less strict)
+      'airport', 'airspace', 'flights', 'aviation',
+      'military base', 'military site', 'infrastructure',
+      'over', 'above', 'near', 'around'
     ];
 
     // NON-INCIDENT EXCLUSIONS - If found, likely NOT an incident
@@ -118,7 +123,8 @@ export class IncidentValidator {
       text.includes(keyword)
     ).length;
 
-    if (nonIncidentCount >= 3) {
+    // Increased threshold from 3 to 5 for more lenient filtering
+    if (nonIncidentCount >= 5) {
       return {
         isValid: false,
         reason: 'Too many non-incident keywords',
@@ -223,8 +229,8 @@ export class IncidentValidator {
       }
     }
 
-    // Final decision
-    const isValid = confidence >= 60 && incidentIndicatorCount > 0;
+    // Final decision (lowered threshold from 60% to 45%)
+    const isValid = confidence >= 45 && incidentIndicatorCount > 0;
 
     return {
       isValid,

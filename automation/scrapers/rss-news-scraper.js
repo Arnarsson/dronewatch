@@ -6,11 +6,15 @@ import { criticalInfrastructure } from '../data/critical-infrastructure.js';
 import { AIAnalyzer } from '../ai-analyzer.js';
 import { GeocodingService } from '../geocoding-service.js';
 import { IncidentValidator } from '../incident-validator.js';
+import { URLValidator } from '../utils/url-validator.js';
+import { DateExtractor } from '../utils/date-extractor.js';
 
 export class RSSNewsScraper {
   constructor(config = {}) {
     this.rssSources = europeanNewsSources;
     this.incidentValidator = new IncidentValidator();
+    this.urlValidator = new URLValidator();
+    this.dateExtractor = new DateExtractor();
 
     // Initialize AI analyzer and geocoding
     this.aiAnalyzer = config.aiAnalyzer || null;
@@ -302,6 +306,21 @@ export class RSSNewsScraper {
   async createIncidentFromArticle(article, sourceName) {
     const text = article.title + ' ' + article.description;
 
+    // Extract and verify dates
+    const dateVerification = this.dateExtractor.extractDates(text, article.pubDate);
+
+    // Check if this is an old incident being reported as new
+    if (dateVerification.isOldIncident) {
+      console.log(`📅 Old incident detected (${dateVerification.daysDifference} days old): ${article.title.substring(0, 60)}...`);
+      console.log(`   Publication: ${dateVerification.publicationDate}, Incident: ${dateVerification.incidentDate}`);
+
+      // Skip incidents older than 30 days unless they're ongoing
+      if (dateVerification.daysDifference > 30 && !text.toLowerCase().includes('ongoing')) {
+        console.log(`❌ Skipping old incident (>30 days): ${article.title.substring(0, 60)}...`);
+        return null;
+      }
+    }
+
     // Use AI analysis if available
     let aiAnalysis = null;
     if (this.useAIAnalysis) {
@@ -358,10 +377,24 @@ export class RSSNewsScraper {
     // Calculate credibility
     const credibility = this.sourceCredibility[sourceName] || this.sourceCredibility['default'];
 
+    // Use actual incident date if extracted, otherwise publication date
+    const incidentDate = dateVerification.incidentDate
+      ? new Date(dateVerification.incidentDate).toISOString()
+      : article.pubDate.toISOString();
+
     const incident = {
       id: incidentId,
-      first_seen_utc: article.pubDate.toISOString(),
+      first_seen_utc: incidentDate,
       last_update_utc: article.pubDate.toISOString(),
+      publication_date_utc: article.pubDate.toISOString(),
+      incident_date_utc: incidentDate,
+      date_verification: {
+        status: dateVerification.verificationStatus,
+        confidence: dateVerification.confidence,
+        days_since_incident: dateVerification.daysDifference,
+        is_old_incident: dateVerification.isOldIncident,
+        extracted_date: dateVerification.incidentDate
+      },
       asset: {
         type: location.type || 'unknown',
         name: location.name,
@@ -385,15 +418,7 @@ export class RSSNewsScraper {
       evidence: {
         strength: Math.min(3, Math.floor(credibility / 2)),
         attribution: this.determineAttribution(text),
-        sources: [{
-          url: article.link,
-          publisher: sourceName,
-          title: article.title,
-          snippet: (article.description || '').substring(0, 300) + '...',
-          first_seen: article.pubDate.toISOString(),
-          credibility: credibility,
-          note: 'Real news article - validated'
-        }]
+        sources: await this.createValidatedSource(article, sourceName, credibility)
       },
       scores: {
         severity: severity,
@@ -404,7 +429,7 @@ export class RSSNewsScraper {
       keywords_matched: this.extractMatchedKeywords(text),
       data_type: 'real',
       source_type: 'news',
-      validation_status: 'verified',
+      validation_status: dateVerification.verificationStatus,
       collection_timestamp: new Date().toISOString()
     };
 
@@ -511,6 +536,36 @@ export class RSSNewsScraper {
     } else {
       return 'none';
     }
+  }
+
+  async createValidatedSource(article, sourceName, credibility) {
+    const source = {
+      url: article.link,
+      publisher: sourceName,
+      title: article.title,
+      snippet: (article.description || '').substring(0, 300) + '...',
+      first_seen: article.pubDate.toISOString(),
+      credibility: credibility,
+      note: 'Real news article - validated'
+    };
+
+    // Validate the URL
+    if (this.urlValidator && article.link) {
+      const validation = await this.urlValidator.validate(article.link);
+      source.url_verified = validation.valid;
+      source.url_status = validation.status;
+
+      if (!validation.valid) {
+        source.archive_url = validation.archiveUrl;
+        source.note += ' [URL may be broken - check archive]';
+      }
+
+      if (validation.finalUrl && validation.finalUrl !== article.link) {
+        source.final_url = validation.finalUrl;
+      }
+    }
+
+    return [source];
   }
 
   assessSeverity(text, category, location) {
