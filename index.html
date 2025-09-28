@@ -178,25 +178,156 @@
       font-weight: 400;
     }
 
-    /* Clean background with subtle texture */
+    /* Cinematic animated background */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background:
-        linear-gradient(180deg, var(--surface) 0%, var(--surface-elevated) 100%),
-        radial-gradient(circle at 20% 80%, rgba(0, 122, 255, 0.03) 0%, transparent 50%);
+        linear-gradient(180deg, #000000 0%, #0a0a0f 50%, #000511 100%),
+        radial-gradient(circle at 20% 80%, rgba(0, 122, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(88, 86, 214, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 40% 60%, rgba(255, 69, 58, 0.02) 0%, transparent 30%);
       pointer-events: none;
       z-index: 0;
+      animation: backgroundPulse 20s ease-in-out infinite;
     }
 
-    /* Subtle micro-interactions */
+    /* Animated particle field background */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, white, transparent),
+        radial-gradient(1px 1px at 50% 50%, white, transparent),
+        radial-gradient(1px 1px at 80% 10%, white, transparent),
+        radial-gradient(2px 2px at 90% 60%, white, transparent);
+      background-size: 200px 200px;
+      background-position: 0 0;
+      opacity: 0.02;
+      pointer-events: none;
+      z-index: 1;
+      animation: particleFloat 60s linear infinite;
+    }
+
+    @keyframes backgroundPulse {
+      0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+      25% { filter: brightness(1.1) hue-rotate(5deg); }
+      50% { filter: brightness(0.95) hue-rotate(-5deg); }
+      75% { filter: brightness(1.05) hue-rotate(3deg); }
+    }
+
+    @keyframes particleFloat {
+      from { transform: translate(0, 0) rotate(0deg); }
+      to { transform: translate(-100px, -100px) rotate(360deg); }
+    }
+
+    /* Matrix rain effect overlay */
+    .matrix-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.03;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+      );
+      animation: matrixRain 20s linear infinite;
+    }
+
+    @keyframes matrixRain {
+      from { transform: translateY(0); }
+      to { transform: translateY(100%); }
+    }
+
+    /* Enhanced 3D micro-interactions */
     .interactive {
-      transition: var(--transition-fast);
+      transition: all var(--transition-base) cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      perspective: 1000px;
     }
 
     .interactive:hover {
-      transform: translateY(-1px);
+      transform: translateY(-2px) rotateX(2deg) scale(1.02);
+      box-shadow:
+        0 10px 40px rgba(0, 122, 255, 0.3),
+        0 0 60px rgba(0, 122, 255, 0.1),
+        inset 0 0 20px rgba(255, 255, 255, 0.05);
+    }
+
+    /* Holographic shimmer effect */
+    .holographic {
+      position: relative;
+      background: linear-gradient(
+        45deg,
+        rgba(255, 0, 0, 0.1),
+        rgba(255, 154, 0, 0.1),
+        rgba(208, 222, 33, 0.1),
+        rgba(79, 220, 74, 0.1),
+        rgba(63, 218, 216, 0.1),
+        rgba(47, 201, 226, 0.1),
+        rgba(28, 127, 238, 0.1),
+        rgba(95, 21, 242, 0.1),
+        rgba(186, 12, 248, 0.1),
+        rgba(251, 7, 217, 0.1),
+        rgba(255, 0, 0, 0.1)
+      );
+      background-size: 300% 300%;
+      animation: holographicShift 6s ease infinite;
+    }
+
+    @keyframes holographicShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Neon glow text effect */
+    .neon-text {
+      color: var(--primary);
+      text-shadow:
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 30px currentColor,
+        0 0 40px rgba(0, 122, 255, 0.5),
+        0 0 70px rgba(0, 122, 255, 0.5),
+        0 0 80px rgba(0, 122, 255, 0.5),
+        0 0 100px rgba(0, 122, 255, 0.5),
+        0 0 150px rgba(0, 122, 255, 0.5);
+      animation: neonPulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes neonPulse {
+      from { filter: brightness(1); }
+      to { filter: brightness(1.2); }
+    }
+
+    /* Cyberpunk grid overlay */
+    .cyber-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.05;
+      animation: gridPerspective 30s ease-in-out infinite;
+    }
+
+    @keyframes gridPerspective {
+      0%, 100% { transform: perspective(500px) rotateX(0deg); opacity: 0.05; }
+      50% { transform: perspective(500px) rotateX(60deg); opacity: 0.02; }
     }
 
     .interactive:active {
@@ -210,21 +341,31 @@
 
     /* Clean Header - Magic Earth Inspired */
     .header {
-      background: var(--surface-overlay);
+      background:
+        linear-gradient(90deg,
+          rgba(0, 122, 255, 0.1) 0%,
+          transparent 20%,
+          transparent 80%,
+          rgba(88, 86, 214, 0.1) 100%),
+        var(--surface-overlay);
       border-bottom: 1px solid var(--divider);
       padding: 0 var(--space-6);
       display: flex;
       align-items: center;
       justify-content: space-between;
       height: 64px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+      box-shadow:
+        var(--shadow-sm),
+        0 0 40px rgba(0, 122, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: var(--z-sticky);
+      animation: headerPulse 4s ease-in-out infinite;
       transition: var(--transition-base);
     }
 
@@ -1782,6 +1923,212 @@
 
     .leaflet-popup {
       z-index: 3000 !important;
+    }
+    /* Additional cinematic animations */
+    @keyframes headerPulse {
+      0%, 100% { border-bottom-color: rgba(0, 122, 255, 0.3); }
+      50% { border-bottom-color: rgba(88, 86, 214, 0.3); }
+    }
+
+    /* 3D Map container effect */
+    #map {
+      filter: contrast(1.1) brightness(0.9);
+      position: relative;
+    }
+
+    #map::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 60%,
+        rgba(0, 0, 0, 0.4) 100%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Animated gradient borders */
+    .gradient-border {
+      position: relative;
+      background: var(--surface-card);
+      border-radius: var(--radius-lg);
+    }
+
+    .gradient-border::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      background: linear-gradient(
+        45deg,
+        #ff0000,
+        #ff9a00,
+        #d0de21,
+        #4fdc4a,
+        #3fdad8,
+        #2fc9e2,
+        #1c7fee,
+        #5f15f2,
+        #ba0cf8,
+        #fb07d9,
+        #ff0000
+      );
+      background-size: 400% 400%;
+      border-radius: var(--radius-lg);
+      z-index: -1;
+      opacity: 0.7;
+      animation: gradientRotate 3s ease infinite;
+      filter: blur(5px);
+    }
+
+    @keyframes gradientRotate {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Futuristic button effects */
+    button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    button:active::after {
+      width: 300px;
+      height: 300px;
+      opacity: 0;
+      transition: width 0.6s, height 0.6s, opacity 0.6s;
+    }
+
+    /* Data visualization effects */
+    .data-viz {
+      position: relative;
+      background: linear-gradient(135deg, var(--surface-card), var(--surface-elevated));
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .data-viz::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      animation: dataStream 3s linear infinite;
+    }
+
+    @keyframes dataStream {
+      to { left: 100%; }
+    }
+
+    /* Holographic display effect */
+    .holo-display {
+      position: relative;
+      background: rgba(0, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      overflow: hidden;
+    }
+
+    .holo-display::before,
+    .holo-display::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 255, 255, 0.8),
+        transparent
+      );
+    }
+
+    .holo-display::before {
+      top: 0;
+      animation: holoScan 2s linear infinite;
+    }
+
+    .holo-display::after {
+      bottom: 0;
+      animation: holoScan 2s linear infinite reverse;
+    }
+
+    @keyframes holoScan {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    /* Quantum loading effect */
+    .quantum-loader {
+      width: 60px;
+      height: 60px;
+      position: relative;
+    }
+
+    .quantum-loader::before,
+    .quantum-loader::after {
+      content: '';
+      position: absolute;
+      border: 3px solid transparent;
+      border-radius: 50%;
+      animation: quantumSpin 2s linear infinite;
+    }
+
+    .quantum-loader::before {
+      inset: 0;
+      border-top-color: var(--primary);
+      animation-duration: 1.5s;
+    }
+
+    .quantum-loader::after {
+      inset: 10px;
+      border-bottom-color: var(--primary-light);
+      animation-duration: 1s;
+      animation-direction: reverse;
+    }
+
+    @keyframes quantumSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Plasma effect for critical alerts */
+    .plasma-alert {
+      background:
+        radial-gradient(circle at 20% 50%, rgba(255, 0, 0, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(255, 69, 58, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(220, 38, 38, 0.3) 0%, transparent 50%);
+      background-size: 200% 200%;
+      animation: plasmaFlow 4s ease-in-out infinite;
+    }
+
+    @keyframes plasmaFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
   </style>
 </head>
@@ -6171,6 +6518,119 @@
         console.error('❌ Failed to initialize news features:', error);
       }
     });
+  </script>
+
+  <!-- Matrix rain and cyberpunk effects -->
+  <div class="matrix-rain"></div>
+  <div class="cyber-grid"></div>
+
+  <!-- Particle canvas -->
+  <canvas id="particle-canvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.3;"></canvas>
+
+  <!-- Cinematic Visual Effects -->
+  <script>
+    // Particle animation system
+    class ParticleSystem {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.resize();
+        this.init();
+        this.animate();
+
+        window.addEventListener('resize', () => this.resize());
+        window.addEventListener('mousemove', (e) => {
+          this.mouseX = e.clientX;
+          this.mouseY = e.clientY;
+        });
+      }
+
+      resize() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+      }
+
+      init() {
+        const particleCount = 80;
+        for (let i = 0; i < particleCount; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            size: Math.random() * 3 + 1,
+            speedX: Math.random() * 2 - 1,
+            speedY: Math.random() * 2 - 1,
+            opacity: Math.random() * 0.5 + 0.2,
+            hue: Math.random() * 60 + 180,
+            pulse: Math.random() * Math.PI * 2
+          });
+        }
+      }
+
+      animate() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.particles.forEach((particle, index) => {
+          particle.x += particle.speedX;
+          particle.y += particle.speedY;
+          particle.pulse += 0.02;
+
+          const dx = this.mouseX - particle.x;
+          const dy = this.mouseY - particle.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 100) {
+            const force = (100 - distance) / 100;
+            particle.x -= dx * force * 0.02;
+            particle.y -= dy * force * 0.02;
+          }
+
+          if (particle.x < 0) particle.x = this.canvas.width;
+          if (particle.x > this.canvas.width) particle.x = 0;
+          if (particle.y < 0) particle.y = this.canvas.height;
+          if (particle.y > this.canvas.height) particle.y = 0;
+
+          const pulseFactor = Math.sin(particle.pulse) * 0.5 + 0.5;
+          const size = particle.size * (1 + pulseFactor * 0.5);
+
+          this.ctx.beginPath();
+          this.ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `hsla(${particle.hue}, 100%, 70%, ${particle.opacity * pulseFactor})`;
+          this.ctx.shadowBlur = 20;
+          this.ctx.shadowColor = `hsla(${particle.hue}, 100%, 50%, ${particle.opacity})`;
+          this.ctx.fill();
+
+          this.particles.slice(index + 1).forEach(otherParticle => {
+            const dx = otherParticle.x - particle.x;
+            const dy = otherParticle.y - particle.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 150) {
+              this.ctx.beginPath();
+              this.ctx.moveTo(particle.x, particle.y);
+              this.ctx.lineTo(otherParticle.x, otherParticle.y);
+              this.ctx.strokeStyle = `hsla(${particle.hue}, 100%, 70%, ${(150 - distance) / 150 * 0.2})`;
+              this.ctx.lineWidth = 0.5;
+              this.ctx.stroke();
+            }
+          });
+        });
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    // Initialize particle system
+    setTimeout(() => {
+      const canvas = document.getElementById('particle-canvas');
+      if (canvas) new ParticleSystem(canvas);
+    }, 1000);
+
+    console.log('🎬 Cinematic Visual Effects Active');
+    console.log('✨ Particle System Running');
+    console.log('🌟 Holographic UI Enhanced');
   </script>
 </body>
 </html>
