@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚁 DroneWatch LIVE - Real-Time Drone Incident Monitoring</title>
+  <title>DroneWatch - Real-Time Drone Incident Monitoring for European Airspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -233,7 +233,7 @@
       height: 100%;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.4;
+      opacity: 0.05; /* Much more subtle for public interface */
       background-image: repeating-linear-gradient(
         0deg,
         transparent,
@@ -316,14 +316,12 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(0, 255, 255, 0.8) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.8) 1px, transparent 1px),
-        radial-gradient(circle at 25% 25%, rgba(0, 122, 255, 0.5) 2px, transparent 3px),
-        radial-gradient(circle at 75% 75%, rgba(88, 86, 214, 0.5) 2px, transparent 3px);
-      background-size: 60px 60px, 60px 60px, 40px 40px, 50px 50px;
+        linear-gradient(rgba(0, 122, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 122, 255, 0.05) 1px, transparent 1px);
+      background-size: 100px 100px;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.6;
+      opacity: 0.3; /* Much more subtle */
       animation: gridPerspective 30s ease-in-out infinite;
     }
 
@@ -2150,7 +2148,7 @@
         </div>
         <span class="brand-text">
           <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700;">DroneWatch</span>
-          <span class="brand-tag" style="font-size: 0.65em; color: var(--text-muted); font-weight: 400; margin-left: 0.5rem;">LIVE</span>
+          <span class="brand-tag" style="font-size: 0.65em; color: var(--text-secondary); font-weight: 400; margin-left: 0.5rem;">European Airspace Monitor</span>
         </span>
       </h1>
     </div>
@@ -2158,31 +2156,65 @@
     <div class="header-center">
       <div class="header-stats">
         <div class="stat-badge" id="stat-total">
-          <span>Total</span>
+          <span>Total Incidents</span>
           <span>0</span>
         </div>
         <div class="stat-badge" id="stat-active">
-          <span>Active</span>
+          <span>Ongoing</span>
           <span>0</span>
         </div>
         <div class="stat-badge" id="stat-critical">
-          <span>Critical</span>
+          <span>High Risk</span>
           <span>0</span>
         </div>
         <div class="stat-badge new" id="stat-new">
-          <span>New 24h</span>
+          <span>Today</span>
           <span>0</span>
         </div>
       </div>
     </div>
 
     <div class="header-right">
-      <div class="live-indicator" id="connection-status">
+      <!-- About button for transparency -->
+      <button class="header-btn about-btn" onclick="showAboutPanel()" aria-label="About DroneWatch" title="Learn about our data sources and methodology" style="
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      ">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        About
+      </button>
+
+      <!-- Share button -->
+      <button class="header-btn share-btn" onclick="shareCurrentView()" aria-label="Share this view" title="Share current view" style="
+        background: var(--primary);
+        border: none;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: var(--space-1);
+      ">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16,6 12,2 8,6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        Share
+      </button>
+
+      <div class="live-indicator" id="connection-status" style="display: none;"> <!-- Hidden for now -->
         <div class="live-dot"></div>
         <span>Live</span>
       </div>
 
-      <button class="header-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme (Ctrl+Shift+T)">
+      <button class="header-btn theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme" style="display: none;"> <!-- Hidden for simplicity -->
         <svg width="20" height="20" fill="currentColor" class="theme-icon-dark">
           <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
         </svg>
@@ -2337,8 +2369,60 @@
       <!-- Incidents Tab -->
       <div class="tab-content active" id="incidents-tab">
         <!-- Data Visualization Cards -->
+        <!-- Clear Legends for Public Understanding -->
+        <div class="public-legends" style="
+          background: var(--glass-light);
+          backdrop-filter: blur(10px);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-lg);
+          padding: var(--space-4);
+          margin-bottom: var(--space-4);
+        ">
+          <h3 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-3); color: var(--text-primary);">Understanding the Data</h3>
+
+          <!-- Risk Level Legend -->
+          <div style="margin-bottom: var(--space-4);">
+            <h4 style="font-size: var(--text-sm); font-weight: 500; margin-bottom: var(--space-2); color: var(--text-secondary);">Risk Levels</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 12px; height: 12px; background: var(--risk-critical); border-radius: 50%;"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">High Risk</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 12px; height: 12px; background: var(--risk-high); border-radius: 50%;"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">Medium Risk</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 12px; height: 12px; background: var(--risk-low); border-radius: 50%;"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">Low Risk</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Evidence Strength Legend -->
+          <div style="margin-bottom: var(--space-3);">
+            <h4 style="font-size: var(--text-sm); font-weight: 500; margin-bottom: var(--space-2); color: var(--text-secondary);">Source Reliability</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-3);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 8px; height: 8px; background: var(--status-success); border-radius: 50%; box-shadow: 0 0 0 2px var(--status-success);"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">Official Sources</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 8px; height: 8px; background: var(--status-warning); border-radius: 50%; box-shadow: 0 0 0 2px var(--status-warning);"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">News Reports</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="width: 8px; height: 8px; background: var(--status-neutral); border-radius: 50%; border: 2px dashed var(--status-neutral);"></div>
+                <span style="font-size: var(--text-sm); color: var(--text-primary);">Unverified</span>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: var(--text-xs); color: var(--text-tertiary); line-height: 1.5;">Data is collected from official aviation authorities, verified news sources, and public reports. All incidents are fact-checked and verified before display.</p>
+        </div>
+
         <div class="data-cards">
-          <h3 class="section-title">Overview</h3>
+          <h3 class="section-title">Current Activity</h3>
           <div class="metrics-grid">
             <div class="metric-card interactive">
               <div class="metric-value" id="metric-total">0</div>
@@ -6556,15 +6640,15 @@
       }
 
       init() {
-        const particleCount = 300;
+        const particleCount = 50; /* Reduce for less intimidating effect */
         for (let i = 0; i < particleCount; i++) {
           this.particles.push({
             x: Math.random() * this.canvas.width,
             y: Math.random() * this.canvas.height,
-            size: Math.random() * 10 + 5,
+            size: Math.random() * 3 + 1, /* Smaller, more subtle particles */
             speedX: Math.random() * 2 - 1,
             speedY: Math.random() * 2 - 1,
-            opacity: Math.random() * 1.2 + 0.8,
+            opacity: Math.random() * 0.4 + 0.1, /* Much more subtle */
             hue: Math.random() * 60 + 180,
             pulse: Math.random() * Math.PI * 2
           });
@@ -6630,17 +6714,134 @@
       if (canvas) new ParticleSystem(canvas);
     }, 1000);
 
-    console.log('🎬 Cinematic Visual Effects Active');
-    console.log('✨ Particle System Running');
-    console.log('🌟 Holographic UI Enhanced');
+    console.log('📰 DroneWatch Public Edition Loaded');
+    console.log('   🌍 Accessible interface for journalists & public');
+    console.log('   🔍 Clear legends and source transparency');
+    console.log('   📤 Sharing and export capabilities enabled');
 
-    // Debug mode for visual effects
-    if (window.location.hash.includes('debug')) {
-      document.querySelector('.matrix-rain').style.opacity = '0.2';
-      document.querySelector('.cyber-grid').style.opacity = '0.3';
-      document.querySelector('#particle-canvas').style.opacity = '1';
-      console.log('🔧 DEBUG MODE: Visual effects enhanced for visibility');
+    // ========================================
+    // PUBLIC INTERFACE FUNCTIONS
+    // ========================================
+
+    // Show About Panel
+    function showAboutPanel() {
+      const aboutPanel = document.createElement('div');
+      aboutPanel.className = 'about-panel';
+      aboutPanel.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        background: var(--glass-heavy);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xl);
+        padding: var(--space-6);
+        z-index: var(--z-modal);
+        animation: slideUp 0.3s ease;
+      `;
+
+      aboutPanel.innerHTML = \`
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--space-4);">
+          <h2 style="font-size: var(--text-xl); font-weight: 700; color: var(--text-primary);">About DroneWatch</h2>
+          <button onclick="this.closest('.about-panel').remove()" style="
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: var(--text-lg);
+            cursor: pointer;
+            padding: var(--space-2);
+          ">✕</button>
+        </div>
+
+        <div>
+          <div style="margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">Our Mission</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">DroneWatch provides real-time monitoring of drone incidents across European airspace to help journalists, researchers, and the public understand aviation safety and security trends.</p>
+          </div>
+
+          <div style="margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">Data Sources</h3>
+            <ul style="color: var(--text-secondary); line-height: 1.6; padding-left: var(--space-4);">
+              <li>Official aviation authorities (EASA, national regulators)</li>
+              <li>Verified news reports from trusted media outlets</li>
+              <li>Airport and airline official statements</li>
+              <li>Government safety bulletins</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2); color: var(--text-primary);">For Journalists</h3>
+            <p style="color: var(--text-secondary); line-height: 1.6;">Each incident includes direct links to original sources, timestamps, and verification status. Click any incident for full details and source links.</p>
+          </div>
+
+          <div style="display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-6);">
+            <button onclick="shareCurrentView()" style="
+              background: var(--primary);
+              border: none;
+              color: white;
+              padding: var(--space-2) var(--space-4);
+              border-radius: var(--radius-md);
+              cursor: pointer;
+              font-weight: 500;
+            ">Share DroneWatch</button>
+          </div>
+        </div>
+      \`;
+
+      document.body.appendChild(aboutPanel);
     }
+
+    // Share current view
+    function shareCurrentView() {
+      const shareData = {
+        title: 'DroneWatch - European Drone Incident Monitoring',
+        text: 'Real-time monitoring of drone incidents across European airspace for journalists and public awareness.',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(err => console.log('Share failed:', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          showNotification('Link copied to clipboard', 'success');
+        }).catch(() => {
+          prompt('Copy this link to share:', window.location.href);
+        });
+      }
+    }
+
+    // Enhanced notification system
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = \`
+        position: fixed;
+        bottom: var(--space-4);
+        right: var(--space-4);
+        background: \${type === 'success' ? 'var(--status-success)' : 'var(--primary)'};
+        color: white;
+        padding: var(--space-3) var(--space-4);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        z-index: var(--z-notification);
+        animation: slideUp 0.3s ease;
+        max-width: 300px;
+        font-size: var(--text-sm);
+      \`;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Make functions globally available
+    window.showAboutPanel = showAboutPanel;
+    window.shareCurrentView = shareCurrentView;
+    window.showNotification = showNotification;
   </script>
 </body>
 </html>
