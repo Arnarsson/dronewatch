@@ -1,9 +1,9 @@
-import { EnhancedRSSNewsScraper } from './automation/scrapers/rss-news-scraper-enhanced.js';
+import { RSSNewsScraper } from './automation/scrapers/rss-news-scraper.js';
 import { europeanInfrastructure } from './automation/data/european-infrastructure.js';
 import { europeanNewsSources } from './automation/data/european-news-sources.js';
 
 async function testEnhancedScraper() {
-  const scraper = new EnhancedRSSNewsScraper();
+  const scraper = new RSSNewsScraper();
 
   console.log('🌍 ENHANCED EUROPEAN DRONE INCIDENT SCRAPER TEST\n');
   console.log('=' .repeat(60));

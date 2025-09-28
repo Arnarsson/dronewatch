@@ -1,11 +1,11 @@
 {
-  "name": "Drone Sightings Europe",
+  "name": "DroneWatch Europe",
   "short_name": "DroneWatch",
-  "description": "Europe-wide drone incident tracking and intelligence platform",
-  "start_url": "/",
+  "description": "Real-time tracking and AI-powered analysis of drone incidents affecting European airspace",
+  "start_url": "/index-public.html",
   "display": "standalone",
-  "background_color": "#0a0d14",
-  "theme_color": "#3b82f6",
+  "background_color": "#0f172a",
+  "theme_color": "#0ea5e9",
   "orientation": "any",
   "icons": [
     {
@@ -33,17 +33,24 @@
   "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "Active Incidents",
-      "short_name": "Active",
-      "description": "View currently active drone incidents",
-      "url": "/?status=active",
+      "name": "View Live Map",
+      "short_name": "Map",
+      "description": "View current drone incidents on map",
+      "url": "/index-public.html#map",
       "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
     },
     {
-      "name": "High Severity",
-      "short_name": "Critical",
-      "description": "View high severity incidents",
-      "url": "/?severity=high",
+      "name": "AI Insights",
+      "short_name": "AI",
+      "description": "View AI-discovered incidents",
+      "url": "/index-public.html#ai",
+      "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "About & Methodology",
+      "short_name": "About",
+      "description": "Learn about our data sources and methods",
+      "url": "/about.html",
       "icons": [{ "src": "/favicon.svg", "sizes": "96x96" }]
     }
   ],

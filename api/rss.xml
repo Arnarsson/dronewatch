@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>DroneWatch - European Drone Incident Feed</title>
+    <link>https://dronewatch.eu</link>
+    <description>Real-time tracking and AI-powered analysis of drone incidents affecting European airspace. Transparent, verified reporting for journalists and the public.</description>
+    <language>en</language>
+    <copyright>DroneWatch - Open Data Initiative</copyright>
+    <lastBuildDate>Thu, 28 Dec 2024 17:00:00 GMT</lastBuildDate>
+    <ttl>15</ttl>
+    <atom:link href="https://dronewatch.eu/api/rss.xml" rel="self" type="application/rss+xml" />
+
+    <image>
+      <url>https://dronewatch.eu/images/logo.png</url>
+      <title>DroneWatch</title>
+      <link>https://dronewatch.eu</link>
+    </image>
+
+    <!-- Dynamic items will be generated here -->
+    <item>
+      <title>🔴 High Impact: Drone Activity at Copenhagen Airport</title>
+      <link>https://dronewatch.eu/#incident=cph-2024-12-28-001</link>
+      <description><![CDATA[
+        <p><strong>Location:</strong> Copenhagen Airport (CPH), Denmark</p>
+        <p><strong>Time:</strong> December 28, 2024, 15:45 UTC</p>
+        <p><strong>Impact:</strong> High (Severity 8/10)</p>
+        <p><strong>Status:</strong> Active</p>
+        <p><strong>Summary:</strong> Multiple drones spotted near runway causing 30-minute closure. Danish authorities investigating. Air traffic temporarily diverted.</p>
+        <p><strong>Verification:</strong> ✅ Verified - Multiple sources confirm</p>
+        <p><strong>AI Confidence:</strong> 87%</p>
+        <p><strong>Sources:</strong> BBC News, Reuters, DR Denmark</p>
+      ]]></description>
+      <guid isPermaLink="false">cph-2024-12-28-001</guid>
+      <pubDate>Thu, 28 Dec 2024 15:45:00 GMT</pubDate>
+      <category>Airport Incident</category>
+      <category>Verified</category>
+      <category>Denmark</category>
+      <dc:creator>DroneWatch AI</dc:creator>
+      <media:content url="https://dronewatch.eu/api/map/cph-2024-12-28-001.png" type="image/png">
+        <media:description>Map showing incident location at Copenhagen Airport</media:description>
+      </media:content>
+    </item>
+
+    <item>
+      <title>🟠 Medium Impact: Unauthorized Drone at Port of Hamburg</title>
+      <link>https://dronewatch.eu/#incident=ham-2024-12-28-002</link>
+      <description><![CDATA[
+        <p><strong>Location:</strong> Port of Hamburg, Germany</p>
+        <p><strong>Time:</strong> December 28, 2024, 12:30 UTC</p>
+        <p><strong>Impact:</strong> Medium (Severity 5/10)</p>
+        <p><strong>Status:</strong> Resolved</p>
+        <p><strong>Summary:</strong> Unauthorized drone activity disrupted loading operations at container terminal for 45 minutes.</p>
+        <p><strong>Verification:</strong> ⚠️ Partially Verified</p>
+        <p><strong>AI Confidence:</strong> 72%</p>
+        <p><strong>Sources:</strong> Reuters, Local Hamburg Media</p>
+      ]]></description>
+      <guid isPermaLink="false">ham-2024-12-28-002</guid>
+      <pubDate>Thu, 28 Dec 2024 12:30:00 GMT</pubDate>
+      <category>Port Incident</category>
+      <category>Germany</category>
+      <dc:creator>DroneWatch AI</dc:creator>
+    </item>
+
+    <item>
+      <title>📊 Daily Summary: 12 Drone Incidents Across Europe</title>
+      <link>https://dronewatch.eu/daily/2024-12-28</link>
+      <description><![CDATA[
+        <h3>DroneWatch Daily Summary - December 28, 2024</h3>
+        <ul>
+          <li><strong>Total Incidents:</strong> 12</li>
+          <li><strong>Active:</strong> 3</li>
+          <li><strong>Countries Affected:</strong> Denmark (3), Germany (4), UK (2), France (2), Netherlands (1)</li>
+          <li><strong>High Impact:</strong> 2 incidents</li>
+          <li><strong>Airports Affected:</strong> Copenhagen, Frankfurt, Manchester</li>
+          <li><strong>AI Discoveries:</strong> 8 incidents first detected by AI analysis</li>
+        </ul>
+        <p><strong>Trending:</strong> 40% increase in German airspace activity. Morning rush hour pattern detected.</p>
+        <p><a href="https://dronewatch.eu/daily/2024-12-28">View full report with interactive map</a></p>
+      ]]></description>
+      <guid isPermaLink="false">daily-2024-12-28</guid>
+      <pubDate>Thu, 28 Dec 2024 23:59:00 GMT</pubDate>
+      <category>Daily Summary</category>
+      <dc:creator>DroneWatch Analytics</dc:creator>
+    </item>
+
+    <item>
+      <title>🤖 AI Pattern Detection: Increased Activity in Baltic Region</title>
+      <link>https://dronewatch.eu/trends/baltic-2024-12</link>
+      <description><![CDATA[
+        <p><strong>AI Analysis:</strong> Pattern detection algorithm identified unusual drone activity concentration in Baltic region.</p>
+        <ul>
+          <li>5 incidents in Denmark-Sweden corridor over 48 hours</li>
+          <li>Timing pattern: Primarily during morning hours (06:00-09:00 UTC)</li>
+          <li>All incidents near transportation infrastructure</li>
+        </ul>
+        <p><strong>Confidence:</strong> 78% based on multi-source analysis</p>
+        <p><strong>Data Sources:</strong> 47 news articles analyzed from 12 sources</p>
+      ]]></description>
+      <guid isPermaLink="false">trend-baltic-2024-12</guid>
+      <pubDate>Thu, 28 Dec 2024 14:00:00 GMT</pubDate>
+      <category>AI Analysis</category>
+      <category>Trending</category>
+      <dc:creator>DroneWatch AI</dc:creator>
+    </item>
+  </channel>
+</rss>

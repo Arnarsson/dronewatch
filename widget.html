@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DroneWatch Widget</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 16px;
+      overflow-y: auto;
+    }
+
+    .widget-container {
+      max-width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+
+    .widget-header {
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .widget-title {
+      font-size: 18px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .widget-badge {
+      background: #10b981;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    .widget-content {
+      padding: 16px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .incident-item {
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+
+    .incident-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateX(4px);
+    }
+
+    .incident-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .incident-location {
+      font-weight: 600;
+      color: #38bdf8;
+      font-size: 14px;
+    }
+
+    .incident-time {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .incident-description {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .incident-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .severity-high {
+      color: #ef4444;
+    }
+
+    .severity-medium {
+      color: #f97316;
+    }
+
+    .severity-low {
+      color: #22c55e;
+    }
+
+    .widget-footer {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .widget-link {
+      color: #38bdf8;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .widget-link:hover {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 32px;
+      color: #94a3b8;
+    }
+
+    .no-incidents {
+      text-align: center;
+      padding: 32px;
+      color: #94a3b8;
+    }
+
+    /* Scrollbar styling */
+    .widget-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .widget-content::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .widget-content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+
+    .widget-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <div class="widget-header">
+      <div class="widget-title">
+        <span>✈️</span>
+        <span>DroneWatch</span>
+      </div>
+      <div class="widget-badge">LIVE</div>
+    </div>
+
+    <div class="widget-content" id="widgetContent">
+      <div class="loading">Loading incidents...</div>
+    </div>
+
+    <div class="widget-footer">
+      <a href="https://dronewatch.eu" target="_blank" class="widget-link">
+        View full map on DroneWatch
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // Fetch and display incidents
+    async function loadIncidents() {
+      try {
+        const response = await fetch('/api/incidents.json');
+        if (!response.ok) {
+          // Fallback to local file
+          const fallbackResponse = await fetch('/incidents.json');
+          if (!fallbackResponse.ok) throw new Error('Failed to load incidents');
+          incidents = await fallbackResponse.json();
+        } else {
+          incidents = await response.json();
+        }
+
+        displayIncidents(incidents);
+      } catch (error) {
+        console.error('Error loading incidents:', error);
+        document.getElementById('widgetContent').innerHTML = `
+          <div class="no-incidents">Unable to load incidents. Please try again later.</div>
+        `;
+      }
+    }
+
+    function displayIncidents(incidents) {
+      const container = document.getElementById('widgetContent');
+
+      if (!incidents || incidents.length === 0) {
+        container.innerHTML = '<div class="no-incidents">No recent incidents reported</div>';
+        return;
+      }
+
+      // Sort by date and take recent 10
+      const recent = incidents
+        .sort((a, b) => new Date(b.first_seen_utc) - new Date(a.first_seen_utc))
+        .slice(0, 10);
+
+      container.innerHTML = recent.map(incident => {
+        const date = new Date(incident.first_seen_utc);
+        const timeAgo = getTimeAgo(date);
+        const severity = incident.scores?.severity || 0;
+        const severityClass = severity >= 7 ? 'high' : severity >= 4 ? 'medium' : 'low';
+        const severityText = severity >= 7 ? 'High' : severity >= 4 ? 'Medium' : 'Low';
+
+        return `
+          <div class="incident-item">
+            <div class="incident-header">
+              <div class="incident-location">
+                📍 ${incident.asset?.name || 'Unknown Location'}
+              </div>
+              <div class="incident-time">${timeAgo}</div>
+            </div>
+
+            <div class="incident-description">
+              ${incident.incident?.narrative || 'Drone activity reported'}
+            </div>
+
+            <div class="incident-meta">
+              <div class="meta-item">
+                <span class="severity-${severityClass}">●</span>
+                <span>${severityText} Impact</span>
+              </div>
+              ${incident.evidence?.strength >= 2 ? `
+                <div class="meta-item">
+                  <span>✓</span>
+                  <span>Verified</span>
+                </div>
+              ` : ''}
+              ${incident.incident?.status === 'active' ? `
+                <div class="meta-item">
+                  <span>🔴</span>
+                  <span>Active</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getTimeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+
+      if (seconds < 60) return 'Just now';
+      if (seconds < 3600) return Math.floor(seconds / 60) + ' min ago';
+      if (seconds < 86400) return Math.floor(seconds / 3600) + ' hours ago';
+      if (seconds < 604800) return Math.floor(seconds / 86400) + ' days ago';
+
+      return date.toLocaleDateString();
+    }
+
+    // Auto-refresh every 5 minutes
+    setInterval(loadIncidents, 5 * 60 * 1000);
+
+    // Initial load
+    loadIncidents();
+  </script>
+</body>
+</html>

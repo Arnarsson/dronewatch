@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About DroneWatch - Methodology & Transparency</title>
+  <meta name="description" content="Learn about DroneWatch's methodology, data sources, and commitment to transparent reporting of drone incidents.">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0ea5e9;
+      --primary-light: #38bdf8;
+      --primary-dark: #0284c7;
+      --surface: #0f172a;
+      --surface-elevated: #1e293b;
+      --glass: rgba(15, 23, 42, 0.9);
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --verified: #10b981;
+      --ai-accent: #8b5cf6;
+      --border: rgba(255, 255, 255, 0.1);
+      --radius: 0.75rem;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      background-image:
+        radial-gradient(ellipse at top, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding: 2rem 0;
+    }
+
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--primary), var(--ai-accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+    }
+
+    .section {
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-secondary);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+
+    .icon {
+      flex-shrink: 0;
+      margin-top: 0.125rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: var(--surface-elevated);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      margin-right: 0.5rem;
+    }
+
+    .badge.verified {
+      border: 1px solid var(--verified);
+      color: var(--verified);
+    }
+
+    .badge.ai {
+      border: 1px solid var(--ai-accent);
+      color: var(--ai-accent);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .stat-card {
+      background: var(--surface-elevated);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .contact-card {
+      background: var(--surface-elevated);
+      padding: 1.25rem;
+      border-radius: 0.5rem;
+      border: 1px solid var(--border);
+    }
+
+    .contact-card h4 {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--glass);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      background: var(--surface-elevated);
+      text-decoration: none;
+      transform: translateX(-4px);
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0.5rem;
+      bottom: 0.5rem;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 0.25rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--surface);
+    }
+
+    .timeline-time {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .container {
+        padding: 1.5rem 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="index-public.html" class="back-link">
+      <span>←</span>
+      <span>Back to DroneWatch</span>
+    </a>
+
+    <header>
+      <div class="logo">🛸</div>
+      <h1>About DroneWatch</h1>
+      <p class="tagline">Transparent tracking of drone incidents across Europe</p>
+    </header>
+
+    <!-- Mission Section -->
+    <section class="section">
+      <h2>
+        <span>🎯</span>
+        <span>Our Mission</span>
+      </h2>
+      <p>
+        DroneWatch provides transparent, real-time information about drone incidents affecting European airspace.
+        We believe the public and journalists deserve access to accurate, verified information about aviation safety
+        and emerging drone-related challenges.
+      </p>
+      <p>
+        Our platform combines AI-powered news analysis with human verification to create a comprehensive picture
+        of drone activity, making this critical safety information accessible to everyone.
+      </p>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section">
+      <h2>
+        <span>⚙️</span>
+        <span>How DroneWatch Works</span>
+      </h2>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value">200+</div>
+          <div class="stat-label">News Sources Monitored</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">15 min</div>
+          <div class="stat-label">Update Frequency</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">24/7</div>
+          <div class="stat-label">Continuous Monitoring</div>
+        </div>
+      </div>
+
+      <h3>Our Process</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-time">Every 15 minutes</div>
+          <strong>News Gathering</strong>
+          <p>Our system scans RSS feeds from major European news outlets, aviation authorities, and specialized publications.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">~ 0.3 seconds</div>
+          <strong>AI Analysis</strong>
+          <p>Advanced language models analyze articles to identify drone incidents, extract locations, and assess impact.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">Immediate</div>
+          <strong>Geolocation & Mapping</strong>
+          <p>Incidents are geolocated using our database of airports, ports, and critical infrastructure across Europe.</p>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-time">Real-time</div>
+          <strong>Verification & Display</strong>
+          <p>Verified incidents appear on the map with confidence scores and source attribution for transparency.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Sources -->
+    <section class="section">
+      <h2>
+        <span>📰</span>
+        <span>Data Sources</span>
+      </h2>
+      <p>
+        We aggregate information from trusted news sources and official channels:
+      </p>
+      <ul>
+        <li>
+          <span class="icon">🌍</span>
+          <div>
+            <strong>International News Agencies</strong><br>
+            BBC, Reuters, AP News, CNN International, Bloomberg
+          </div>
+        </li>
+        <li>
+          <span class="icon">🇪🇺</span>
+          <div>
+            <strong>European National Media</strong><br>
+            DW (Germany), Le Monde (France), El País (Spain), La Repubblica (Italy), and 100+ regional outlets
+          </div>
+        </li>
+        <li>
+          <span class="icon">✈️</span>
+          <div>
+            <strong>Aviation Specialists</strong><br>
+            FlightGlobal, Aviation24, AirportWatch, specialized aviation media
+          </div>
+        </li>
+        <li>
+          <span class="icon">🏛️</span>
+          <div>
+            <strong>Official Sources</strong><br>
+            When available: EASA reports, national aviation authorities, police statements
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- AI Methodology -->
+    <section class="section">
+      <h2>
+        <span>🤖</span>
+        <span>AI Methodology</span>
+      </h2>
+
+      <h3>How Our AI Works</h3>
+      <p>
+        Our AI system uses state-of-the-art language models to understand and extract information from news articles:
+      </p>
+      <ul>
+        <li>
+          <span class="badge ai">AI</span>
+          <div>
+            <strong>Natural Language Processing</strong><br>
+            GPT-4 and Claude models analyze text to identify drone-related incidents with high accuracy
+          </div>
+        </li>
+        <li>
+          <span class="badge ai">AI</span>
+          <div>
+            <strong>Entity Recognition</strong><br>
+            Automatic extraction of locations, times, and impact assessments from unstructured text
+          </div>
+        </li>
+        <li>
+          <span class="badge ai">AI</span>
+          <div>
+            <strong>Confidence Scoring</strong><br>
+            Each discovery includes a transparency score (0-100%) based on source reliability and information completeness
+          </div>
+        </li>
+        <li>
+          <span class="badge ai">AI</span>
+          <div>
+            <strong>Cross-Reference Validation</strong><br>
+            Multiple sources reporting the same incident increase confidence scores
+          </div>
+        </li>
+      </ul>
+
+      <h3>AI Transparency Promise</h3>
+      <p>
+        Every AI-discovered incident is clearly marked with:
+      </p>
+      <ul>
+        <li>🤖 AI badge indicating automated discovery</li>
+        <li>📊 Confidence percentage for transparency</li>
+        <li>📰 Direct links to original news sources</li>
+        <li>✅ Option for human verification</li>
+      </ul>
+    </section>
+
+    <!-- Verification Levels -->
+    <section class="section">
+      <h2>
+        <span>✅</span>
+        <span>Verification Levels</span>
+      </h2>
+      <p>
+        We use a transparent verification system to help you assess information reliability:
+      </p>
+      <ul>
+        <li>
+          <span class="badge verified">Verified</span>
+          <div>
+            <strong>High Confidence (Score 2-3)</strong><br>
+            Multiple reliable sources, official confirmation, or direct evidence
+          </div>
+        </li>
+        <li>
+          <span class="badge">Likely</span>
+          <div>
+            <strong>Medium Confidence (Score 1-2)</strong><br>
+            Single reliable source or multiple unconfirmed reports
+          </div>
+        </li>
+        <li>
+          <span class="badge">Unverified</span>
+          <div>
+            <strong>Low Confidence (Score 0-1)</strong><br>
+            Single source, social media reports, or preliminary information
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Privacy & Ethics -->
+    <section class="section">
+      <h2>
+        <span>🔒</span>
+        <span>Privacy & Ethics</span>
+      </h2>
+      <ul>
+        <li>
+          <span class="icon">👤</span>
+          <div>
+            <strong>No Personal Data</strong><br>
+            We do not collect or store any personal information about individuals
+          </div>
+        </li>
+        <li>
+          <span class="icon">🍪</span>
+          <div>
+            <strong>No Tracking</strong><br>
+            No cookies, no analytics tracking, no user profiling - your privacy is protected
+          </div>
+        </li>
+        <li>
+          <span class="icon">📖</span>
+          <div>
+            <strong>Open Data</strong><br>
+            All incident data is publicly accessible and can be freely shared
+          </div>
+        </li>
+        <li>
+          <span class="icon">⚖️</span>
+          <div>
+            <strong>Responsible Reporting</strong><br>
+            We focus on public safety information, not sensationalism
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Limitations -->
+    <section class="section">
+      <h2>
+        <span>⚠️</span>
+        <span>Important Limitations</span>
+      </h2>
+      <p>
+        Please be aware of these limitations when using DroneWatch:
+      </p>
+      <ul>
+        <li>
+          <span class="icon">⏱️</span>
+          <div>
+            <strong>Not Real-Time</strong><br>
+            Updates every 15 minutes means some delay in reporting
+          </div>
+        </li>
+        <li>
+          <span class="icon">📰</span>
+          <div>
+            <strong>Media Dependent</strong><br>
+            We can only report incidents that appear in news sources
+          </div>
+        </li>
+        <li>
+          <span class="icon">🌍</span>
+          <div>
+            <strong>Coverage Gaps</strong><br>
+            Rural areas and smaller incidents may not be captured
+          </div>
+        </li>
+        <li>
+          <span class="icon">🎯</span>
+          <div>
+            <strong>Not Official</strong><br>
+            This is not an official aviation authority service
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- For Journalists -->
+    <section class="section">
+      <h2>
+        <span>📝</span>
+        <span>For Journalists</span>
+      </h2>
+      <p>
+        DroneWatch is designed to be a valuable resource for media professionals:
+      </p>
+      <ul>
+        <li>
+          <span class="icon">📊</span>
+          <div>
+            <strong>Data Export</strong><br>
+            Download incident data in CSV format for analysis (coming soon)
+          </div>
+        </li>
+        <li>
+          <span class="icon">🔗</span>
+          <div>
+            <strong>Direct Source Links</strong><br>
+            Every incident includes links to original news sources
+          </div>
+        </li>
+        <li>
+          <span class="icon">📡</span>
+          <div>
+            <strong>RSS Feed</strong><br>
+            Subscribe to our RSS feed for automated updates (coming soon)
+          </div>
+        </li>
+        <li>
+          <span class="icon">💬</span>
+          <div>
+            <strong>Embed Widgets</strong><br>
+            Embed live maps or incident feeds in your articles (coming soon)
+          </div>
+        </li>
+      </ul>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h4>Press Inquiries</h4>
+          <p>press@dronewatch.eu</p>
+        </div>
+        <div class="contact-card">
+          <h4>Data Requests</h4>
+          <p>data@dronewatch.eu</p>
+        </div>
+        <div class="contact-card">
+          <h4>Corrections</h4>
+          <p>corrections@dronewatch.eu</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact & Feedback -->
+    <section class="section">
+      <h2>
+        <span>💬</span>
+        <span>Contact & Feedback</span>
+      </h2>
+      <p>
+        We welcome feedback, corrections, and suggestions for improvement:
+      </p>
+      <ul>
+        <li>
+          <span class="icon">✉️</span>
+          <div>
+            <strong>General Inquiries</strong><br>
+            <a href="mailto:info@dronewatch.eu">info@dronewatch.eu</a>
+          </div>
+        </li>
+        <li>
+          <span class="icon">🐛</span>
+          <div>
+            <strong>Report Issues</strong><br>
+            <a href="https://github.com/dronewatch/feedback">GitHub Issues</a>
+          </div>
+        </li>
+        <li>
+          <span class="icon">🐦</span>
+          <div>
+            <strong>Follow Updates</strong><br>
+            <a href="https://twitter.com/dronewatcheu">@DroneWatchEU</a>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Credits -->
+    <section class="section">
+      <h2>
+        <span>🙏</span>
+        <span>Credits & Acknowledgments</span>
+      </h2>
+      <p>
+        DroneWatch is an independent, non-profit initiative made possible by:
+      </p>
+      <ul>
+        <li>
+          <span class="icon">🗺️</span>
+          <div>
+            <strong>OpenStreetMap</strong><br>
+            Map data and infrastructure locations
+          </div>
+        </li>
+        <li>
+          <span class="icon">🤖</span>
+          <div>
+            <strong>OpenRouter & Anthropic</strong><br>
+            AI language models for news analysis
+          </div>
+        </li>
+        <li>
+          <span class="icon">📰</span>
+          <div>
+            <strong>News Organizations</strong><br>
+            The journalists and media outlets reporting on these incidents
+          </div>
+        </li>
+        <li>
+          <span class="icon">👥</span>
+          <div>
+            <strong>Open Source Community</strong><br>
+            Leaflet, Node.js, and countless open source projects
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <footer style="text-align: center; margin-top: 4rem; padding: 2rem 0; color: var(--text-muted);">
+      <p>
+        DroneWatch is an independent project committed to transparency and public awareness.<br>
+        Last updated: December 2024
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
