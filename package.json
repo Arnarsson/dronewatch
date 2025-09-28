@@ -10,7 +10,7 @@
     "serve": "python3 -m http.server 8081",
     "update": "node automation/live-update-service.js",
     "scrape": "node automation/scrapers/rss-news-scraper.js",
-    "build": "rm -rf dist && mkdir -p dist && cp index-live.html dist/index.html && cp incidents.json dist/incidents.json",
+    "build": "rm -rf dist && mkdir -p dist && cp index.html dist/index.html && cp incidents.json dist/incidents.json",
     "vercel-build": "npm run build",
     "build-assets": "python3 tools/build_assets.py",
     "automation": "node automation/index.js run",
