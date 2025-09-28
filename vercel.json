@@ -1,5 +1,6 @@
 {
   "framework": null,
+  "installCommand": "echo 'No dependencies to install'",
   "buildCommand": "npm run vercel-build",
   "outputDirectory": "dist",
   "functions": {
