@@ -1,0 +1,104 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Import Leaflet styles */
+@import 'leaflet/dist/leaflet.css';
+@import 'react-leaflet-cluster/lib/assets/MarkerCluster.css';
+@import 'react-leaflet-cluster/lib/assets/MarkerCluster.Default.css';
+
+@layer base {
+  :root {
+    --background: 221 39% 6%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 47.4% 8.2%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 25 100% 50%;
+    --primary-foreground: 221 39% 6%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 25 100% 50%;
+    --accent-foreground: 221 39% 6%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 25 100% 50%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}
+
+/* Custom scrollbar */
+@layer components {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-muted rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full hover:bg-muted-foreground/50;
+  }
+}
+
+/* Leaflet customizations */
+.leaflet-container {
+  @apply bg-background font-sans;
+  z-index: 1;
+}
+
+.leaflet-control {
+  @apply border-border;
+}
+
+.leaflet-bar a {
+  @apply bg-card text-foreground border-border hover:bg-muted;
+}
+
+.leaflet-popup-content-wrapper {
+  @apply bg-card text-foreground rounded-lg shadow-lg;
+}
+
+.leaflet-popup-tip {
+  @apply bg-card;
+}
+
+/* Marker cluster customizations */
+.marker-cluster {
+  @apply bg-primary/20 border-2 border-primary text-primary font-bold;
+}
+
+.marker-cluster-small {
+  @apply bg-success/20 border-success;
+}
+
+.marker-cluster-medium {
+  @apply bg-warning/20 border-warning;
+}
+
+.marker-cluster-large {
+  @apply bg-destructive/20 border-destructive;
+}
+
+/* Focus visible utilities */
+@layer utilities {
+  .focus-visible-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+}

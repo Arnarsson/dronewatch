@@ -102,7 +102,14 @@ export class NewsDashboard {
       
       this.articles = data.articles || [];
       this.sources = new Map(data.sources || []);
-      this.trends = data.trends || [];
+      // Handle trends as either array or object format
+      if (Array.isArray(data.trends)) {
+        this.trends = data.trends;
+      } else if (data.trends && data.trends.severityTrends) {
+        this.trends = data.trends.severityTrends;
+      } else {
+        this.trends = [];
+      }
       
       this.renderNewsFeed();
       this.renderTrends();

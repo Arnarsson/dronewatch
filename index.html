@@ -98,6 +98,12 @@
 
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--surface);
@@ -110,7 +116,8 @@
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     /* Monospace for data */
@@ -937,8 +944,11 @@
 
     /* Map container */
     .map-wrapper {
-      flex: 1;
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: var(--surface);
     }
 
@@ -1243,9 +1253,10 @@
 
       .sidebar {
         position: fixed;
-        left: -100%;
-        width: 100%;
-        height: 100%;
+        left: -280px;
+        width: 280px;
+        height: calc(100vh - 64px);
+        top: 64px;
         z-index: 2000;
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
@@ -1301,10 +1312,11 @@
       }
 
       .sidebar {
-        width: 360px;
+        width: 320px;
         position: fixed;
-        left: -360px;
-        height: 100%;
+        left: -320px;
+        height: calc(100vh - 68px);
+        top: 68px;
         z-index: 2000;
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
@@ -1589,6 +1601,247 @@
     .leaflet-popup {
       z-index: 3000 !important;
     }
+    /* ============================================ */
+    /* ENHANCED MAGIC EARTH GLASSMORPHISM EFFECTS  */
+    /* ============================================ */
+
+    /* Premium gradient animated background */
+    @keyframes gradientShift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    body {
+      background:
+        linear-gradient(45deg, #000614 0%, #001028 25%, #002244 50%, #001028 75%, #000614 100%),
+        radial-gradient(ellipse at top left, rgba(0, 212, 255, 0.1) 0%, transparent 40%),
+        radial-gradient(ellipse at bottom right, rgba(179, 102, 255, 0.08) 0%, transparent 40%);
+      background-size: 400% 400%;
+      animation: gradientShift 20s ease infinite;
+    }
+
+    /* Enhanced header with premium glassmorphism */
+    .app-header {
+      background: linear-gradient(90deg,
+        rgba(0, 10, 30, 0.95) 0%,
+        rgba(0, 20, 60, 0.9) 20%,
+        rgba(0, 15, 45, 0.9) 50%,
+        rgba(0, 20, 60, 0.9) 80%,
+        rgba(0, 10, 30, 0.95) 100%) !important;
+      backdrop-filter: blur(40px) saturate(200%) brightness(1.1) !important;
+      -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(1.1) !important;
+      border-bottom: 1px solid rgba(0, 212, 255, 0.3) !important;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.8),
+        0 2px 10px rgba(0, 212, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* Enhanced sidebar with premium glass effect */
+    .sidebar {
+      background: linear-gradient(145deg,
+        rgba(0, 20, 60, 0.85) 0%,
+        rgba(0, 10, 40, 0.8) 50%,
+        rgba(0, 20, 60, 0.85) 100%) !important;
+      backdrop-filter: blur(50px) saturate(180%) brightness(0.95) !important;
+      -webkit-backdrop-filter: blur(50px) saturate(180%) brightness(0.95) !important;
+      border: 1px solid rgba(0, 212, 255, 0.25) !important;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.7),
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 2px 10px rgba(0, 212, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* Premium incident cards */
+    .incident-card {
+      background: linear-gradient(145deg,
+        rgba(0, 30, 70, 0.6) 0%,
+        rgba(0, 20, 50, 0.5) 100%) !important;
+      backdrop-filter: blur(30px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(30px) saturate(150%) !important;
+      border: 1px solid rgba(0, 212, 255, 0.2) !important;
+      box-shadow:
+        0 10px 40px rgba(0, 0, 0, 0.5),
+        0 2px 10px rgba(0, 212, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .incident-card:hover {
+      transform: translateY(-5px) scale(1.02) !important;
+      background: linear-gradient(145deg,
+        rgba(0, 40, 90, 0.7) 0%,
+        rgba(0, 30, 70, 0.6) 100%) !important;
+      border-color: rgba(0, 212, 255, 0.5) !important;
+      box-shadow:
+        0 20px 60px rgba(0, 212, 255, 0.3),
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(0, 212, 255, 0.2),
+        inset 0 2px 0 rgba(255, 255, 255, 0.15) !important;
+    }
+
+    /* Enhanced stats with neon glow */
+    .stat-value {
+      color: #00d4ff !important;
+      text-shadow:
+        0 0 20px rgba(0, 212, 255, 0.8),
+        0 0 10px rgba(0, 212, 255, 0.6) !important;
+      font-weight: 700 !important;
+    }
+
+    /* Premium buttons with glass effect */
+    .control-btn {
+      background: linear-gradient(135deg,
+        rgba(0, 30, 70, 0.6) 0%,
+        rgba(0, 20, 50, 0.4) 100%) !important;
+      backdrop-filter: blur(20px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+      border: 1px solid rgba(0, 212, 255, 0.25) !important;
+      box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 1px 5px rgba(0, 212, 255, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .control-btn:hover {
+      background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.3) 0%,
+        rgba(0, 150, 200, 0.2) 100%) !important;
+      transform: translateY(-2px) scale(1.05) !important;
+      border-color: rgba(0, 212, 255, 0.5) !important;
+      box-shadow:
+        0 8px 25px rgba(0, 212, 255, 0.4),
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        0 0 15px rgba(0, 212, 255, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Enhanced filter buttons */
+    .filter-btn {
+      background: linear-gradient(135deg,
+        rgba(0, 25, 60, 0.7) 0%,
+        rgba(0, 15, 40, 0.5) 100%) !important;
+      backdrop-filter: blur(20px) saturate(140%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+      border: 1px solid rgba(0, 212, 255, 0.2) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .filter-btn:hover {
+      background: linear-gradient(135deg,
+        rgba(0, 40, 80, 0.8) 0%,
+        rgba(0, 30, 60, 0.6) 100%) !important;
+      transform: translateY(-2px) !important;
+      border-color: rgba(0, 212, 255, 0.4) !important;
+      box-shadow:
+        0 8px 20px rgba(0, 212, 255, 0.3),
+        0 4px 10px rgba(0, 0, 0, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.4) 0%,
+        rgba(0, 150, 200, 0.3) 100%) !important;
+      color: white !important;
+      border-color: rgba(0, 212, 255, 0.6) !important;
+      box-shadow:
+        0 8px 25px rgba(0, 212, 255, 0.5),
+        0 4px 10px rgba(0, 0, 0, 0.3),
+        0 0 20px rgba(0, 212, 255, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3) !important;
+    }
+
+    /* Enhanced logo with neon effect */
+    .logo-icon {
+      filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.8)) !important;
+    }
+
+    /* Premium app title */
+    .app-title {
+      background: linear-gradient(90deg, #00d4ff, #00ff88, #00d4ff) !important;
+      background-size: 200% auto !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      animation: shimmer 3s linear infinite !important;
+    }
+
+    @keyframes shimmer {
+      to {
+        background-position: 200% center;
+      }
+    }
+
+    /* Enhanced search bar */
+    .global-search {
+      background: linear-gradient(135deg,
+        rgba(0, 20, 50, 0.7) 0%,
+        rgba(0, 10, 30, 0.5) 100%) !important;
+      backdrop-filter: blur(20px) saturate(150%) !important;
+      -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+      border: 1px solid rgba(0, 212, 255, 0.2) !important;
+    }
+
+    .global-search-input {
+      background: transparent !important;
+      color: white !important;
+    }
+
+    .global-search-input::placeholder {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    /* Map enhancements */
+    #map {
+      background: radial-gradient(ellipse at center, #001028 0%, #000614 50%, #000000 100%) !important;
+    }
+
+    /* Leaflet marker clusters with glow */
+    .marker-cluster {
+      background: radial-gradient(circle,
+        rgba(0, 212, 255, 0.4) 0%,
+        rgba(0, 150, 200, 0.2) 50%,
+        transparent 70%) !important;
+    }
+
+    .marker-cluster div {
+      background: rgba(0, 30, 70, 0.9) !important;
+      color: #00d4ff !important;
+      text-shadow: 0 0 10px rgba(0, 212, 255, 0.8) !important;
+    }
+
+    /* Enhanced scrollbars */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 10, 30, 0.5);
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.5) 0%,
+        rgba(0, 150, 200, 0.3) 100%);
+      border-radius: 5px;
+      border: 1px solid rgba(0, 212, 255, 0.3);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg,
+        rgba(0, 212, 255, 0.7) 0%,
+        rgba(0, 150, 200, 0.5) 100%);
+    }
+
   </style>
 </head>
 <body>
@@ -1947,11 +2200,11 @@
           </div>
         </div>
       </div>
-    </div>
 
     <!-- Enhanced Map Container -->
-    <div class="map-wrapper">
-      <div id="map-loading" class="loading-overlay">
+    <div class="map-container">
+      <div class="map-wrapper">
+        <div id="map-loading" class="loading-overlay">
         <div class="loading-content">
           <div class="spinner"></div>
           <div style="margin-top: 1rem; color: var(--text-muted);">Initializing Operations Center...</div>
@@ -2044,6 +2297,7 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 
   <!-- Update notification -->
@@ -2123,18 +2377,7 @@
     }
 
     // Update header stats
-    function updateHeaderStats() {
-      const active = state.incidents.filter(i => i.incident.status === 'active').length;
-      const total = state.incidents.length;
-      const lastUpdate = state.lastUpdate ? new Date(state.lastUpdate).toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit'
-      }) : '--';
-
-      document.getElementById('header-active-count').textContent = active;
-      document.getElementById('header-total-count').textContent = total;
-      document.getElementById('header-last-update').textContent = lastUpdate;
-    }
+    // Removed duplicate updateHeaderStats - using updateStats instead
 
     // Initialize application
     async function init() {
@@ -2142,7 +2385,7 @@
 
       // Initialize header components
       initGlobalSearch();
-      updateHeaderStats();
+      updateStats();
 
       // Add timeout to force hide loading overlay after 3 seconds
       setTimeout(() => {
@@ -2153,11 +2396,12 @@
         }
       }, 3000);
 
-      // Initialize map first
-      initMap();
-
-      // Load initial data
-      await loadIncidents();
+      // Initialize map first (with small delay to ensure DOM is ready)
+      setTimeout(() => {
+        initMap();
+        // Load initial data after map is initialized
+        loadIncidents();
+      }, 100);
 
       // Setup UI interactions
       setupFilters();
@@ -2783,6 +3027,12 @@
 
     // Render incidents on map and sidebar
     function renderIncidents() {
+      // Ensure map is initialized before proceeding
+      if (!state.map || !state.clusterGroup) {
+        console.log('⏳ Map not ready yet, skipping render...');
+        return;
+      }
+
       // Clear existing markers
       state.clusterGroup.clearLayers();
       state.markers.clear();
@@ -2794,6 +3044,9 @@
 
       // Apply filters
       const filtered = filterIncidents(state.incidents);
+
+      // Update stats with filtered incidents
+      updateStats(filtered);
 
       // Render sidebar
       const listEl = document.getElementById('incident-list');
@@ -2810,22 +3063,26 @@
         return [incident.asset.lat, incident.asset.lon, intensity];
       });
 
-      // Create heat map layer
-      if (heatData.length > 0) {
-        state.heatLayer = L.heatLayer(heatData, {
-          radius: 35,
-          blur: 25,
-          maxZoom: 10,
-          gradient: {
-            0.0: '#0000ff',
-            0.2: '#00ffff',
-            0.4: '#00ff00',
-            0.6: '#ffff00',
-            0.8: '#ff9900',
-            1.0: '#ff0000'
-          },
-          minOpacity: 0.3
-        }).addTo(state.map);
+      // Create heat map layer (with safety checks)
+      if (heatData.length > 0 && state.map && state.map.getContainer()) {
+        try {
+          state.heatLayer = L.heatLayer(heatData, {
+            radius: 35,
+            blur: 25,
+            maxZoom: 10,
+            gradient: {
+              0.0: '#0000ff',
+              0.2: '#00ffff',
+              0.4: '#00ff00',
+              0.6: '#ffff00',
+              0.8: '#ff9900',
+              1.0: '#ff0000'
+            },
+            minOpacity: 0.3
+          }).addTo(state.map);
+        } catch (error) {
+          console.warn('⚠️ Failed to create heatmap layer:', error);
+        }
       }
 
       // Add markers and cards
@@ -3313,11 +3570,28 @@
     }
 
     // Update statistics
-    function updateStats() {
-      const active = state.incidents.filter(i => i.incident.status === 'active').length;
-      document.getElementById('active-count').textContent = active;
-      document.getElementById('total-count').textContent = state.incidents.length;
-      document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+    function updateStats(filteredIncidents = null) {
+      // Use filtered incidents if provided, otherwise use all incidents
+      const incidents = filteredIncidents || state.incidents;
+      const active = incidents.filter(i => i.incident.status === 'active').length;
+
+      // Update header stats (safely with null checks)
+      const headerActiveEl = document.getElementById('header-active-count');
+      const headerTotalEl = document.getElementById('header-total-count');
+      const headerUpdateEl = document.getElementById('header-last-update');
+
+      if (headerActiveEl) headerActiveEl.textContent = active;
+      if (headerTotalEl) headerTotalEl.textContent = incidents.length;
+      if (headerUpdateEl) headerUpdateEl.textContent = new Date().toLocaleTimeString();
+
+      // Also update sidebar stats if they exist
+      const activeEl = document.getElementById('active-count');
+      const totalEl = document.getElementById('total-count');
+      const updateEl = document.getElementById('last-update');
+
+      if (activeEl) activeEl.textContent = active;
+      if (totalEl) totalEl.textContent = incidents.length;
+      if (updateEl) updateEl.textContent = new Date().toLocaleTimeString();
 
       // Calculate overall risk level
       const activeIncidents = state.incidents.filter(i => i.incident.status === 'active');
