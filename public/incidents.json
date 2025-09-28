@@ -75,13 +75,13 @@
       "first_seen_utc": "2025-09-27T10:00:00.000Z",
       "last_update_utc": "2025-09-27T10:00:00.000Z",
       "asset": {
-        "type": "unknown",
-        "name": "Niš Airport",
-        "iata": "INI",
-        "icao": "LYNI",
-        "lat": 43.3373,
-        "lon": 21.8537,
-        "country": "Serbia"
+        "type": "military",
+        "name": "Karup Air Base",
+        "iata": null,
+        "icao": "EKKA",
+        "lat": 56.2975,
+        "lon": 9.1247,
+        "country": "Denmark"
       },
       "incident": {
         "category": "threat",
@@ -389,13 +389,13 @@
       "first_seen_utc": "2025-09-26T10:02:00.000Z",
       "last_update_utc": "2025-09-26T10:02:00.000Z",
       "asset": {
-        "type": "unknown",
-        "name": "Heraklion Airport",
-        "iata": "HER",
-        "icao": "LGIR",
-        "lat": 35.3397,
-        "lon": 25.1803,
-        "country": "Greece"
+        "type": "airport",
+        "name": "Aalborg Airport",
+        "iata": "AAL",
+        "icao": "EKYT",
+        "lat": 57.0928,
+        "lon": 9.8492,
+        "country": "Denmark"
       },
       "incident": {
         "category": "closure",
@@ -451,13 +451,13 @@
       "first_seen_utc": "2025-09-26T07:36:21.000Z",
       "last_update_utc": "2025-09-26T07:36:21.000Z",
       "asset": {
-        "type": "research",
-        "name": "CERN",
-        "iata": null,
-        "icao": null,
-        "lat": 46.2344,
-        "lon": 6.0557,
-        "country": "Switzerland/France"
+        "type": "airport",
+        "name": "Aalborg Airport",
+        "iata": "AAL",
+        "icao": "EKYT",
+        "lat": 57.0928,
+        "lon": 9.8492,
+        "country": "Denmark"
       },
       "incident": {
         "category": "closure",
@@ -645,13 +645,13 @@
       "first_seen_utc": "2025-09-25T06:31:14.000Z",
       "last_update_utc": "2025-09-25T06:31:14.000Z",
       "asset": {
-        "type": "unknown",
-        "name": "Heraklion Airport",
-        "iata": "HER",
-        "icao": "LGIR",
-        "lat": 35.3397,
-        "lon": 25.1803,
-        "country": "Greece"
+        "type": "airport",
+        "name": "Aalborg Airport",
+        "iata": "AAL",
+        "icao": "EKYT",
+        "lat": 57.0928,
+        "lon": 9.8492,
+        "country": "Denmark"
       },
       "incident": {
         "category": "closure",
@@ -767,13 +767,13 @@
       "first_seen_utc": "2025-09-23T07:03:34.000Z",
       "last_update_utc": "2025-09-23T07:03:34.000Z",
       "asset": {
-        "type": "unknown",
-        "name": "Heraklion Airport",
-        "iata": "HER",
-        "icao": "LGIR",
-        "lat": 35.3397,
-        "lon": 25.1803,
-        "country": "Greece"
+        "type": "airport",
+        "name": "Copenhagen Airport",
+        "iata": "CPH",
+        "icao": "EKCH",
+        "lat": 55.6181,
+        "lon": 12.6561,
+        "country": "Denmark"
       },
       "incident": {
         "category": "threat",
