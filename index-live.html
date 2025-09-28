@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🚁 DroneWatch LIVE - Real-Time Drone Incident Monitoring</title>
+  <title>DroneWatch - Real-Time Drone Incident Monitoring for European Airspace</title>
 
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -516,13 +516,54 @@
   <!-- Header -->
   <div class="header">
     <h1>
-      🚁 DroneWatch LIVE
-      <div class="live-indicator">
-        <span class="live-dot"></span>
-        <span>Live Updates</span>
-      </div>
+      🚁 DroneWatch
+      <span style="font-size: 0.6em; color: var(--text-muted); font-weight: 400; margin-left: 0.5rem;">European Airspace Monitor</span>
     </h1>
-    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- Public-friendly buttons -->
+    <div class="header-buttons" style="display: flex; gap: 1rem; align-items: center;">
+      <button onclick="showAboutPanel()" style="
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      ">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        About
+      </button>
+
+      <button onclick="shareCurrentView()" style="
+        background: var(--primary);
+        border: none;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      ">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 12v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16,6 12,2 8,6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        Share
+      </button>
+
+      <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    </div>
     <div class="header-stats">
       <div class="stat-badge" id="new-incidents-badge">
         <span>New:</span>
@@ -1346,6 +1387,132 @@
         clearInterval(state.updateInterval);
       }
     });
+
+    // ========================================
+    // PUBLIC INTERFACE FUNCTIONS
+    // ========================================
+
+    // Show About Panel
+    function showAboutPanel() {
+      const aboutPanel = document.createElement('div');
+      aboutPanel.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        background: var(--glass-panel);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--border);
+        border-radius: 1rem;
+        padding: 2rem;
+        z-index: 10000;
+        color: var(--text);
+      `;
+
+      aboutPanel.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text);">About DroneWatch</h2>
+          <button onclick="this.closest('div').remove()" style="
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+          ">✕</button>
+        </div>
+
+        <div>
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text);">Our Mission</h3>
+            <p style="color: var(--text); opacity: 0.8; line-height: 1.6;">DroneWatch provides real-time monitoring of drone incidents across European airspace to help journalists, researchers, and the public understand aviation safety and security trends.</p>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text);">Data Sources</h3>
+            <ul style="color: var(--text); opacity: 0.8; line-height: 1.6; padding-left: 1.5rem;">
+              <li>Official aviation authorities (EASA, national regulators)</li>
+              <li>Verified news reports from trusted media outlets</li>
+              <li>Airport and airline official statements</li>
+              <li>Government safety bulletins</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text);">For Journalists</h3>
+            <p style="color: var(--text); opacity: 0.8; line-height: 1.6;">Each incident includes direct links to original sources, timestamps, and verification status. Click any incident for full details and source links.</p>
+          </div>
+
+          <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+            <button onclick="shareCurrentView()" style="
+              background: var(--primary);
+              border: none;
+              color: white;
+              padding: 0.5rem 1rem;
+              border-radius: 0.5rem;
+              cursor: pointer;
+              font-weight: 500;
+            ">Share DroneWatch</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(aboutPanel);
+    }
+
+    // Share current view
+    function shareCurrentView() {
+      const shareData = {
+        title: 'DroneWatch - European Drone Incident Monitoring',
+        text: 'Real-time monitoring of drone incidents across European airspace for journalists and public awareness.',
+        url: window.location.href
+      };
+
+      if (navigator.share) {
+        navigator.share(shareData).catch(err => console.log('Share failed:', err));
+      } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          showNotification('Link copied to clipboard!', 'success');
+        }).catch(() => {
+          prompt('Copy this link to share:', window.location.href);
+        });
+      }
+    }
+
+    // Simple notification system
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        background: ${type === 'success' ? '#10b981' : 'var(--primary)'};
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10001;
+        font-size: 0.9rem;
+        max-width: 300px;
+      `;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Make functions globally available
+    window.showAboutPanel = showAboutPanel;
+    window.shareCurrentView = shareCurrentView;
+    window.showNotification = showNotification;
+
+    console.log('📰 DroneWatch Public Edition Ready');
+    console.log('   🌍 Accessible interface for journalists & public');
+    console.log('   📤 Click About button for transparency info');
   </script>
 </body>
 </html>

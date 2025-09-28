@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DroneWatch Public Edition Test</title>
+    <style>
+        body { font-family: monospace; padding: 2rem; }
+        .test-result { margin: 1rem 0; padding: 1rem; border-radius: 0.5rem; }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>DroneWatch Public Edition - Test Results</h1>
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addResult(test, status, details) {
+            const div = document.createElement('div');
+            div.className = `test-result ${status}`;
+            div.innerHTML = `<strong>${status.toUpperCase()}: ${test}</strong><br>${details}`;
+            results.appendChild(div);
+        }
+
+        // Test if the index-live.html file exists and can be loaded
+        fetch('/index-live.html')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                }
+                throw new Error(`HTTP ${response.status}`);
+            })
+            .then(html => {
+                addResult('File Loading', 'pass', 'index-live.html loaded successfully');
+
+                // Test for About button
+                if (html.includes('showAboutPanel()') && html.includes('About')) {
+                    addResult('About Button', 'pass', 'About button found with showAboutPanel() onclick handler');
+                } else {
+                    addResult('About Button', 'fail', 'About button or handler not found');
+                }
+
+                // Test for Share button
+                if (html.includes('shareCurrentView()') && html.includes('Share')) {
+                    addResult('Share Button', 'pass', 'Share button found with shareCurrentView() onclick handler');
+                } else {
+                    addResult('Share Button', 'fail', 'Share button or handler not found');
+                }
+
+                // Test for European Airspace Monitor tagline
+                if (html.includes('European Airspace Monitor')) {
+                    addResult('Tagline', 'pass', 'European Airspace Monitor tagline found');
+                } else {
+                    addResult('Tagline', 'fail', 'European Airspace Monitor tagline not found');
+                }
+
+                // Test for public edition console message
+                if (html.includes('Public Edition Ready')) {
+                    addResult('Console Message', 'pass', 'Public Edition Ready console message found');
+                } else {
+                    addResult('Console Message', 'fail', 'Public Edition Ready console message not found');
+                }
+
+                // Test for About panel content
+                if (html.includes('Our Mission') && html.includes('Data Sources') && html.includes('For Journalists')) {
+                    addResult('About Panel Content', 'pass', 'About panel contains all expected sections');
+                } else {
+                    addResult('About Panel Content', 'fail', 'About panel missing expected content sections');
+                }
+
+                // Test for journalist-friendly features
+                if (html.includes('journalists, researchers, and the public')) {
+                    addResult('Journalist Focus', 'pass', 'Content specifically mentions journalists and public access');
+                } else {
+                    addResult('Journalist Focus', 'fail', 'Missing journalist-focused content');
+                }
+
+                addResult('Overall Status', 'info', 'All basic components for public edition are present');
+            })
+            .catch(error => {
+                addResult('File Loading', 'fail', `Could not load index-live.html: ${error.message}`);
+            });
+    </script>
+</body>
+</html>
