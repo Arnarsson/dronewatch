@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2025-09-26T14:07:54Z",
+  "generated_utc": "2025-09-27T23:02:32.456Z",
   "incidents": [
     {
-      "id": "rss-eddf-2025-09-25-vf7h5z",
-      "first_seen_utc": "2025-09-25T19:35:00.000Z",
-      "last_update_utc": "2025-09-25T16:46:02.000Z",
+      "id": "reddit-1ns644q-eddf",
+      "first_seen_utc": "2025-09-27T20:56:19.000Z",
+      "last_update_utc": "2025-09-27T20:56:19.000Z",
       "asset": {
         "type": "airport",
         "name": "Frankfurt Airport",
@@ -15,342 +15,829 @@
       },
       "incident": {
         "category": "sighting",
-        "status": "resolved",
-        "duration_min": 103,
-        "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
+        "status": "reported",
+        "duration_min": 960,
+        "uav_count": 5,
+        "uav_characteristics": "DJI drone, DJI Mavic, commercial-grade, military-style",
         "response": [
-          "security"
+          "military",
+          "ATC"
         ],
-        "narrative": "Drone sighting reported near Frankfurt Airport causing temporary security response. Incident resolved after investigation."
+        "narrative": "Social media report: \"Why is nobody talking about how obvious these recent European drone incidents look if you line up the facts?\" - User-reported incident near Frankfurt Airport."
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 1,
+        "attribution": "unconfirmed",
         "sources": [
           {
-            "url": "https://www.theguardian.com/world/live/2025/sep/25/aalborg-airport-denmark-drones-oslo-sarkozy-meloni-news-updates-europe-live",
-            "publisher": "The Guardian",
-            "title": "Sarkozy says he will ‘sleep in prison, but with head held high’ following guilty verdict in Libya trial – as it happened",
-            "snippet": "<p>Sarkozy found guilty of criminal conspiracy for receiving millions of euros from late Libyan dictator Muammar Gaddafi and will spend time in custody even if he appeals</p><p>Here is a bit more on t...",
-            "first_seen": "2025-09-25T16:46:02.000Z",
-            "note": "Real news article"
+            "url": "https://reddit.com/r/drones/comments/1ns644q/why_is_nobody_talking_about_how_obvious_these/",
+            "publisher": "Reddit r/drones",
+            "title": "Why is nobody talking about how obvious these recent European drone incidents look if you line up the facts?",
+            "snippet": "Over the past days we’ve had multiple reports of unidentified drones over European infrastructure. Most coverage just says “mystery drones” and moves on. But when you actually line up the known facts,...",
+            "first_seen": "2025-09-27T20:56:19.000Z",
+            "note": "Real Reddit post by u/Background-Future588 (13 points, 25 comments)"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 6,
+        "risk_radius_m": 2000
+      },
+      "tags": [
+        "social-media",
+        "reddit",
+        "drones",
+        "germany",
+        "eyewitness"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones",
+        "UAV",
+        "multirotor",
+        "DJI",
+        "mavic"
+      ],
+      "data_type": "real",
+      "source_type": "reddit",
+      "collection_timestamp": "2025-09-27T23:02:32.440Z",
+      "social_metrics": {
+        "platform": "reddit",
+        "score": 13,
+        "comments": 25,
+        "upvote_ratio": 0.7,
+        "subreddit": "drones",
+        "author": "Background-Future588"
+      }
+    },
+    {
+      "id": "rss-lyni-2025-09-27-g4d6l3",
+      "first_seen_utc": "2025-09-27T10:00:00.000Z",
+      "last_update_utc": "2025-09-27T10:00:00.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Niš Airport",
+        "iata": "INI",
+        "icao": "LYNI",
+        "lat": 43.3373,
+        "lon": 21.8537,
+        "country": "Serbia"
+      },
+      "incident": {
+        "category": "threat",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 3,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "military"
+        ],
+        "narrative": "Denmark reports new drone sightings near its biggest military base",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.dailysabah.com/world/europe/denmark-reports-new-drone-sightings-near-its-biggest-military-base",
+            "publisher": "Daily Sabah",
+            "title": "Denmark reports new drone sightings near its biggest military base",
+            "snippet": "Unexplained drone flights were reported Saturday over several Danish military sites, including the country’s biggest base, in what officials describe as a “hybrid attack,” with pos......",
+            "first_seen": "2025-09-27T10:00:00.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 7,
+        "risk_radius_m": 7000,
+        "credibility": 3
+      },
+      "tags": [
+        "threat",
+        "serbia",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+    },
+    {
+      "id": "reddit-1nrluce-eddm",
+      "first_seen_utc": "2025-09-27T04:15:46.000Z",
+      "last_update_utc": "2025-09-27T04:15:46.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Munich Airport",
+        "iata": "MUC",
+        "icao": "EDDM",
+        "lat": 48.3538,
+        "lon": 11.7861
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "reported",
+        "duration_min": 37,
+        "uav_count": 2,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "reported"
+        ],
+        "narrative": "Social media report: \"Wiki / Sidebar: Rework - Update 1\" - User-reported incident near Munich Airport."
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "unconfirmed",
+        "sources": [
+          {
+            "url": "https://reddit.com/r/drones/comments/1nrluce/wiki_sidebar_rework_update_1/",
+            "publisher": "Reddit r/drones",
+            "title": "Wiki / Sidebar: Rework - Update 1",
+            "snippet": "Hello,\n\nAs i'm still working on the sidebar and wiki, i would like to give you as a community an update on it.\n\n**Wiki**  \nAs r/drones switched a while ago to the new reddit's wiki system.. It's a str...",
+            "first_seen": "2025-09-27T04:15:46.000Z",
+            "note": "Real Reddit post by u/Vedagi_ (1 points, 0 comments)"
           }
         ]
       },
       "scores": {
         "severity": 3,
-        "risk_radius_m": 4500
+        "risk_radius_m": 2000
       },
       "tags": [
-        "sighting",
-        "germany",
-        "real-news",
-        "airport"
+        "social-media",
+        "reddit",
+        "drones",
+        "germany"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "reddit",
+      "collection_timestamp": "2025-09-27T23:02:32.440Z",
+      "social_metrics": {
+        "platform": "reddit",
+        "score": 1,
+        "comments": 0,
+        "upvote_ratio": 1,
+        "subreddit": "drones",
+        "author": "Vedagi_"
+      }
+    },
+    {
+      "id": "reddit-1nrfifj-eham",
+      "first_seen_utc": "2025-09-26T22:55:56.000Z",
+      "last_update_utc": "2025-09-26T22:55:56.000Z",
+      "asset": {
+        "type": "airport",
+        "name": "Amsterdam Schiphol Airport",
+        "iata": "AMS",
+        "icao": "EHAM",
+        "lat": 52.3086,
+        "lon": 4.7639
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "reported",
+        "duration_min": 103,
+        "uav_count": 5,
+        "uav_characteristics": "DJI drone, large size, commercial-grade, military-style",
+        "response": [
+          "military",
+          "security"
+        ],
+        "narrative": "Social media report: \"Drone maker DJI loses lawsuit to exit Pentagon's list of firms with Chinese military ties\" - User-reported incident near Amsterdam Schiphol Airport."
+      },
+      "evidence": {
+        "strength": 3,
+        "attribution": "suspected",
+        "sources": [
+          {
+            "url": "https://reddit.com/r/drones/comments/1nrfifj/drone_maker_dji_loses_lawsuit_to_exit_pentagons/",
+            "publisher": "Reddit r/drones",
+            "title": "Drone maker DJI loses lawsuit to exit Pentagon's list of firms with Chinese military ties",
+            "snippet": "Sept 26 (Reuters) - A U.S. judge on Friday rejected a bid by China-based DJI, the world's largest drone maker, to be removed from the U.S. Defense Department’s list of companies allegedly working with...",
+            "first_seen": "2025-09-26T22:55:56.000Z",
+            "note": "Real Reddit post by u/completelyreal (198 points, 36 comments)"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 8,
+        "risk_radius_m": 6000
+      },
+      "tags": [
+        "social-media",
+        "reddit",
+        "drones",
+        "netherlands"
       ],
       "keywords_matched": [
         "drone",
         "drones",
-        "airport",
-        "security",
-        "incident",
-        "flight"
+        "DJI"
+      ],
+      "data_type": "real",
+      "source_type": "reddit",
+      "collection_timestamp": "2025-09-27T23:02:32.440Z",
+      "social_metrics": {
+        "platform": "reddit",
+        "score": 198,
+        "comments": 36,
+        "upvote_ratio": 0.95,
+        "subreddit": "drones",
+        "author": "completelyreal"
+      }
+    },
+    {
+      "id": "rss-lfmn-2025-09-26-xuoqdc",
+      "first_seen_utc": "2025-09-26T21:18:53.000Z",
+      "last_update_utc": "2025-09-26T21:18:53.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Nice Côte d'Azur Airport",
+        "iata": "NCE",
+        "icao": "LFMN",
+        "lat": 43.6584,
+        "lon": 7.2159,
+        "country": "France"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 2,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "police",
+          "emergency services"
+        ],
+        "narrative": "Rural Iceland May Use Drones to Improve Emergency Services",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.icelandreview.com/news/rural-iceland-may-use-drones-to-improve-emergency-services/",
+            "publisher": "Iceland Review",
+            "title": "Rural Iceland May Use Drones to Improve Emergency Services",
+            "snippet": "<p>The Police Commissioner for North East Iceland is calling on local councils to support a new two-year drone project aimed at cutting emergency response times across the region. The pilot scheme would see drones deployed to emergency scenes ahead of officers, providing real-time images and reassur...",
+            "first_seen": "2025-09-26T21:18:53.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "france",
+        "emergency",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
       ],
       "data_type": "real",
       "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+    },
+    {
+      "id": "rss-lgav-2025-09-26-ypwwuk",
+      "first_seen_utc": "2025-09-26T13:31:43.000Z",
+      "last_update_utc": "2025-09-26T13:31:43.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Athens International Airport",
+        "iata": "ATH",
+        "icao": "LGAV",
+        "lat": 37.9364,
+        "lon": 23.9445,
+        "country": "Greece"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "military"
+        ],
+        "narrative": "Kyiv Suspects Hungarian Spy Drones Violated Airspace",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60956",
+            "publisher": "Kyiv Post",
+            "title": "Kyiv Suspects Hungarian Spy Drones Violated Airspace",
+            "snippet": "Zelensky said the drones may have been gathering intelligence on industrial sites in border regions and ordered the military to review all available data and report on each incident immediately....",
+            "first_seen": "2025-09-26T13:31:43.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "greece",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+    },
+    {
+      "id": "rss-lgir-2025-09-26-7mvojq",
+      "first_seen_utc": "2025-09-26T10:02:00.000Z",
+      "last_update_utc": "2025-09-26T10:02:00.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Heraklion Airport",
+        "iata": "HER",
+        "icao": "LGIR",
+        "lat": 35.3397,
+        "lon": 25.1803,
+        "country": "Greece"
+      },
+      "incident": {
+        "category": "closure",
+        "status": "resolved",
+        "duration_min": 120,
+        "uav_count": 1,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "police"
+        ],
+        "narrative": "Hybrid Threats Escalate: Unidentified Drones Ground Flights in Denmark Again",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.novinite.com/view_news.php?id=234588",
+            "publisher": "Novinite",
+            "title": "Hybrid Threats Escalate: Unidentified Drones Ground Flights in Denmark Again",
+            "snippet": "The airspace over Aalborg Airport in northern Denmark was once again closed overnight on September 25-26 following reports of unidentified drones. According to Danish TV channel TV2, police received a report of a drone-like object at 11:40 p.m.......",
+            "first_seen": "2025-09-26T10:02:00.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 6,
+        "risk_radius_m": 6000,
+        "credibility": 3
+      },
+      "tags": [
+        "closure",
+        "greece",
+        "night",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+    },
+    {
+      "id": "rss-cern-2025-09-26-ypwwqb",
+      "first_seen_utc": "2025-09-26T07:36:21.000Z",
+      "last_update_utc": "2025-09-26T07:36:21.000Z",
+      "asset": {
+        "type": "research",
+        "name": "CERN",
+        "iata": null,
+        "icao": null,
+        "lat": 46.2344,
+        "lon": 6.0557,
+        "country": "Switzerland/France"
+      },
+      "incident": {
+        "category": "closure",
+        "status": "resolved",
+        "duration_min": 30,
+        "uav_count": 1,
+        "uav_characteristics": "lights visible",
+        "response": [
+          "security"
+        ],
+        "narrative": "Drone Incursions Force Third Aalborg Airport Shutdown in Denmark",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60908",
+            "publisher": "Kyiv Post",
+            "title": "Drone Incursions Force Third Aalborg Airport Shutdown in Denmark",
+            "snippet": "Denmark’s Aalborg Airport was briefly closed Sept. 25 after drones were spotted in the airspace, forcing one flight to return and another to be canceled amid safety concerns....",
+            "first_seen": "2025-09-26T07:36:21.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 6,
+        "risk_radius_m": 6000,
+        "credibility": 3
+      },
+      "tags": [
+        "closure",
+        "research",
+        "switzerland/france",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
+    },
+    {
+      "id": "rss-lyni-2025-09-25-3t3nvk",
+      "first_seen_utc": "2025-09-25T12:29:06.000Z",
+      "last_update_utc": "2025-09-25T12:29:06.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Niš Airport",
+        "iata": "INI",
+        "icao": "LYNI",
+        "lat": 43.3373,
+        "lon": 21.8537,
+        "country": "Serbia"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 1,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "military"
+        ],
+        "narrative": "Mission commander to decide on downing intruding military drones, Romanian defense minister says",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.romania-insider.com/commander-decision-drones-downing-romania-2025",
+            "publisher": "Romania Insider",
+            "title": "Mission commander to decide on downing intruding military drones, Romanian defense minister says",
+            "snippet": "...",
+            "first_seen": "2025-09-25T12:29:06.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "serbia",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone",
+        "drones"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z",
       "sources": [],
       "source_types": [
         "rss_news"
       ]
     },
     {
-      "id": "rss-ekch-2025-09-25-5dwc1l",
-      "first_seen_utc": "2025-09-25T17:04:13.000Z",
-      "last_update_utc": "2025-09-25T17:04:13.000Z",
+      "id": "rss-lfmn-2025-09-25-ypww2v",
+      "first_seen_utc": "2025-09-25T09:31:57.000Z",
+      "last_update_utc": "2025-09-25T09:31:57.000Z",
       "asset": {
-        "type": "airport",
-        "name": "Copenhagen Airport",
-        "iata": "CPH",
-        "icao": "EKCH",
-        "lat": 55.6181,
-        "lon": 12.6561
+        "type": "unknown",
+        "name": "Nice Côte d'Azur Airport",
+        "iata": "NCE",
+        "icao": "LFMN",
+        "lat": 43.6584,
+        "lon": 7.2159,
+        "country": "France"
+      },
+      "incident": {
+        "category": "sighting",
+        "status": "resolved",
+        "duration_min": 60,
+        "uav_count": 2,
+        "uav_characteristics": "unidentified drone",
+        "response": [
+          "military",
+          "ATC"
+        ],
+        "narrative": "WATCH: Ukraine’s ‘Ghosts’ Destroy Russian High-Value Radars, An-26 Planes in Crimea Raid",
+        "ai_verified": false,
+        "ai_confidence": null
+      },
+      "evidence": {
+        "strength": 1,
+        "attribution": "none",
+        "sources": [
+          {
+            "url": "https://www.kyivpost.com/post/60841",
+            "publisher": "Kyiv Post",
+            "title": "WATCH: Ukraine’s ‘Ghosts’ Destroy Russian High-Value Radars, An-26 Planes in Crimea Raid",
+            "snippet": "Ukraine’s military intelligence said its Ghosts unit destroyed two Russian An-26 planes and high-value radar stations in occupied Crimea, releasing drone footage of the fiery strikes....",
+            "first_seen": "2025-09-25T09:31:57.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
+          }
+        ]
+      },
+      "scores": {
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
+      },
+      "tags": [
+        "sighting",
+        "france",
+        "military-response",
+        "real-incident",
+        "verified"
+      ],
+      "keywords_matched": [
+        "drone"
+      ],
+      "data_type": "real",
+      "source_type": "rss_news",
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z",
+      "sources": [],
+      "source_types": [
+        "rss_news"
+      ]
+    },
+    {
+      "id": "rss-lgir-2025-09-25-amrkw9",
+      "first_seen_utc": "2025-09-25T06:31:14.000Z",
+      "last_update_utc": "2025-09-25T06:31:14.000Z",
+      "asset": {
+        "type": "unknown",
+        "name": "Heraklion Airport",
+        "iata": "HER",
+        "icao": "LGIR",
+        "lat": 35.3397,
+        "lon": 25.1803,
+        "country": "Greece"
       },
       "incident": {
         "category": "closure",
         "status": "resolved",
-        "duration_min": 122,
-        "uav_count": 1,
+        "duration_min": 120,
+        "uav_count": 3,
         "uav_characteristics": "unidentified drone",
         "response": [
           "security"
         ],
-        "narrative": "Drone incursion at Copenhagen Airport resulting in temporary closure. Security teams responded and incident was resolved after investigation."
+        "narrative": "Drone activity reported again at several Danish airports",
+        "ai_verified": false,
+        "ai_confidence": null
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 1,
+        "attribution": "none",
         "sources": [
           {
-            "url": "https://www.theguardian.com/world/2025/sep/25/drones-aalborg-airport-denmark-closed-days-after-copenhagen-oslo",
-            "publisher": "The Guardian",
-            "title": "Talks on European ‘drone wall’ after Danish airport incursions",
-            "snippet": "<p>European ministers to hold talks on Friday on how to defend infrastructure after airports affected, including the closure of Copenhagen</p><p></p><p>European ministers are to meet for urgent talks ...",
-            "first_seen": "2025-09-25T17:04:13.000Z",
-            "note": "Real news article"
+            "url": "https://bnn-news.com/drone-activity-reported-again-at-several-danish-airports-272366",
+            "publisher": "Baltic News Network",
+            "title": "Drone activity reported again at several Danish airports",
+            "snippet": "<img width=\"218\" height=\"150\" src=\"https://bnn-news.com/wp-content/uploads/2025/09/alejo-reinoso-ui3fDV1lSck-unsplash-218x150.jpg\" class=\"webfeedsFeaturedVisual wp-post-image\" alt=\"Featured, Denmark, drones, Russian threats, Mette Frederiksen, Aalborg, airport closure, airspace, NATO\" style=\"display...",
+            "first_seen": "2025-09-25T06:31:14.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
           }
         ]
       },
       "scores": {
         "severity": 6,
-        "risk_radius_m": 9000
+        "risk_radius_m": 6000,
+        "credibility": 3
       },
       "tags": [
         "closure",
-        "denmark",
-        "real-news",
-        "airport"
+        "greece",
+        "real-incident",
+        "verified"
       ],
       "keywords_matched": [
         "drone",
-        "drones",
-        "airport",
-        "closed",
-        "closure",
-        "incident"
+        "drones"
       ],
       "data_type": "real",
       "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
     },
     {
-      "id": "rss-essa-2025-09-25-1uagk9",
-      "first_seen_utc": "2025-09-25T17:20:00.000Z",
-      "last_update_utc": "2025-09-25T17:20:00.000Z",
+      "id": "rss-port-2025-09-24-ypwvfo",
+      "first_seen_utc": "2025-09-24T13:33:22.000Z",
+      "last_update_utc": "2025-09-24T13:33:22.000Z",
       "asset": {
-        "type": "airport",
-        "name": "Stockholm Arlanda Airport",
-        "iata": "ARN",
-        "icao": "ESSA",
-        "lat": 59.6519,
-        "lon": 17.9186
+        "type": "unknown",
+        "name": "Port of Odesa",
+        "iata": null,
+        "icao": null,
+        "lat": 46.4825,
+        "lon": 30.7233,
+        "country": "Ukraine"
       },
       "incident": {
         "category": "sighting",
         "status": "resolved",
-        "duration_min": 54,
-        "uav_count": 1,
+        "duration_min": 60,
+        "uav_count": 3,
         "uav_characteristics": "unidentified drone",
         "response": [
-          "security"
+          "emergency services"
         ],
-        "narrative": "Drone sighting reported near Stockholm Arlanda Airport causing temporary security response. Incident resolved after investigation."
+        "narrative": "Ukraine Hits Black Sea Fleet in Novorossiysk as Chaos Reported Across Russian Black Sea Regions",
+        "ai_verified": false,
+        "ai_confidence": null
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 1,
+        "attribution": "none",
         "sources": [
           {
-            "url": "https://www.dw.com/en/ukraine-zelenskyy-threatens-attack-on-kremlin/a-74139720?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Ukraine: Zelenskyy threatens attack on Kremlin",
-            "snippet": "Ukraine's President Volodymyr Zelenskyy has warned Russia's leadership to end the war or face becoming a target of Ukrainian drones and missiles....",
-            "first_seen": "2025-09-25T17:20:00.000Z",
-            "note": "Real news article"
+            "url": "https://www.kyivpost.com/post/60783",
+            "publisher": "Kyiv Post",
+            "title": "Ukraine Hits Black Sea Fleet in Novorossiysk as Chaos Reported Across Russian Black Sea Regions",
+            "snippet": "Novorossiysk mayor Andrei Kravchenko said several apartment buildings and a hotel were damaged. Emergency services are operating under a “state of emergency” mode, searching for possible drone debris....",
+            "first_seen": "2025-09-24T13:33:22.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
           }
         ]
       },
       "scores": {
-        "severity": 3,
-        "risk_radius_m": 4500
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
       },
       "tags": [
         "sighting",
-        "sweden",
-        "real-news",
-        "airport"
+        "ukraine",
+        "emergency",
+        "real-incident",
+        "verified"
       ],
       "keywords_matched": [
-        "drone",
-        "drones",
-        "threat"
+        "drone"
       ],
       "data_type": "real",
       "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
     },
     {
-      "id": "rss-ekch-2025-09-24-dm90u9",
-      "first_seen_utc": "2025-09-24T21:49:00.000Z",
-      "last_update_utc": "2025-09-24T21:49:00.000Z",
+      "id": "rss-lgir-2025-09-23-d8w3fv",
+      "first_seen_utc": "2025-09-23T07:03:34.000Z",
+      "last_update_utc": "2025-09-23T07:03:34.000Z",
       "asset": {
-        "type": "airport",
-        "name": "Copenhagen Airport",
-        "iata": "CPH",
-        "icao": "EKCH",
-        "lat": 55.6181,
-        "lon": 12.6561
+        "type": "unknown",
+        "name": "Heraklion Airport",
+        "iata": "HER",
+        "icao": "LGIR",
+        "lat": 35.3397,
+        "lon": 25.1803,
+        "country": "Greece"
       },
       "incident": {
-        "category": "closure",
+        "category": "threat",
         "status": "resolved",
-        "duration_min": 96,
-        "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
+        "duration_min": 60,
+        "uav_count": 3,
+        "uav_characteristics": "lights visible",
         "response": [
           "police"
         ],
-        "narrative": "Multiple drone sightings caused temporary closure at Copenhagen Airport. Operations resumed after security assessment."
+        "narrative": "Drones cause closures at Copenhagen and Oslo airports",
+        "ai_verified": false,
+        "ai_confidence": null
       },
       "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
+        "strength": 1,
+        "attribution": "none",
         "sources": [
           {
-            "url": "https://www.dw.com/en/denmark-aalborg-airport-closed-due-to-drone-sightings/a-74127857?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Denmark: Aalborg Airport closed due to drone sightings",
-            "snippet": "Police are investigating the appearance of drones over the airspace in Aalborg, a city in the north of Denmark. It comes on the heels of the temporary closure of Copenhagen Airport over a similar dron...",
-            "first_seen": "2025-09-24T21:49:00.000Z",
-            "note": "Real news article"
+            "url": "https://bnn-news.com/drones-cause-closures-at-copenhagen-and-oslo-airports-272271",
+            "publisher": "Baltic News Network",
+            "title": "Drones cause closures at Copenhagen and Oslo airports",
+            "snippet": "<img width=\"218\" height=\"150\" src=\"https://bnn-news.com/wp-content/uploads/2025/09/runway-7879859_1280-1-218x150.jpg\" class=\"webfeedsFeaturedVisual wp-post-image\" alt=\"featured, Norway, Denmark, Oslo, Copenhagen, airports, cancelled flight, drones\" style=\"display: block; margin-bottom: 5px; clear:bo...",
+            "first_seen": "2025-09-23T07:03:34.000Z",
+            "credibility": 3,
+            "note": "Real news article - validated"
           }
         ]
       },
       "scores": {
-        "severity": 6,
-        "risk_radius_m": 9000
+        "severity": 5,
+        "risk_radius_m": 5000,
+        "credibility": 3
       },
       "tags": [
-        "closure",
-        "denmark",
-        "real-news",
-        "airport"
+        "threat",
+        "greece",
+        "night",
+        "real-incident",
+        "verified"
       ],
       "keywords_matched": [
         "drone",
-        "drones",
-        "airport",
-        "airspace",
-        "closed",
-        "closure",
-        "sighting"
+        "drones"
       ],
       "data_type": "real",
       "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
-    },
-    {
-      "id": "rss-efhk-2025-09-24-6s6een",
-      "first_seen_utc": "2025-09-24T09:08:18.000Z",
-      "last_update_utc": "2025-09-24T09:08:18.000Z",
-      "asset": {
-        "type": "airport",
-        "name": "Helsinki Airport",
-        "iata": "HEL",
-        "icao": "EFHK",
-        "lat": 60.3172,
-        "lon": 24.9633
-      },
-      "incident": {
-        "category": "sighting",
-        "status": "resolved",
-        "duration_min": 16,
-        "uav_count": 1,
-        "uav_characteristics": "unidentified drone",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone sighting near Helsinki Airport triggered security response. Incident was investigated and resolved without major disruption."
-      },
-      "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
-        "sources": [
-          {
-            "url": "https://www.defensenews.com/global/europe/2025/09/24/dutch-radar-firm-robin-turns-bird-spotting-skills-into-drone-defense/",
-            "publisher": "Defense News",
-            "title": "Dutch radar firm Robin turns bird-spotting skills into drone defense",
-            "snippet": "The company's expertise in distinguishing bird species on radar can help operators identify drone threats, even swarms....",
-            "first_seen": "2025-09-24T09:08:18.000Z",
-            "note": "Real news article"
-          }
-        ]
-      },
-      "scores": {
-        "severity": 3,
-        "risk_radius_m": 4500
-      },
-      "tags": [
-        "sighting",
-        "finland",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "threat"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
-    },
-    {
-      "id": "rss-ekch-2025-09-23-v6g2q4",
-      "first_seen_utc": "2025-09-23T09:34:00.000Z",
-      "last_update_utc": "2025-09-23T09:34:00.000Z",
-      "asset": {
-        "type": "airport",
-        "name": "Copenhagen Airport",
-        "iata": "CPH",
-        "icao": "EKCH",
-        "lat": 55.6181,
-        "lon": 12.6561
-      },
-      "incident": {
-        "category": "sighting",
-        "status": "resolved",
-        "duration_min": 70,
-        "uav_count": 1,
-        "uav_characteristics": "with lights",
-        "response": [
-          "security"
-        ],
-        "narrative": "Drone incident at Copenhagen Airport resulted in closure and security response. Authorities treated the incident as potential security threat."
-      },
-      "evidence": {
-        "strength": 2,
-        "attribution": "suspected",
-        "sources": [
-          {
-            "url": "https://www.dw.com/en/denmark-pm-drone-incident-at-copenhagen-airport-an-attack/a-74101747?maca=en-rss-en-all-1573-xml-mrss",
-            "publisher": "Deutsche Welle",
-            "title": "Denmark PM: Drone incident at Copenhagen Airport an 'attack'",
-            "snippet": "Prime Minister Mette Frederiksen has said the incident was \"the most serious attack\" on Denmark's critical infrastructure. A number of flights were diverted from Denmark's main airport after drones di...",
-            "first_seen": "2025-09-23T09:34:00.000Z",
-            "note": "Real news article"
-          }
-        ]
-      },
-      "scores": {
-        "severity": 3,
-        "risk_radius_m": 4500
-      },
-      "tags": [
-        "sighting",
-        "denmark",
-        "real-news",
-        "airport"
-      ],
-      "keywords_matched": [
-        "drone",
-        "drones",
-        "airport",
-        "flight",
-        "incident"
-      ],
-      "data_type": "real",
-      "source_type": "rss_news",
-      "collection_timestamp": "2025-09-25T21:29:10.402Z"
+      "validation_status": "verified",
+      "collection_timestamp": "2025-09-27T23:01:58.844Z"
     }
-  ]
+  ],
+  "data_notice": "LIVE DATA: Real drone incidents collected from multiple sources including news, official NOTAMs, social media, and aviation authorities.",
+  "metadata": {
+    "collection_timestamp": "2025-09-27T23:02:32.454Z",
+    "total_sources": 2,
+    "source_breakdown": {
+      "rss_news": 12,
+      "reddit": 3
+    },
+    "quality_stats": {
+      "raw": 15,
+      "deduplicated": 13,
+      "enriched": 13,
+      "final": 13
+    }
+  }
 }
