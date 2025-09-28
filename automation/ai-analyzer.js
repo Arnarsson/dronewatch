@@ -23,19 +23,32 @@ export class AIAnalyzer {
 
     // Analysis templates
     this.prompts = {
-      incident_extraction: `Analyze this news article for drone incidents. Extract ONLY real incidents (not simulations/exercises).
+      incident_extraction: `Analyze this news article for REAL DRONE INCIDENTS only.
 
-Return JSON with these fields:
+REAL INCIDENT criteria:
+- An actual drone was physically present at a location
+- It caused disruption, was sighted, or created security concern
+- It happened in the past or is currently happening
+- It affected operations (airport closure, flight delays, etc.)
+
+NOT an incident - REJECT these:
+- Company announcements, product launches, or business news
+- Legal matters (lawsuits, patents, regulations)
+- Future plans or scheduled events
+- Drone industry news or market reports
+- Technology demonstrations or reviews
+- Training exercises or simulations
+- Delivery service announcements
+
+Return JSON:
 {
   "is_real_incident": boolean,
+  "incident_type": "sighting|disruption|breach|collision|none",
   "locations": [{"name": string, "type": "airport|harbour|military|city"}],
   "severity": 1-10,
-  "incident_type": "sighting|closure|breach|threat|disruption",
-  "uav_count": number,
   "duration_minutes": number,
-  "response_teams": ["police", "military", etc],
-  "key_facts": ["bullet points"],
-  "verification_confidence": 0-100
+  "verification_confidence": 0-100,
+  "rejection_reason": "string if not real incident"
 }
 
 Article: {text}`,

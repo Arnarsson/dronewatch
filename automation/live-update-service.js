@@ -11,12 +11,16 @@ import { RSSNewsScraper } from './scrapers/rss-news-scraper.js';
 import { AIAnalyzer } from './ai-analyzer.js';
 import { GeocodingService } from './geocoding-service.js';
 import { TwitterScraper } from './scrapers/twitter-scraper.js';
+import { IncidentValidator } from './incident-validator.js';
 import fetch from 'node-fetch';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 class LiveUpdateService {
   constructor() {
+    // Initialize validation service
+    this.incidentValidator = new IncidentValidator();
+
     // Initialize AI and geocoding services
     this.aiAnalyzer = new AIAnalyzer({
       apiKey: process.env.OPENROUTER_API_KEY

@@ -2,10 +2,12 @@ import fetch from '../utils/fetch.js';
 import { parseStringPromise } from 'xml2js';
 import { europeanInfrastructure } from '../data/european-infrastructure.js';
 import { europeanNewsSources } from '../data/european-news-sources.js';
+import { IncidentValidator } from '../incident-validator.js';
 
 export class EnhancedRSSNewsScraper {
   constructor() {
     this.rssSources = europeanNewsSources;
+    this.incidentValidator = new IncidentValidator();
 
     // Combine all infrastructure
     this.allAssets = {
@@ -223,58 +225,39 @@ export class EnhancedRSSNewsScraper {
     });
   }
 
-  validateRealIncident(article) {
-    const text = (article.title + ' ' + article.description).toLowerCase();
+  validateRealIncident(article, aiAnalysis = null) {
+    // First use the quick filter to eliminate obvious non-incidents
+    if (!this.incidentValidator.quickFilter(article.title)) {
+      console.log(`⚠️ Quick filter rejected: ${article.title.substring(0, 60)}...`);
+      return false;
+    }
 
-    // Check for simulation keywords
-    const isSimulation = this.simulationKeywords.some(keyword =>
-      text.includes(keyword.toLowerCase())
-    );
+    // Run comprehensive validation
+    const validation = this.incidentValidator.validate(article, aiAnalysis);
 
-    // If it contains simulation keywords, check if it's explicitly marked as real
-    if (isSimulation) {
-      const explicitlyReal = text.includes('real incident') ||
-                            text.includes('actual incident') ||
-                            text.includes('not a drill') ||
-                            text.includes('not an exercise');
+    if (!validation.isValid) {
+      console.log(`❌ Validation failed (${validation.confidence}% confidence): ${validation.reason}`);
+      console.log(`   Article: ${article.title.substring(0, 80)}...`);
 
-      if (!explicitlyReal) {
-        console.log(`⚠️ Excluding simulation/exercise: ${article.title.substring(0, 60)}...`);
-        return false;
+      // Log details for debugging
+      if (validation.details) {
+        console.log(`   Details:`, {
+          incidents: validation.details.incidentIndicatorCount,
+          nonIncidents: validation.details.nonIncidentCount,
+          future: validation.details.futureCount
+        });
       }
-    }
 
-    // Must have real incident indicators
-    const hasRealIndicator = this.realIncidentIndicators.some(keyword =>
-      text.includes(keyword.toLowerCase())
-    );
-
-    if (!hasRealIndicator) {
-      console.log(`⚠️ No real incident indicators found: ${article.title.substring(0, 60)}...`);
       return false;
     }
 
-    // Additional validation: Check for future dates (scheduled exercises)
-    const futureIndicators = ['will be', 'to be held', 'scheduled for', 'planning to',
-                             'next week', 'next month', 'upcoming', 'future'];
-    const isFuture = futureIndicators.some(indicator => text.includes(indicator));
-
-    if (isFuture && !text.includes('was scheduled')) {
-      console.log(`⚠️ Excluding future/planned event: ${article.title.substring(0, 60)}...`);
+    // Additional check for confidence threshold
+    if (validation.confidence < 60) {
+      console.log(`⚠️ Low confidence (${validation.confidence}%): ${article.title.substring(0, 60)}...`);
       return false;
     }
 
-    // Check for press release about capabilities/products
-    const isPR = ['unveils', 'announces', 'launches', 'introduces', 'presents',
-                  'showcases', 'demonstrates new', 'reveals'].some(keyword =>
-      text.includes(keyword)
-    );
-
-    if (isPR && !text.includes('incident')) {
-      console.log(`⚠️ Excluding product announcement: ${article.title.substring(0, 60)}...`);
-      return false;
-    }
-
+    console.log(`✅ Valid incident (${validation.confidence}% confidence): ${article.title.substring(0, 60)}...`);
     return true;
   }
 

@@ -1,7 +1,9 @@
 import fetch from '../utils/fetch.js';
+import { IncidentValidator } from '../incident-validator.js';
 
 export class RedditScraper {
   constructor() {
+    this.incidentValidator = new IncidentValidator();
     // Reddit subreddits to monitor for drone incidents
     this.subreddits = [
       'drones',
@@ -167,12 +169,31 @@ export class RedditScraper {
         fullText.includes(keyword.toLowerCase())
       );
 
-      // Must contain incident/aviation keywords
-      const hasIncidentKeyword = this.incidentKeywords.some(keyword =>
-        fullText.includes(keyword.toLowerCase())
-      );
+      if (!hasDroneKeyword) return false;
 
-      return hasDroneKeyword && hasIncidentKeyword;
+      // Use the incident validator for comprehensive filtering
+      const postData = {
+        title: post.title,
+        description: post.text || post.selftext || '',
+        snippet: post.text || ''
+      };
+
+      // Quick filter first
+      if (!this.incidentValidator.quickFilter(post.title)) {
+        console.log(`⚠️ Reddit quick filter rejected: ${post.title.substring(0, 60)}...`);
+        return false;
+      }
+
+      // Full validation
+      const validation = this.incidentValidator.validate(postData);
+
+      if (!validation.isValid || validation.confidence < 50) {
+        console.log(`❌ Reddit validation failed (${validation.confidence}%): ${post.title.substring(0, 60)}...`);
+        return false;
+      }
+
+      console.log(`✅ Reddit incident valid (${validation.confidence}%): ${post.title.substring(0, 60)}...`);
+      return true;
     });
   }
 
