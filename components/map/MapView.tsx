@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import { useMapStore } from '@/lib/store/map'
 import { useIncidentStore } from '@/lib/store/incidents'
@@ -23,10 +23,22 @@ const Popup = dynamic(
   () => import('react-leaflet').then(mod => mod.Popup),
   { ssr: false }
 )
-const MarkerClusterGroup = dynamic(
-  () => import('react-leaflet-cluster'),
-  { ssr: false }
-)
+const MarkerClusterGroup = dynamic(async () => {
+  const mod = await import('react-leaflet-cluster')
+  const ClusterComponent = (mod as any)?.default ?? (mod as any)?.MarkerClusterGroup
+
+  if (typeof ClusterComponent === 'function') {
+    return ClusterComponent
+  }
+
+  // Fall back to a pass-through component if the cluster module is unavailable.
+  return function MarkerClusterGroupFallback({ children }: { children?: ReactNode }) {
+    return <>{children}</>
+  }
+}, {
+  ssr: false,
+  loading: () => null,
+})
 
 import 'leaflet/dist/leaflet.css'
 import 'react-leaflet-cluster/lib/ClusterDefault.css'
