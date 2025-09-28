@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2025-09-28T12:30:34.274Z",
+  "generated_utc": "2025-09-28T12:45:50.634Z",
   "incidents": [
     {
       "id": "twitter-sim-1759058111443",
@@ -39,7 +39,7 @@
       ],
       "source_type": "twitter",
       "data_type": "simulated",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "twitter-sim-1759058130661",
@@ -79,7 +79,7 @@
       ],
       "source_type": "twitter",
       "data_type": "simulated",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "twitter-sim-1759059934754",
@@ -119,7 +119,7 @@
       ],
       "source_type": "twitter",
       "data_type": "simulated",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lyni-2025-09-27-g4d6l3",
@@ -184,7 +184,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lgir-2025-09-26-7mvojq",
@@ -254,7 +254,7 @@
       "source_types": [
         "rss_news"
       ],
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-cern-2025-09-26-ypwwqb",
@@ -322,7 +322,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-26-7mvojq",
@@ -396,7 +396,7 @@
       "source_type": "news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T11:01:55.151Z",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-26-ypwwqb",
@@ -470,7 +470,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:06.807Z",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-25-amrkw9",
@@ -543,7 +543,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:07.058Z",
-      "last_updated_utc": "2025-09-28T12:30:34.273Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lyni-2025-09-28-sm9c6p",
@@ -609,7 +609,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lyni-2025-09-25-ypww6d",
@@ -680,7 +680,7 @@
       "source_types": [
         "rss_news"
       ],
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-cope-2025-09-27-ypwwxy",
@@ -755,7 +755,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:06.671Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-26-gmx450",
@@ -828,7 +828,7 @@
       "source_type": "news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T11:02:06.957Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-27-g4d6l3",
@@ -901,7 +901,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:12.047Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-28-sm9c6p",
@@ -975,7 +975,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:12.112Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lppt-2025-09-28-ypxd2a",
@@ -1043,7 +1043,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-ukoo-2025-09-26-ypwwq4",
@@ -1111,7 +1111,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "reddit-1ns9nu7-eddf",
@@ -1182,7 +1182,7 @@
       "source_types": [
         "reddit"
       ],
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lgir-2025-09-27-uebwak",
@@ -1246,7 +1246,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "reddit-1nrs7dn-loww",
@@ -1313,7 +1313,7 @@
         "subreddit": "drones",
         "author": "Virtual_Secretary_15"
       },
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-edds-2025-09-27-ypwwwd",
@@ -1381,7 +1381,7 @@
       "source_type": "rss_news",
       "validation_status": "verified",
       "collection_timestamp": "2025-09-28T08:51:07.528Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-lgir-2025-09-25-ypww4t",
@@ -1452,7 +1452,7 @@
       "source_types": [
         "rss_news"
       ],
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-28-ypxd2a",
@@ -1527,7 +1527,7 @@
       "source_type": "news",
       "validation_status": "probable",
       "collection_timestamp": "2025-09-28T11:02:06.620Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-27-ypwwwd",
@@ -1602,7 +1602,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:06.743Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-26-ypwwq4",
@@ -1677,7 +1677,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:06.924Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-25-ypww6d",
@@ -1750,7 +1750,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:06.973Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-25-ypww4t",
@@ -1823,7 +1823,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:07.029Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-25-ypww4n",
@@ -1897,7 +1897,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:07.089Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-cope-2025-09-25-ypww19",
@@ -1971,7 +1971,7 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:07.306Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     },
     {
       "id": "rss-unkn-2025-09-27-uebwak",
@@ -2043,14 +2043,14 @@
       "source_type": "news",
       "validation_status": "unverified",
       "collection_timestamp": "2025-09-28T11:02:08.025Z",
-      "last_updated_utc": "2025-09-28T12:30:34.274Z"
+      "last_updated_utc": "2025-09-28T12:45:50.634Z"
     }
   ],
   "data_notice": "LIVE DATA: Real drone incidents collected from multiple sources including news, official NOTAMs, social media, and aviation authorities.",
   "metadata": {
-    "last_update": "2025-09-28T12:30:34.274Z",
+    "last_update": "2025-09-28T12:45:50.634Z",
     "total_sources": 4,
     "update_interval_minutes": 15,
-    "next_update": "2025-09-28T12:45:34.274Z"
+    "next_update": "2025-09-28T13:00:50.634Z"
   }
 }
