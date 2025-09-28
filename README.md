@@ -7,7 +7,7 @@
 ![Technology](https://img.shields.io/badge/Tech-Vanilla_JS-yellow)
 
 ## 🎯 Overview
-
+NO SIMULATIONS!
 DroneWatch is a professional operations center application designed for real-time monitoring and analysis of drone incidents across European airspace. Built with a focus on operational efficiency, the application provides comprehensive incident tracking, proximity-based filtering, and AI-powered news integration.
 
 ## ✨ Key Features
@@ -35,6 +35,7 @@ DroneWatch is a professional operations center application designed for real-tim
 - Real-time drone incident discovery from news sources
 - Automated incident classification and geolocation
 - Support for Grok-4 Fast, LLaMA 3.1, Phi-3, and more
+- NO SIMULATIONS!!!!!!!
 
 ### 📱 **Mobile-First Design**
 - Responsive glassmorphism UI design

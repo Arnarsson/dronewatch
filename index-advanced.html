@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚁 DroneWatch - Professional Operations Center</title>
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+  
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  
+  <style>
+    :root {
+      --bg: #0a0d14;
+      --surface: #1a1f2b;
+      --glass: rgba(26, 31, 43, 0.8);
+      --border: #374151;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --live: #10b981;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-container {
+      display: grid;
+      grid-template-columns: 320px 1fr 400px;
+      grid-template-rows: 60px 1fr;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      grid-column: 1 / 4;
+      background: var(--glass);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .header h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--live);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--live);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.2); }
+    }
+
+    .header-stats {
+      display: flex;
+      gap: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    /* Left Panel - Controls */
+    .left-panel {
+      background: var(--glass);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    .panel-section {
+      margin-bottom: 2rem;
+    }
+
+    .panel-section h3 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    .filter-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--text-muted);
+    }
+
+    .filter-group input,
+    .filter-group select {
+      width: 100%;
+      padding: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.875rem;
+    }
+
+    .filter-group input:focus,
+    .filter-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .date-range {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .date-range input {
+      flex: 1;
+    }
+
+    .evidence-filter {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .evidence-level {
+      padding: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.75rem;
+    }
+
+    .evidence-level:hover {
+      border-color: var(--accent);
+    }
+
+    .evidence-level.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .proximity-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .proximity-slider {
+      flex: 1;
+    }
+
+    .proximity-value {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 3rem;
+    }
+
+    .infrastructure-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .infra-toggle {
+      padding: 0.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.75rem;
+    }
+
+    .infra-toggle:hover {
+      border-color: var(--accent);
+    }
+
+    .infra-toggle.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Map Container */
+    .map-container {
+      position: relative;
+      background: var(--surface);
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .map-controls {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .map-control-btn {
+      width: 40px;
+      height: 40px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(10px);
+    }
+
+    .map-control-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Right Panel - Incident Feed */
+    .right-panel {
+      background: var(--glass);
+      border-left: 1px solid var(--border);
+      padding: 1.5rem;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+    }
+
+    .incident-feed {
+      margin-bottom: 2rem;
+    }
+
+    .incident-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .incident-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .incident-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-location {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .incident-time {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .incident-details {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .incident-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .badge-status-active {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .badge-status-resolved {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .badge-evidence-0 {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--text-muted);
+    }
+
+    .badge-evidence-1 {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--warning);
+    }
+
+    .badge-evidence-2 {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--accent);
+    }
+
+    .badge-evidence-3 {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+
+    .incident-description {
+      font-size: 0.875rem;
+      line-height: 1.4;
+      color: var(--text-muted);
+    }
+
+    .incident-source {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* AI News Integration */
+    .ai-news-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .ai-news-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .ai-news-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .ai-fetch-btn {
+      padding: 0.5rem 1rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ai-fetch-btn:hover {
+      background: #2563eb;
+    }
+
+    .ai-news-item {
+      padding: 0.75rem;
+      background: var(--bg);
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      border-left: 3px solid var(--accent);
+    }
+
+    .ai-news-location {
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .ai-news-description {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Statistics */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value.active {
+      color: var(--danger);
+    }
+
+    .stat-value.resolved {
+      color: var(--success);
+    }
+
+    .stat-value.evidence {
+      color: var(--accent);
+    }
+
+    .stat-value.infrastructure {
+      color: var(--warning);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 1024px) {
+      .app-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 60px 1fr;
+      }
+
+      .left-panel,
+      .right-panel {
+        display: none;
+      }
+
+      .map-container {
+        grid-column: 1;
+        grid-row: 2;
+      }
+    }
+
+    /* Loading States */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid var(--accent);
+      border-top: 2px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <h1>🚁 DroneWatch</h1>
+      <div class="live-indicator">
+        <div class="live-dot"></div>
+        <span>LIVE</span>
+      </div>
+      <div class="header-stats">
+        <span id="total-incidents">0</span> incidents
+        <span id="active-incidents">0</span> active
+        <span id="last-update">Loading...</span>
+      </div>
+    </header>
+
+    <!-- Left Panel - Controls -->
+    <aside class="left-panel">
+      <div class="panel-section">
+        <h3>Time Range</h3>
+        <div class="filter-group">
+          <label>Days Back</label>
+          <select id="days-filter">
+            <option value="1">Last 24 hours</option>
+            <option value="7" selected>Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="365">Last year</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Date Range</label>
+          <div class="date-range">
+            <input type="date" id="start-date">
+            <input type="date" id="end-date">
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>Status Filter</h3>
+        <div class="filter-group">
+          <select id="status-filter">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="resolved">Resolved</option>
+            <option value="unconfirmed">Unconfirmed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>Evidence Strength</h3>
+        <div class="evidence-filter">
+          <div class="evidence-level" data-level="0">Level 0</div>
+          <div class="evidence-level" data-level="1">Level 1</div>
+          <div class="evidence-level active" data-level="2">Level 2</div>
+          <div class="evidence-level active" data-level="3">Level 3</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>Proximity Analysis</h3>
+        <div class="filter-group">
+          <label>Radius (km)</label>
+          <div class="proximity-controls">
+            <input type="range" id="proximity-slider" min="1" max="50" value="10" class="proximity-slider">
+            <span class="proximity-value" id="proximity-value">10km</span>
+          </div>
+        </div>
+        <div class="filter-group">
+          <label>Infrastructure</label>
+          <div class="infrastructure-toggle">
+            <div class="infra-toggle active" data-type="airport">Airports</div>
+            <div class="infra-toggle active" data-type="harbour">Harbours</div>
+            <div class="infra-toggle" data-type="military">Military</div>
+            <div class="infra-toggle" data-type="energy">Energy</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>Text Search</h3>
+        <div class="filter-group">
+          <input type="text" id="text-search" placeholder="Search incidents...">
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3>AI News Integration</h3>
+        <div class="ai-news-section">
+          <div class="ai-news-header">
+            <span class="ai-news-title">🤖 AI News Discovery</span>
+            <button class="ai-fetch-btn" id="ai-fetch-btn">Fetch News</button>
+          </div>
+          <div id="ai-news-feed">
+            <div class="ai-news-item">
+              <div class="ai-news-location">Frankfurt Airport</div>
+              <div class="ai-news-description">Drone sighting reported near Frankfurt Airport causing temporary security response.</div>
+            </div>
+            <div class="ai-news-item">
+              <div class="ai-news-location">Copenhagen Airport</div>
+              <div class="ai-news-description">Multiple drone incidents detected in Copenhagen area, authorities investigating.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Map Container -->
+    <main class="map-container">
+      <div id="map"></div>
+      <div class="map-controls">
+        <div class="map-control-btn" id="zoom-in" title="Zoom In">+</div>
+        <div class="map-control-btn" id="zoom-out" title="Zoom Out">-</div>
+        <div class="map-control-btn" id="reset-view" title="Reset View">⌂</div>
+        <div class="map-control-btn" id="toggle-clusters" title="Toggle Clusters">⚡</div>
+      </div>
+    </main>
+
+    <!-- Right Panel - Incident Feed -->
+    <aside class="right-panel">
+      <div class="incident-feed">
+        <h3>Incident Feed</h3>
+        <div id="incident-list">
+          <!-- Incidents will be populated here -->
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value active" id="active-count">0</div>
+          <div class="stat-label">Active Now</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value resolved" id="resolved-count">0</div>
+          <div class="stat-label">Resolved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value evidence" id="evidence-count">0</div>
+          <div class="stat-label">High Evidence</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value infrastructure" id="infrastructure-count">0</div>
+          <div class="stat-label">Near Infrastructure</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // Global state
+    let map;
+    let markers = [];
+    let markerCluster;
+    let incidents = [];
+    let filteredIncidents = [];
+    let infrastructureData = {
+      airports: [],
+      harbours: [],
+      military: [],
+      energy: []
+    };
+
+    // Initialize application
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeMap();
+      loadInfrastructureData();
+      loadIncidents();
+      setupEventListeners();
+      setupWebSocket();
+    });
+
+    // Initialize Leaflet map
+    function initializeMap() {
+      map = L.map('map').setView([54.5, 10.0], 6);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Initialize marker cluster
+      markerCluster = L.markerClusterGroup({
+        chunkedLoading: true,
+        maxClusterRadius: 50
+      });
+      map.addLayer(markerCluster);
+    }
+
+    // Load infrastructure data
+    async function loadInfrastructureData() {
+      try {
+        // Load airports
+        const airportsResponse = await fetch('/data/assets/airports_wikidata.geojson');
+        const airportsData = await airportsResponse.json();
+        infrastructureData.airports = airportsData.features;
+
+        // Load harbours
+        const harboursResponse = await fetch('/data/assets/harbours.geojson');
+        const harboursData = await harboursResponse.json();
+        infrastructureData.harbours = harboursData.features;
+
+        console.log('Infrastructure loaded:', {
+          airports: infrastructureData.airports.length,
+          harbours: infrastructureData.harbours.length
+        });
+      } catch (error) {
+        console.error('Error loading infrastructure:', error);
+      }
+    }
+
+    // Load incidents from API
+    async function loadIncidents() {
+      try {
+        const response = await fetch('/api/incidents');
+        const data = await response.json();
+        incidents = data.incidents || [];
+        filteredIncidents = [...incidents];
+        renderIncidents();
+        updateStatistics();
+        console.log('Loaded incidents:', incidents.length);
+      } catch (error) {
+        console.error('Error loading incidents:', error);
+      }
+    }
+
+    // Render incidents on map
+    function renderIncidents() {
+      // Clear existing markers
+      markerCluster.clearLayers();
+      markers = [];
+
+      filteredIncidents.forEach(incident => {
+        if (incident.asset && incident.asset.lat && incident.asset.lon) {
+          const marker = L.marker([incident.asset.lat, incident.asset.lon], {
+            icon: createIncidentIcon(incident)
+          });
+          
+          marker.bindPopup(createIncidentPopup(incident));
+          marker.on('click', () => selectIncident(incident));
+          
+          markers.push(marker);
+          markerCluster.addLayer(marker);
+        }
+      });
+    }
+
+    // Create custom incident icon
+    function createIncidentIcon(incident) {
+      const status = incident.incident?.status || 'unknown';
+      const evidence = incident.evidence?.strength || 0;
+      
+      let color = '#6b7280'; // Default gray
+      if (status === 'active') color = '#ef4444';
+      else if (status === 'resolved') color = '#10b981';
+      else if (evidence >= 2) color = '#3b82f6';
+      
+      return L.divIcon({
+        html: `<div style="
+          width: 20px;
+          height: 20px;
+          background: ${color};
+          border: 2px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        "></div>`,
+        className: 'custom-incident-icon',
+        iconSize: [20, 20]
+      });
+    }
+
+    // Create incident popup
+    function createIncidentPopup(incident) {
+      const status = incident.incident?.status || 'unknown';
+      const evidence = incident.evidence?.strength || 0;
+      const location = incident.asset?.name || 'Unknown Location';
+      const time = new Date(incident.first_seen_utc).toLocaleString();
+      
+      return `
+        <div style="min-width: 200px;">
+          <h3 style="margin: 0 0 8px 0; font-size: 14px;">${location}</h3>
+          <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280;">${time}</p>
+          <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+            <span style="padding: 2px 6px; background: ${status === 'active' ? '#ef4444' : '#10b981'}; color: white; border-radius: 4px; font-size: 10px;">${status}</span>
+            <span style="padding: 2px 6px; background: #3b82f6; color: white; border-radius: 4px; font-size: 10px;">Evidence ${evidence}</span>
+          </div>
+          <p style="margin: 0; font-size: 12px; line-height: 1.4;">${incident.incident?.description || 'No description available'}</p>
+        </div>
+      `;
+    }
+
+    // Select incident
+    function selectIncident(incident) {
+      // Update incident list selection
+      document.querySelectorAll('.incident-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      // Find and highlight the corresponding card
+      const incidentId = incident.id;
+      const card = document.querySelector(`[data-incident-id="${incidentId}"]`);
+      if (card) {
+        card.classList.add('selected');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      // Filter controls
+      document.getElementById('days-filter').addEventListener('change', applyFilters);
+      document.getElementById('status-filter').addEventListener('change', applyFilters);
+      document.getElementById('text-search').addEventListener('input', applyFilters);
+      document.getElementById('proximity-slider').addEventListener('input', updateProximityValue);
+      
+      // Evidence levels
+      document.querySelectorAll('.evidence-level').forEach(level => {
+        level.addEventListener('click', function() {
+          this.classList.toggle('active');
+          applyFilters();
+        });
+      });
+      
+      // Infrastructure toggles
+      document.querySelectorAll('.infra-toggle').forEach(toggle => {
+        toggle.addEventListener('click', function() {
+          this.classList.toggle('active');
+          applyFilters();
+        });
+      });
+      
+      // Map controls
+      document.getElementById('zoom-in').addEventListener('click', () => map.zoomIn());
+      document.getElementById('zoom-out').addEventListener('click', () => map.zoomOut());
+      document.getElementById('reset-view').addEventListener('click', () => map.setView([54.5, 10.0], 6));
+      document.getElementById('toggle-clusters').addEventListener('click', toggleClusters);
+      
+      // AI News fetch
+      document.getElementById('ai-fetch-btn').addEventListener('click', fetchAINews);
+    }
+
+    // Update proximity value display
+    function updateProximityValue() {
+      const slider = document.getElementById('proximity-slider');
+      const value = document.getElementById('proximity-value');
+      value.textContent = slider.value + 'km';
+      applyFilters();
+    }
+
+    // Apply filters
+    function applyFilters() {
+      const daysBack = parseInt(document.getElementById('days-filter').value);
+      const statusFilter = document.getElementById('status-filter').value;
+      const textSearch = document.getElementById('text-search').value.toLowerCase();
+      const proximityRadius = parseInt(document.getElementById('proximity-slider').value);
+      
+      // Get active evidence levels
+      const activeEvidenceLevels = Array.from(document.querySelectorAll('.evidence-level.active'))
+        .map(el => parseInt(el.dataset.level));
+      
+      // Get active infrastructure types
+      const activeInfrastructure = Array.from(document.querySelectorAll('.infra-toggle.active'))
+        .map(el => el.dataset.type);
+      
+      // Filter incidents
+      filteredIncidents = incidents.filter(incident => {
+        // Date filter
+        if (daysBack) {
+          const incidentDate = new Date(incident.first_seen_utc);
+          const cutoffDate = new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);
+          if (incidentDate < cutoffDate) return false;
+        }
+        
+        // Status filter
+        if (statusFilter && incident.incident?.status !== statusFilter) return false;
+        
+        // Evidence filter
+        const evidenceLevel = incident.evidence?.strength || 0;
+        if (activeEvidenceLevels.length > 0 && !activeEvidenceLevels.includes(evidenceLevel)) return false;
+        
+        // Text search
+        if (textSearch) {
+          const searchText = `${incident.asset?.name || ''} ${incident.incident?.description || ''}`.toLowerCase();
+          if (!searchText.includes(textSearch)) return false;
+        }
+        
+        // Proximity analysis
+        if (activeInfrastructure.length > 0 && incident.asset?.lat && incident.asset?.lon) {
+          const incidentLat = incident.asset.lat;
+          const incidentLon = incident.asset.lon;
+          
+          let nearInfrastructure = false;
+          
+          activeInfrastructure.forEach(type => {
+            const infrastructure = infrastructureData[type] || [];
+            for (const infra of infrastructure) {
+              if (infra.geometry && infra.geometry.coordinates) {
+                const [lon, lat] = infra.geometry.coordinates;
+                const distance = calculateDistance(incidentLat, incidentLon, lat, lon);
+                if (distance <= proximityRadius) {
+                  nearInfrastructure = true;
+                  return;
+                }
+              }
+            }
+          });
+          
+          if (!nearInfrastructure) return false;
+        }
+        
+        return true;
+      });
+      
+      renderIncidents();
+      renderIncidentList();
+      updateStatistics();
+    }
+
+    // Calculate distance between two points
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Earth's radius in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // Render incident list
+    function renderIncidentList() {
+      const container = document.getElementById('incident-list');
+      container.innerHTML = '';
+      
+      filteredIncidents.forEach(incident => {
+        const card = document.createElement('div');
+        card.className = 'incident-card';
+        card.dataset.incidentId = incident.id;
+        
+        const status = incident.incident?.status || 'unknown';
+        const evidence = incident.evidence?.strength || 0;
+        const location = incident.asset?.name || 'Unknown Location';
+        const time = new Date(incident.first_seen_utc).toLocaleString();
+        
+        card.innerHTML = `
+          <div class="incident-header">
+            <div class="incident-location">${location}</div>
+            <div class="incident-time">${time}</div>
+          </div>
+          <div class="incident-details">
+            <span class="incident-badge badge-status-${status}">${status}</span>
+            <span class="incident-badge badge-evidence-${evidence}">Evidence ${evidence}</span>
+          </div>
+          <div class="incident-description">${incident.incident?.description || 'No description available'}</div>
+          <div class="incident-source">Source: ${incident.source || 'Unknown'}</div>
+        `;
+        
+        card.addEventListener('click', () => {
+          if (incident.asset?.lat && incident.asset?.lon) {
+            map.setView([incident.asset.lat, incident.asset.lon], 12);
+            selectIncident(incident);
+          }
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Update statistics
+    function updateStatistics() {
+      const activeCount = filteredIncidents.filter(i => i.incident?.status === 'active').length;
+      const resolvedCount = filteredIncidents.filter(i => i.incident?.status === 'resolved').length;
+      const evidenceCount = filteredIncidents.filter(i => (i.evidence?.strength || 0) >= 2).length;
+      const infrastructureCount = filteredIncidents.length; // Simplified for demo
+      
+      document.getElementById('active-count').textContent = activeCount;
+      document.getElementById('resolved-count').textContent = resolvedCount;
+      document.getElementById('evidence-count').textContent = evidenceCount;
+      document.getElementById('infrastructure-count').textContent = infrastructureCount;
+      
+      // Update header stats
+      document.getElementById('total-incidents').textContent = filteredIncidents.length;
+      document.getElementById('active-incidents').textContent = activeCount;
+      document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+    }
+
+    // Toggle marker clusters
+    function toggleClusters() {
+      if (map.hasLayer(markerCluster)) {
+        map.removeLayer(markerCluster);
+      } else {
+        map.addLayer(markerCluster);
+      }
+    }
+
+    // Fetch AI news
+    async function fetchAINews() {
+      const btn = document.getElementById('ai-fetch-btn');
+      btn.textContent = 'Fetching...';
+      btn.disabled = true;
+      
+      try {
+        // Simulate AI news fetch
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Add mock AI news items
+        const aiNewsContainer = document.getElementById('ai-news-feed');
+        const newItem = document.createElement('div');
+        newItem.className = 'ai-news-item';
+        newItem.innerHTML = `
+          <div class="ai-news-location">AI Discovered: New Incident</div>
+          <div class="ai-news-description">AI analysis detected potential drone incident in monitored area.</div>
+        `;
+        aiNewsContainer.appendChild(newItem);
+        
+        btn.textContent = 'Fetch News';
+        btn.disabled = false;
+      } catch (error) {
+        console.error('Error fetching AI news:', error);
+        btn.textContent = 'Error';
+        btn.disabled = false;
+      }
+    }
+
+    // Setup WebSocket for real-time updates
+    function setupWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const ws = new WebSocket(`${protocol}//${window.location.host}`);
+      
+      ws.onopen = function() {
+        console.log('WebSocket connected');
+        ws.send(JSON.stringify({ type: 'subscribe', channel: 'incidents' }));
+      };
+      
+      ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.type === 'incident_update') {
+          loadIncidents(); // Reload incidents when updates arrive
+        }
+      };
+      
+      ws.onclose = function() {
+        console.log('WebSocket disconnected');
+        // Attempt to reconnect after 5 seconds
+        setTimeout(setupWebSocket, 5000);
+      };
+    }
+  </script>
+</body>
+</html>

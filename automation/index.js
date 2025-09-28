@@ -118,7 +118,7 @@ class DroneIncidentAutomation {
 
     try {
       const fs = await import('fs/promises');
-      const currentData = JSON.parse(await fs.readFile('/root/repo/public/incidents.json', 'utf-8'));
+      const currentData = JSON.parse(await fs.readFile('./public/incidents.json', 'utf-8'));
 
       const audit = await this.qualityController.auditDataset(currentData);
 

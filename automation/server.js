@@ -14,10 +14,11 @@ import fs from 'fs/promises';
 import { LiveUpdateService } from './live-update-service.js';
 import { WebSocketService } from './websocket-service.js';
 import { AlertService } from './alert-service.js';
+import NewsAPI from '../api/news.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8085;
 
 // Create HTTP server
 const server = createServer(app);
@@ -33,6 +34,7 @@ app.use(express.static(path.join(__dirname, '..')));
 let updateService;
 let wsService;
 let alertService;
+let newsAPI;
 
 // API endpoint for live incidents with query params
 app.get('/api/incidents', async (req, res) => {
@@ -138,6 +140,16 @@ app.post('/api/update', async (req, res) => {
     res.status(503).json({ error: 'Update service not initialized' });
   }
 });
+
+// Initialize News API
+newsAPI = new NewsAPI();
+
+// News API Routes
+app.get('/api/news', (req, res) => newsAPI.getNews(req, res));
+app.post('/api/analyze-article', (req, res) => newsAPI.analyzeArticle(req, res));
+app.get('/api/analytics', (req, res) => newsAPI.getAnalytics(req, res));
+app.get('/api/trends', (req, res) => newsAPI.getTrends(req, res));
+app.post('/api/news-alerts', (req, res) => newsAPI.subscribeToAlerts(req, res));
 
 // Start server
 server.listen(PORT, async () => {

@@ -1,0 +1,1 @@
+<\!DOCTYPE html><html><body><h1>Test Data</h1><script>fetch("/incidents.json").then(r=>r.json()).then(d=>document.body.innerHTML+=`<pre>${JSON.stringify(d.incidents.slice(0,2),null,2)}</pre>`)</script></body></html>

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DroneWatch - Parallel Agent Monitoring Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', 'SF Mono', monospace;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .agent-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .agent-name {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .agent-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        .status-online {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid #00ff88;
+        }
+
+        .status-offline {
+            background: rgba(255, 71, 87, 0.2);
+            color: #ff4757;
+            border: 1px solid #ff4757;
+        }
+
+        .agent-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 0.8em;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            color: #00ccff;
+        }
+
+        .metrics-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .console-log {
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid transparent;
+        }
+
+        .log-info {
+            border-left-color: #00ccff;
+            color: #00ccff;
+        }
+
+        .log-success {
+            border-left-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .log-warning {
+            border-left-color: #ffa502;
+            color: #ffa502;
+        }
+
+        .log-error {
+            border-left-color: #ff4757;
+            color: #ff4757;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .updating {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>🚁 DroneWatch Agent Monitor</h1>
+
+        <div class="controls">
+            <button onclick="refreshStatus()">Refresh Status</button>
+            <button onclick="startAllAgents()">Start All Agents</button>
+            <button onclick="stopAllAgents()">Stop All Agents</button>
+            <button onclick="clearLogs()">Clear Logs</button>
+        </div>
+
+        <div class="metrics-section">
+            <h2>System Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value" id="total-agents">8</div>
+                    <div class="metric-label">Total Agents</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="online-agents">0</div>
+                    <div class="metric-label">Online</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="incidents-processed">0</div>
+                    <div class="metric-label">Incidents</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="messages-sent">0</div>
+                    <div class="metric-label">Messages</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="agent-grid" id="agent-grid">
+            <!-- Agent cards will be dynamically inserted here -->
+        </div>
+
+        <div class="metrics-section">
+            <h2>System Console</h2>
+            <div class="console-log" id="console-log">
+                <div class="log-entry log-info">System initialized...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const agents = [
+            { name: 'incident-validator', port: 3001, wsPort: 3101, description: 'Schema validation & evidence classification' },
+            { name: 'scraper-orchestrator', port: 3002, wsPort: 3102, description: 'RSS feeds & news sources' },
+            { name: 'performance-monitor', port: 3003, wsPort: 3103, description: 'System metrics & monitoring' },
+            { name: 'realtime-coordinator', port: 3004, wsPort: 3104, description: 'WebSocket broadcasting' },
+            { name: 'geo-intelligence', port: 3005, wsPort: 3105, description: 'Proximity analysis & risk zones' },
+            { name: 'automation-reliability', port: 3006, wsPort: 3106, description: '24/7 uptime & self-healing' },
+            { name: 'parallel-orchestrator', port: 3007, wsPort: 3107, description: 'Task distribution & coordination' },
+            { name: 'test-agent', port: 3008, wsPort: 3108, description: 'Automated testing & validation' }
+        ];
+
+        let onlineCount = 0;
+        let incidentCount = 0;
+        let messageCount = 0;
+        const websockets = {};
+
+        function createAgentCard(agent) {
+            return `
+                <div class="agent-card" id="agent-${agent.name}">
+                    <div class="agent-header">
+                        <div class="agent-name">${agent.name}</div>
+                        <div class="agent-status status-offline" id="status-${agent.name}">OFFLINE</div>
+                    </div>
+                    <div class="agent-info">
+                        <div class="info-item">
+                            <div class="info-label">HTTP Port</div>
+                            <div class="info-value">${agent.port}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">WebSocket</div>
+                            <div class="info-value">${agent.wsPort}</div>
+                        </div>
+                        <div class="info-item" style="grid-column: 1 / -1">
+                            <div class="info-label">Description</div>
+                            <div class="info-value" style="color: #888; font-size: 0.9em">${agent.description}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Status</div>
+                            <div class="info-value" id="health-${agent.name}">Checking...</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Uptime</div>
+                            <div class="info-value" id="uptime-${agent.name}">--:--:--</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initializeDashboard() {
+            const grid = document.getElementById('agent-grid');
+            agents.forEach(agent => {
+                grid.innerHTML += createAgentCard(agent);
+            });
+
+            // Check agent status
+            agents.forEach(checkAgentHealth);
+
+            // Set up periodic refresh
+            setInterval(refreshStatus, 10000); // Every 10 seconds
+        }
+
+        async function checkAgentHealth(agent) {
+            try {
+                const response = await fetch(`http://localhost:${agent.port}/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    updateAgentStatus(agent.name, true, data);
+                    connectWebSocket(agent);
+                } else {
+                    updateAgentStatus(agent.name, false);
+                }
+            } catch (error) {
+                updateAgentStatus(agent.name, false);
+            }
+        }
+
+        function updateAgentStatus(agentName, online, data = null) {
+            const statusEl = document.getElementById(`status-${agentName}`);
+            const healthEl = document.getElementById(`health-${agentName}`);
+            const uptimeEl = document.getElementById(`uptime-${agentName}`);
+
+            if (online) {
+                statusEl.className = 'agent-status status-online';
+                statusEl.textContent = 'ONLINE';
+                healthEl.textContent = 'Healthy';
+
+                if (data && data.uptime) {
+                    const hours = Math.floor(data.uptime / 3600);
+                    const minutes = Math.floor((data.uptime % 3600) / 60);
+                    const seconds = Math.floor(data.uptime % 60);
+                    uptimeEl.textContent = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            } else {
+                statusEl.className = 'agent-status status-offline';
+                statusEl.textContent = 'OFFLINE';
+                healthEl.textContent = 'Unreachable';
+                uptimeEl.textContent = '--:--:--';
+            }
+
+            updateMetrics();
+        }
+
+        function connectWebSocket(agent) {
+            if (websockets[agent.name]) {
+                websockets[agent.name].close();
+            }
+
+            try {
+                const ws = new WebSocket(`ws://localhost:${agent.wsPort}`);
+
+                ws.onopen = () => {
+                    addLog(`WebSocket connected to ${agent.name}`, 'success');
+                };
+
+                ws.onmessage = (event) => {
+                    messageCount++;
+                    document.getElementById('messages-sent').textContent = messageCount;
+
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'incident_validated') {
+                            incidentCount++;
+                            document.getElementById('incidents-processed').textContent = incidentCount;
+                            addLog(`${agent.name}: Incident validated`, 'info');
+                        }
+                    } catch (e) {
+                        // Handle non-JSON messages
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    addLog(`WebSocket error for ${agent.name}`, 'error');
+                };
+
+                ws.onclose = () => {
+                    addLog(`WebSocket disconnected from ${agent.name}`, 'warning');
+                };
+
+                websockets[agent.name] = ws;
+            } catch (error) {
+                addLog(`Failed to connect WebSocket to ${agent.name}`, 'error');
+            }
+        }
+
+        function updateMetrics() {
+            onlineCount = document.querySelectorAll('.status-online').length;
+            document.getElementById('online-agents').textContent = onlineCount;
+        }
+
+        function addLog(message, type = 'info') {
+            const logEl = document.getElementById('console-log');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+
+            // Keep only last 100 log entries
+            while (logEl.children.length > 100) {
+                logEl.removeChild(logEl.firstChild);
+            }
+        }
+
+        function refreshStatus() {
+            addLog('Refreshing agent status...', 'info');
+            agents.forEach(checkAgentHealth);
+        }
+
+        function startAllAgents() {
+            addLog('Starting all agents...', 'info');
+            // In a real implementation, this would call an API endpoint
+            fetch('http://localhost:3007/start-all', { method: 'POST' })
+                .then(() => {
+                    addLog('Start command sent', 'success');
+                    setTimeout(refreshStatus, 2000);
+                })
+                .catch(() => addLog('Failed to start agents', 'error'));
+        }
+
+        function stopAllAgents() {
+            addLog('Stopping all agents...', 'warning');
+            // In a real implementation, this would call an API endpoint
+            fetch('http://localhost:3007/stop-all', { method: 'POST' })
+                .then(() => {
+                    addLog('Stop command sent', 'success');
+                    setTimeout(refreshStatus, 2000);
+                })
+                .catch(() => addLog('Failed to stop agents', 'error'));
+        }
+
+        function clearLogs() {
+            const logEl = document.getElementById('console-log');
+            logEl.innerHTML = '<div class="log-entry log-info">Console cleared</div>';
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', initializeDashboard);
+    </script>
+</body>
+</html>

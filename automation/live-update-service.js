@@ -225,18 +225,13 @@ class LiveUpdateService {
     const incidents = [];
 
     try {
-      // Use existing RSS scraper
-      const rssResults = await this.rssScraper.scrapeAll();
-      console.log(`📰 Processing ${rssResults.length} RSS articles...`);
+      // Use existing RSS scraper - it already returns incidents
+      const rssResults = await this.rssScraper.scrapeIncidents(7);
+      console.log(`📰 Processing ${rssResults.length} RSS incidents...`);
 
-      // Convert to incident format
-      for (const article of rssResults) {
-        if (this.isDroneIncident(article)) {
-          const incident = this.createIncidentFromArticle(article);
-          incidents.push(incident);
-          console.log(`  ✓ Found incident: ${incident.asset.name}`);
-        }
-      }
+      // RSS scraper already returns incidents, no conversion needed
+      incidents.push(...rssResults);
+      console.log(`  ✓ Found ${rssResults.length} incidents from RSS`);
 
       // Return incidents array directly
       return incidents;

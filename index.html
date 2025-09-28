@@ -1205,6 +1205,111 @@
             </div>
           </div>
         </div>
+
+        <!-- Risk Zone Controls -->
+        <div class="filter-controls" style="margin-top: 1rem;">
+          <div class="filter-group">
+            <label style="display: flex; align-items: center; justify-content: space-between;">
+              Risk Zones
+              <button id="toggle-all-zones" class="quick-action-btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;"
+                      onclick="toggleAllRiskZones()" title="Toggle All">
+                All
+              </button>
+            </label>
+            <div style="display: grid; gap: 0.5rem; margin-top: 0.5rem;">
+              <label class="risk-zone-toggle" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="zone-critical" checked>
+                <span style="width: 12px; height: 12px; background: var(--risk-critical); border-radius: 50%;"></span>
+                <span>Critical Risk</span>
+              </label>
+              <label class="risk-zone-toggle" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="zone-high" checked>
+                <span style="width: 12px; height: 12px; background: var(--risk-high); border-radius: 50%;"></span>
+                <span>High Risk</span>
+              </label>
+              <label class="risk-zone-toggle" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="zone-medium" checked>
+                <span style="width: 12px; height: 12px; background: var(--risk-medium); border-radius: 50%;"></span>
+                <span>Medium Risk</span>
+              </label>
+              <label class="risk-zone-toggle" style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="zone-low" checked>
+                <span style="width: 12px; height: 12px; background: var(--risk-low); border-radius: 50%;"></span>
+                <span>Low Risk</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Opacity Slider -->
+          <div class="filter-group" style="margin-top: 1rem;">
+            <label style="display: flex; align-items: center; justify-content: space-between;">
+              Zone Opacity
+              <span id="opacity-value" style="color: var(--text-muted); font-size: 0.875rem;">50%</span>
+            </label>
+            <input type="range" id="zone-opacity" min="10" max="100" value="50"
+                   style="width: 100%; margin-top: 0.5rem;"
+                   oninput="updateZoneOpacity(this.value)">
+          </div>
+
+          <!-- Focus Buttons -->
+          <div class="filter-group" style="margin-top: 1rem;">
+            <label>Quick Focus</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem;">
+              <button class="filter-btn" onclick="focusOnRegion('denmark')"
+                      style="padding: 0.5rem; font-size: 0.875rem;">
+                🇩🇰 Denmark
+              </button>
+              <button class="filter-btn" onclick="focusOnRegion('germany')"
+                      style="padding: 0.5rem; font-size: 0.875rem;">
+                🇩🇪 Germany
+              </button>
+              <button class="filter-btn" onclick="focusOnRegion('uk')"
+                      style="padding: 0.5rem; font-size: 0.875rem;">
+                🇬🇧 UK
+              </button>
+              <button class="filter-btn" onclick="focusOnRegion('active')"
+                      style="padding: 0.5rem; font-size: 0.875rem;">
+                🎯 Active Only
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timeline Controls -->
+        <div class="filter-controls" style="margin-top: 1rem;">
+          <div class="filter-group">
+            <label style="display: flex; align-items: center; justify-content: space-between;">
+              Timeline
+              <span id="timeline-date" style="color: var(--text-muted); font-size: 0.875rem;">Last 7 days</span>
+            </label>
+            <input type="range" id="timeline-slider" min="1" max="30" value="7"
+                   style="width: 100%; margin-top: 0.5rem;"
+                   oninput="updateTimeline(this.value)">
+            <div style="display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.75rem; color: var(--text-muted);">
+              <span>24h</span>
+              <span>7d</span>
+              <span>30d</span>
+            </div>
+          </div>
+
+          <!-- Playback Controls -->
+          <div class="filter-group" style="margin-top: 0.75rem;">
+            <div style="display: flex; gap: 0.5rem; justify-content: center;">
+              <button class="filter-btn" onclick="timelinePlayback('backward')"
+                      style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                ⏪ Back
+              </button>
+              <button class="filter-btn" id="timeline-play" onclick="toggleTimelinePlayback()"
+                      style="padding: 0.5rem 1.5rem; font-size: 0.875rem; flex: 1;">
+                ▶️ Play
+              </button>
+              <button class="filter-btn" onclick="timelinePlayback('forward')"
+                      style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                Forward ⏩
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1740,6 +1845,24 @@
           permanent: false,
           direction: 'top',
           className: 'risk-tooltip'
+        });
+
+        // Make risk circles interactive
+        riskCircle.on('click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          state.map.fitBounds(this.getBounds(), { padding: [50, 50], animate: true });
+          showRiskDetails(incident);
+        });
+
+        riskCircle.on('mouseover', function(e) {
+          this.setStyle({ fillOpacity: 0.15, weight: 4 });
+        });
+
+        riskCircle.on('mouseout', function(e) {
+          this.setStyle({
+            fillOpacity: 0.05,
+            weight: isActive ? 3 : 2
+          });
         });
 
         // Create incident marker
@@ -2378,17 +2501,298 @@
       }
     }
 
+    // Heatmap state
+    let heatmapLayer = null;
+    let heatmapEnabled = false;
+
     function toggleHeatmap() {
-      // Placeholder for heatmap functionality
-      console.log('Heatmap toggle - to be implemented');
+      heatmapEnabled = !heatmapEnabled;
+
+      if (heatmapEnabled) {
+        // Create heatmap data from incidents
+        const heatmapData = state.incidents.map(incident => {
+          const intensity = incident.scores.severity / 10;
+          return [
+            incident.asset.lat,
+            incident.asset.lon,
+            intensity * (incident.incident.status === 'active' ? 1.5 : 1)
+          ];
+        });
+
+        // Remove existing heatmap if any
+        if (heatmapLayer) {
+          state.map.removeLayer(heatmapLayer);
+        }
+
+        // Create gradient based on risk levels
+        const gradient = {
+          0.2: '#10b981',  // Low risk (green)
+          0.4: '#3b82f6',  // Medium-low (blue)
+          0.6: '#f59e0b',  // Medium (yellow)
+          0.8: '#f97316',  // High (orange)
+          1.0: '#dc2626'   // Critical (red)
+        };
+
+        // Create heatmap using canvas (since we don't have Leaflet.heat plugin)
+        const heatmapCanvas = document.createElement('canvas');
+        const heatmapOverlay = L.imageOverlay('', state.map.getBounds(), {
+          opacity: 0.6,
+          className: 'heatmap-overlay'
+        });
+
+        // Simple heatmap visualization using markers with large radius
+        heatmapData.forEach(([lat, lon, intensity]) => {
+          const heatCircle = L.circle([lat, lon], {
+            radius: 50000 * intensity,  // 50km max radius
+            color: 'transparent',
+            fillColor: intensity > 0.7 ? '#dc2626' :
+                      intensity > 0.5 ? '#f97316' :
+                      intensity > 0.3 ? '#f59e0b' : '#10b981',
+            fillOpacity: 0.3 * intensity,
+            weight: 0,
+            className: 'heat-point'
+          });
+
+          if (!heatmapLayer) {
+            heatmapLayer = L.layerGroup();
+          }
+          heatmapLayer.addLayer(heatCircle);
+        });
+
+        if (heatmapLayer) {
+          state.map.addLayer(heatmapLayer);
+        }
+
+        // Update button state
+        const btn = document.querySelector('[onclick="toggleHeatmap()"]');
+        if (btn) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--primary)';
+        }
+
+        showNotification('Heatmap enabled', 'success');
+      } else {
+        // Remove heatmap
+        if (heatmapLayer) {
+          state.map.removeLayer(heatmapLayer);
+          heatmapLayer = null;
+        }
+
+        // Update button state
+        const btn = document.querySelector('[onclick="toggleHeatmap()"]');
+        if (btn) {
+          btn.classList.remove('active');
+          btn.style.background = '';
+        }
+
+        showNotification('Heatmap disabled', 'info');
+      }
+    }
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.style.cssText = `
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        padding: 1rem 1.5rem;
+        background: ${type === 'success' ? 'rgba(16, 185, 129, 0.9)' :
+                      type === 'error' ? 'rgba(239, 68, 68, 0.9)' :
+                      type === 'warning' ? 'rgba(245, 158, 11, 0.9)' :
+                      'rgba(59, 130, 246, 0.9)'};
+        color: white;
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 6000;
+        animation: slideInRight 0.3s ease;
+        font-family: 'Inter', system-ui;
+      `;
+      notification.textContent = message;
+
+      document.body.appendChild(notification);
+
+      // Auto remove after 3 seconds
+      setTimeout(() => {
+        notification.style.animation = 'slideOutRight 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    }
+
+    // Add slide animations to CSS
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+      @keyframes slideInRight {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+      @keyframes slideOutRight {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+      }
+      .quick-action-btn.active {
+        background: var(--primary) !important;
+        color: white !important;
+      }
+    `;
+    document.head.appendChild(styleSheet);
+
+    let riskZonesVisible = true;
+
+    // Toggle individual risk zone levels
+    function updateRiskZoneLevels() {
+      const showCritical = document.getElementById('zone-critical')?.checked;
+      const showHigh = document.getElementById('zone-high')?.checked;
+      const showMedium = document.getElementById('zone-medium')?.checked;
+      const showLow = document.getElementById('zone-low')?.checked;
+
+      if (state.riskCircles) {
+        state.riskCircles.eachLayer(layer => {
+          const incident = layer.incident;
+          if (!incident) return;
+
+          const severity = incident.scores.severity;
+          const shouldShow = (severity >= 8 && showCritical) ||
+                           (severity >= 6 && severity < 8 && showHigh) ||
+                           (severity >= 4 && severity < 6 && showMedium) ||
+                           (severity < 4 && showLow);
+
+          if (shouldShow) {
+            layer.setStyle({ opacity: state.zoneOpacity || 0.3 });
+          } else {
+            layer.setStyle({ opacity: 0 });
+          }
+        });
+      }
+    }
+
+    // Toggle all risk zones
+    function toggleAllRiskZones() {
+      const checkboxes = ['zone-critical', 'zone-high', 'zone-medium', 'zone-low'];
+      const anyUnchecked = checkboxes.some(id => !document.getElementById(id).checked);
+
+      checkboxes.forEach(id => {
+        document.getElementById(id).checked = anyUnchecked;
+      });
+
+      updateRiskZoneLevels();
+    }
+
+    // Update zone opacity
+    function updateZoneOpacity(value) {
+      state.zoneOpacity = value / 100;
+      document.getElementById('opacity-value').textContent = `${value}%`;
+
+      if (state.riskCircles) {
+        state.riskCircles.eachLayer(layer => {
+          const currentOpacity = layer.options.opacity;
+          if (currentOpacity > 0) {
+            layer.setStyle({ opacity: state.zoneOpacity });
+          }
+        });
+      }
+    }
+
+    // Focus on specific region
+    function focusOnRegion(region) {
+      const regions = {
+        denmark: { lat: 55.6761, lon: 12.5683, zoom: 7 },
+        germany: { lat: 51.1657, lon: 10.4515, zoom: 6 },
+        uk: { lat: 54.3781, lon: -2.7108, zoom: 6 },
+        active: null
+      };
+
+      if (region === 'active') {
+        const activeIncidents = state.incidents.filter(i => i.incident.status === 'active');
+        if (activeIncidents.length > 0) {
+          const bounds = L.latLngBounds(activeIncidents.map(i => [i.asset.lat, i.asset.lon]));
+          state.map.fitBounds(bounds, { padding: [50, 50], animate: true });
+        } else {
+          showNotification('No active incidents to focus on', 'info');
+        }
+      } else if (regions[region]) {
+        const r = regions[region];
+        state.map.setView([r.lat, r.lon], r.zoom, { animate: true });
+      }
+    }
+
+    // Update timeline
+    function updateTimeline(days) {
+      state.filters.dateRange = parseInt(days);
+      document.getElementById('timeline-date').textContent =
+        days === '1' ? 'Last 24 hours' : `Last ${days} days`;
+
+      applyFilters();
+      showNotification(`Timeline updated: ${days === '1' ? 'Last 24 hours' : `Last ${days} days`}`, 'info');
+    }
+
+    // Timeline playback control
+    let playbackInterval = null;
+    let currentPlaybackDay = 1;
+
+    function toggleTimelinePlayback() {
+      const playBtn = document.getElementById('timeline-play');
+
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+        playBtn.innerHTML = '▶️ Play';
+      } else {
+        playBtn.innerHTML = '⏸️ Pause';
+        currentPlaybackDay = 1;
+
+        playbackInterval = setInterval(() => {
+          if (currentPlaybackDay > 30) {
+            currentPlaybackDay = 1;
+          }
+
+          document.getElementById('timeline-slider').value = currentPlaybackDay;
+          updateTimeline(currentPlaybackDay);
+          currentPlaybackDay++;
+        }, 1000);
+      }
+    }
+
+    function timelinePlayback(direction) {
+      const slider = document.getElementById('timeline-slider');
+      let currentValue = parseInt(slider.value);
+
+      if (direction === 'forward') {
+        currentValue = Math.min(30, currentValue + 1);
+      } else {
+        currentValue = Math.max(1, currentValue - 1);
+      }
+
+      slider.value = currentValue;
+      updateTimeline(currentValue);
     }
 
     function toggleRiskZones() {
-      // Toggle risk zone visibility
+      riskZonesVisible = !riskZonesVisible;
+
+      // Toggle all risk circles visibility
+      document.querySelectorAll('.risk-zone, .active-risk-zone, .critical-zone').forEach(zone => {
+        zone.style.display = riskZonesVisible ? '' : 'none';
+      });
+
+      // Update button state
+      const btn = document.querySelector('[onclick="toggleRiskZones()"]');
+      if (btn) {
+        if (riskZonesVisible) {
+          btn.classList.remove('active');
+          showNotification('Risk zones visible', 'info');
+        } else {
+          btn.classList.add('active');
+          showNotification('Risk zones hidden', 'info');
+        }
+      }
+
+      // Update checkbox if it exists
       const checkbox = document.getElementById('show-risk-zones');
       if (checkbox) {
-        checkbox.checked = !checkbox.checked;
-        renderIncidents();
+        checkbox.checked = riskZonesVisible;
       }
     }
 
@@ -2420,12 +2824,25 @@
     }
 
     function updateRiskIndicator() {
-      const activeCount = state.incidents.filter(i => i.incident.status === 'active').length;
-      const avgSeverity = state.incidents.reduce((acc, i) => acc + i.scores.severity, 0) / (state.incidents.length || 1);
+      const activeIncidents = state.incidents.filter(i => i.incident.status === 'active');
+      const activeCount = activeIncidents.length;
 
-      const riskLevel = avgSeverity >= 7 || activeCount >= 10 ? 'critical' :
-                       avgSeverity >= 5 || activeCount >= 5 ? 'high' :
-                       avgSeverity >= 3 || activeCount >= 2 ? 'medium' : 'low';
+      // Calculate weighted severity (active incidents count more)
+      const weightedSeverity = state.incidents.reduce((acc, i) => {
+        const weight = i.incident.status === 'active' ? 1.5 : 1;
+        return acc + (i.scores.severity * weight);
+      }, 0) / (state.incidents.length || 1);
+
+      // Calculate risk score based on multiple factors
+      const riskScore = (
+        (weightedSeverity / 10) * 0.5 +  // Severity component (50%)
+        (Math.min(activeCount, 10) / 10) * 0.3 +  // Active count component (30%)
+        (state.incidents.length / 50) * 0.2  // Total incidents component (20%)
+      ) * 10;
+
+      const riskLevel = riskScore >= 7 ? 'critical' :
+                       riskScore >= 5 ? 'high' :
+                       riskScore >= 3 ? 'medium' : 'low';
 
       const indicator = document.getElementById('risk-indicator');
       const levelElement = document.getElementById('current-risk-level');
@@ -2433,26 +2850,75 @@
       if (indicator && levelElement) {
         indicator.style.display = 'flex';
         levelElement.className = `risk-level ${riskLevel}`;
+
+        // Add pulsing animation for critical levels
+        const pulseSpeed = riskLevel === 'critical' ? 'animation: pulse 1s infinite;' :
+                          riskLevel === 'high' ? 'animation: pulse 2s infinite;' : '';
+
         levelElement.innerHTML = `
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
-          <span>${riskLevel.toUpperCase()}</span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor; ${pulseSpeed}"></span>
+          <span>${riskLevel.toUpperCase()} (${riskScore.toFixed(1)})</span>
         `;
       }
 
-      // Update stats
+      // Update stats with real calculations
       document.getElementById('active-zones-count').textContent = activeCount;
-      document.getElementById('risk-score').textContent = avgSeverity.toFixed(1);
+      document.getElementById('risk-score').textContent = riskScore.toFixed(1);
 
-      // Calculate coverage area (simplified)
+      // Calculate actual coverage area
       const totalCoverage = state.incidents.reduce((acc, i) => {
-        const areaKm2 = Math.PI * Math.pow(i.scores.risk_radius_m / 1000, 2);
+        const radiusKm = (i.scores.risk_radius_m || 3000) / 1000;
+        const areaKm2 = Math.PI * Math.pow(radiusKm, 2);
         return acc + areaKm2;
       }, 0);
       document.getElementById('coverage-area').textContent = Math.round(totalCoverage);
 
-      // Mock response time
-      const avgResponseMin = 15 + Math.floor(Math.random() * 10);
-      document.getElementById('response-time').textContent = `${avgResponseMin}min`;
+      // Calculate average response time based on incident data
+      const avgDuration = state.incidents.reduce((acc, i) =>
+        acc + (i.incident.duration_min || 60), 0) / (state.incidents.length || 1);
+      document.getElementById('response-time').textContent = `${Math.round(avgDuration)}min`;
+    }
+
+    // Show detailed risk information
+    function showRiskDetails(incident) {
+      const riskPanel = document.createElement('div');
+      riskPanel.className = 'risk-details-panel';
+      riskPanel.innerHTML = `
+        <div style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    background: var(--glass-panel); padding: 2rem; border-radius: 12px;
+                    backdrop-filter: blur(20px); border: 1px solid var(--border-strong);
+                    z-index: 5000; min-width: 400px; max-width: 600px;">
+          <h3 style="color: var(--text); margin-bottom: 1rem;">Risk Assessment: ${incident.asset.name}</h3>
+          <div style="display: grid; gap: 1rem;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Severity:</span>
+              <span style="color: var(--risk-high); font-weight: bold;">${incident.scores.severity}/10</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Risk Radius:</span>
+              <span style="color: var(--text);">${(incident.scores.risk_radius_m / 1000).toFixed(1)} km</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Status:</span>
+              <span style="color: ${incident.incident.status === 'active' ? 'var(--risk-critical)' : 'var(--success)'};">
+                ${incident.incident.status.toUpperCase()}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--text-muted);">Duration:</span>
+              <span style="color: var(--text);">${incident.incident.duration_min || 'Unknown'} minutes</span>
+            </div>
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()"
+                  style="margin-top: 1.5rem; width: 100%; padding: 0.5rem;
+                         background: var(--primary); color: white; border: none;
+                         border-radius: 6px; cursor: pointer;">Close</button>
+        </div>
+        <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0, 0, 0, 0.5); z-index: 4999;"
+             onclick="this.parentElement.remove()"></div>
+      `;
+      document.body.appendChild(riskPanel);
     }
 
     // Start application when DOM is ready
@@ -2461,10 +2927,36 @@
         init();
         // Update risk indicator after data loads
         setTimeout(updateRiskIndicator, 2000);
+
+        // Set up risk zone level listeners
+        setTimeout(() => {
+          ['zone-critical', 'zone-high', 'zone-medium', 'zone-low'].forEach(id => {
+            const checkbox = document.getElementById(id);
+            if (checkbox) {
+              checkbox.addEventListener('change', updateRiskZoneLevels);
+            }
+          });
+
+          // Initialize zone opacity
+          state.zoneOpacity = 0.5;
+        }, 100);
       });
     } else {
       init();
       setTimeout(updateRiskIndicator, 2000);
+
+      // Set up risk zone level listeners
+      setTimeout(() => {
+        ['zone-critical', 'zone-high', 'zone-medium', 'zone-low'].forEach(id => {
+          const checkbox = document.getElementById(id);
+          if (checkbox) {
+            checkbox.addEventListener('change', updateRiskZoneLevels);
+          }
+        });
+
+        // Initialize zone opacity
+        state.zoneOpacity = 0.5;
+      }, 100);
     }
 
     // Cleanup on page unload

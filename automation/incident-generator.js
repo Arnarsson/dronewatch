@@ -358,7 +358,7 @@ export class IncidentGenerator {
     };
   }
 
-  async saveIncidents(incidents, outputPath = '/root/repo/public/incidents.json') {
+  async saveIncidents(incidents, outputPath = './public/incidents.json') {
     const formattedIncidents = incidents.map(incident => ({
       id: incident.id,
       first_seen_utc: incident.first_seen_utc,

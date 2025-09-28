@@ -105,7 +105,7 @@ export class AutomationScheduler {
     try {
       // Load current production data
       const fs = await import('fs/promises');
-      const currentData = JSON.parse(await fs.readFile('/root/repo/public/incidents.json', 'utf-8'));
+      const currentData = JSON.parse(await fs.readFile('./public/incidents.json', 'utf-8'));
 
       // Run quality analysis
       const qualityReport = await this.qualityController.auditDataset(currentData);
@@ -141,7 +141,7 @@ export class AutomationScheduler {
 
       // Save report
       const fs = await import('fs/promises');
-      const reportsDir = '/root/repo/automation/reports';
+      const reportsDir = './automation/reports';
       await fs.mkdir(reportsDir, { recursive: true });
 
       const reportFile = `${reportsDir}/daily-report-${new Date().toISOString().split('T')[0]}.json`;
@@ -167,7 +167,7 @@ export class AutomationScheduler {
     try {
       // Clean old incidents (older than max age)
       const fs = await import('fs/promises');
-      const currentData = JSON.parse(await fs.readFile('/root/repo/public/incidents.json', 'utf-8'));
+      const currentData = JSON.parse(await fs.readFile('./public/incidents.json', 'utf-8'));
 
       const maxAge = CONFIG.processing.maxAge * 24 * 60 * 60 * 1000;
       const cutoffDate = new Date(Date.now() - maxAge);
@@ -182,7 +182,7 @@ export class AutomationScheduler {
       }
 
       // Clean old reports (keep last 30 days)
-      const reportsDir = '/root/repo/automation/reports';
+      const reportsDir = './automation/reports';
       try {
         const files = await fs.readdir(reportsDir);
         const reportFiles = files.filter(f => f.startsWith('daily-report-'));
@@ -217,7 +217,7 @@ export class AutomationScheduler {
 
       // Copy to dist for production
       const fs = await import('fs/promises');
-      await fs.copyFile('/root/repo/public/incidents.json', '/root/repo/dist/incidents.json');
+      await fs.copyFile('./public/incidents.json', './dist/incidents.json');
 
       // Auto-commit and deploy if enabled
       if (process.env.AUTO_DEPLOY === 'true') {
@@ -237,10 +237,10 @@ export class AutomationScheduler {
       const { execSync } = await import('child_process');
 
       // Build project
-      execSync('npm run build', { cwd: '/root/repo' });
+      execSync('npm run build', { cwd: '.' });
 
       // Git operations
-      execSync('git add -A', { cwd: '/root/repo' });
+      execSync('git add -A', { cwd: '.' });
 
       const commitMessage = `feat: automated incident update - ${incidentCount} incidents (${reason})
 
@@ -251,8 +251,8 @@ Generated via automated collection system.
 
 Co-Authored-By: Claude <noreply@anthropic.com>`;
 
-      execSync(`git commit -m "${commitMessage}"`, { cwd: '/root/repo' });
-      execSync('git push origin main', { cwd: '/root/repo' });
+      execSync(`git commit -m "${commitMessage}"`, { cwd: '.' });
+      execSync('git push origin main', { cwd: '.' });
 
       console.log(`Auto-deployed ${incidentCount} incidents to production`);
 
@@ -265,7 +265,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>`;
   async analyzeCurrentData() {
     try {
       const fs = await import('fs/promises');
-      const data = JSON.parse(await fs.readFile('/root/repo/public/incidents.json', 'utf-8'));
+      const data = JSON.parse(await fs.readFile('./public/incidents.json', 'utf-8'));
 
       const analysis = {
         total_incidents: data.length,
@@ -340,7 +340,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>`;
     // Check data file accessibility
     try {
       const fs = await import('fs/promises');
-      await fs.access('/root/repo/public/incidents.json');
+      await fs.access('./public/incidents.json');
     } catch (error) {
       health.status = 'error';
       health.issues.push('Cannot access incidents.json file');
