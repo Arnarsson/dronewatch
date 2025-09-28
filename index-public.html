@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DroneWatch - Tracking Drone Incidents Across Europe</title>
+  <meta name="description" content="Real-time tracking and analysis of drone incidents affecting European airspace. Transparent, verified reporting for journalists and the public.">
+
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="DroneWatch - European Drone Incident Tracker">
+  <meta property="og:description" content="Real-time tracking of drone incidents across Europe with AI-powered analysis">
+  <meta property="og:type" content="website">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DroneWatch">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+  <!-- Incident Details Module -->
+  <script src="js/incident-details.js" defer></script>
+
+  <!-- Multilingual Support -->
+  <script src="js/translations.js"></script>
+
+  <!-- Crowdsourced Verification System -->
+  <script src="js/verification-system.js" defer></script>
+
+  <!-- Inter font for better readability -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS Reset and Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Friendly, approachable color palette */
+      --primary: #0ea5e9;        /* Sky blue - aviation themed */
+      --primary-light: #38bdf8;
+      --primary-dark: #0284c7;
+
+      --surface: #0f172a;        /* Dark but not black */
+      --surface-elevated: #1e293b;
+      --surface-overlay: rgba(15, 23, 42, 0.9);
+
+      /* Glassmorphism */
+      --glass-light: rgba(255, 255, 255, 0.05);
+      --glass-medium: rgba(255, 255, 255, 0.08);
+      --glass-heavy: rgba(15, 23, 42, 0.85);
+      --glass-border: rgba(255, 255, 255, 0.1);
+
+      /* Text hierarchy */
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      /* Semantic colors */
+      --verified: #10b981;      /* Green for verified */
+      --unverified: #f59e0b;    /* Amber for unverified */
+      --high-impact: #ef4444;   /* Red for high impact */
+      --medium-impact: #f97316; /* Orange for medium */
+      --low-impact: #22c55e;    /* Green for low impact */
+
+      /* AI-specific colors */
+      --ai-accent: #8b5cf6;     /* Purple for AI features */
+      --ai-gradient: linear-gradient(135deg, #8b5cf6, #ec4899);
+
+      /* Spacing */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2rem;
+      --space-2xl: 3rem;
+
+      /* Border radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.5rem;
+      --radius-full: 9999px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Language Selector */
+    .language-selector {
+      position: relative;
+    }
+
+    .language-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: var(--space-sm);
+      background: var(--glass-heavy);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-sm);
+      min-width: 150px;
+      z-index: 1000;
+      box-shadow: var(--shadow-glass);
+    }
+
+    .language-menu button {
+      display: block;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: var(--space-sm) var(--space-md);
+      text-align: left;
+      cursor: pointer;
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+      font-size: 0.875rem;
+    }
+
+    .language-menu button:hover {
+      background: var(--glass-light);
+      color: var(--text-primary);
+    }
+
+    /* Export Modal Styles */
+    .export-modal, .embed-code-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: var(--space-md);
+    }
+
+    .export-modal-content {
+      background: var(--glass-heavy);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      max-width: 600px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .export-modal-header {
+      padding: var(--space-lg);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .export-modal-header h2, .export-modal-header h3 {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover {
+      background: var(--glass-light);
+      color: var(--text-primary);
+    }
+
+    .export-modal-body {
+      padding: var(--space-lg);
+    }
+
+    .export-option {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-md);
+      background: var(--glass-light);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      transition: all 0.2s;
+    }
+
+    .export-option:hover {
+      background: var(--glass-medium);
+      transform: translateY(-2px);
+    }
+
+    .export-option-icon {
+      font-size: 2rem;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--glass-medium);
+      border-radius: var(--radius-md);
+    }
+
+    .export-option-details {
+      flex: 1;
+    }
+
+    .export-option-details h3 {
+      margin: 0 0 var(--space-xs) 0;
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .export-option-details p {
+      margin: 0 0 var(--space-sm) 0;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .export-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .export-btn:hover {
+      background: var(--primary-light);
+      transform: translateY(-1px);
+    }
+
+    .rss-url-container {
+      display: flex;
+      gap: var(--space-sm);
+      margin-top: var(--space-sm);
+    }
+
+    .rss-url {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      color: var(--text-secondary);
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.75rem;
+    }
+
+    .copy-btn {
+      background: var(--glass-medium);
+      border: 1px solid var(--glass-border);
+      color: var(--text-secondary);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .api-endpoint {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      color: var(--primary);
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.75rem;
+      margin-top: var(--space-sm);
+    }
+
+    .embed-code-textarea {
+      width: 100%;
+      min-height: 150px;
+      background: var(--surface);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      color: var(--text-secondary);
+      font-family: 'Monaco', 'Courier New', monospace;
+      font-size: 0.75rem;
+      margin: var(--space-md) 0;
+      resize: vertical;
+    }
+
+    /* Base styles */
+    html, body {
+      height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      overflow: hidden;
+    }
+
+    /* Main Layout */
+    .app-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header - Simple and clean */
+    .app-header {
+      background: var(--glass-heavy);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--glass-border);
+      z-index: 1000;
+      padding: var(--space-md) var(--space-lg);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      border-radius: var(--radius-md);
+      font-size: 1.25rem;
+    }
+
+    .brand-text h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .tagline {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin: 0;
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .tagline {
+        display: block;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .search-container {
+      position: relative;
+      display: none;
+    }
+
+    .search-container.expanded {
+      display: block;
+    }
+
+    .search-input {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-full);
+      padding: var(--space-sm) var(--space-lg);
+      padding-left: 2.5rem;
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      width: 250px;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--glass-medium);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: var(--space-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .header-btn {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      transition: all 0.2s;
+    }
+
+    .header-btn:hover {
+      background: var(--glass-medium);
+      border-color: var(--primary);
+    }
+
+    .mobile-only {
+      display: block;
+    }
+
+    .desktop-only {
+      display: none;
+    }
+
+    @media (min-width: 768px) {
+      .mobile-only {
+        display: none;
+      }
+      .desktop-only {
+        display: block;
+      }
+      .search-container {
+        display: block;
+      }
+    }
+
+    /* Map Container */
+    .map-container {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      background: var(--surface);
+    }
+
+    /* Info Panel - Glassmorphic floating panel */
+    .info-panel {
+      position: absolute;
+      bottom: var(--space-lg);
+      left: var(--space-lg);
+      width: 320px;
+      max-height: 70vh;
+      background: var(--glass-heavy);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-glass);
+      overflow: hidden;
+      transition: all 0.3s ease;
+      z-index: 500;
+    }
+
+    .info-panel.collapsed {
+      height: auto;
+      max-height: 60px;
+    }
+
+    .panel-header {
+      padding: var(--space-md);
+      background: var(--glass-light);
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .panel-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .panel-toggle {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: var(--space-xs);
+      transition: transform 0.3s;
+    }
+
+    .info-panel.collapsed .panel-toggle {
+      transform: rotate(180deg);
+    }
+
+    .panel-content {
+      padding: var(--space-md);
+      overflow-y: auto;
+      max-height: calc(70vh - 60px);
+    }
+
+    .info-panel.collapsed .panel-content {
+      display: none;
+    }
+
+    /* Panel Sections */
+    .panel-section {
+      margin-bottom: var(--space-lg);
+    }
+
+    .panel-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Stats Display */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .stat-card {
+      background: var(--glass-light);
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--glass-border);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Filter Buttons */
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+
+    .filter-btn {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-xs) var(--space-sm);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn:hover {
+      background: var(--glass-medium);
+      border-color: var(--primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xs);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    /* AI Insights Panel */
+    .ai-panel {
+      position: absolute;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      width: 380px;
+      max-height: 500px;
+      background: var(--glass-heavy);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-glass);
+      overflow: hidden;
+      z-index: 500;
+      transition: all 0.3s ease;
+    }
+
+    .ai-panel-header {
+      background: var(--ai-gradient);
+      padding: var(--space-md);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .ai-panel-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .ai-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      font-size: 0.75rem;
+    }
+
+    .ai-status-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .ai-panel-content {
+      padding: var(--space-md);
+      overflow-y: auto;
+      max-height: 400px;
+    }
+
+    /* AI Discovery Cards */
+    .ai-discovery {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      transition: all 0.2s;
+    }
+
+    .ai-discovery:hover {
+      background: var(--glass-medium);
+      border-color: var(--ai-accent);
+      transform: translateY(-2px);
+    }
+
+    .discovery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-sm);
+    }
+
+    .discovery-location {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .confidence-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      background: var(--glass-light);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+    }
+
+    .confidence-high {
+      color: var(--verified);
+      border: 1px solid var(--verified);
+    }
+
+    .confidence-medium {
+      color: var(--unverified);
+      border: 1px solid var(--unverified);
+    }
+
+    .confidence-low {
+      color: var(--text-muted);
+      border: 1px solid var(--text-muted);
+    }
+
+    .discovery-summary {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: var(--space-sm);
+    }
+
+    .discovery-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .source-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+
+    .source-link:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    .discovery-actions {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .action-btn {
+      background: var(--glass-light);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-xs) var(--space-sm);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    /* Trending Section */
+    .trending-section {
+      background: var(--glass-light);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .trending-header {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .trend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    .trend-item:last-child {
+      border-bottom: none;
+    }
+
+    .trend-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .trend-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .trend-up {
+      color: var(--high-impact);
+    }
+
+    .trend-down {
+      color: var(--verified);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .info-panel, .ai-panel {
+        left: var(--space-md);
+        right: var(--space-md);
+        bottom: var(--space-md);
+        width: auto;
+      }
+
+      .ai-panel {
+        display: none;
+      }
+
+      .ai-panel.mobile-expanded {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        max-height: 100vh;
+        border-radius: 0;
+        z-index: 2000;
+      }
+
+      .mobile-ai-trigger {
+        position: fixed;
+        bottom: 80px;
+        right: var(--space-md);
+        background: var(--ai-gradient);
+        color: white;
+        border: none;
+        border-radius: var(--radius-full);
+        padding: var(--space-md);
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Custom Map Markers */
+    .incident-marker {
+      background: var(--high-impact);
+      border: 2px solid white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-md);
+      transition: all 0.2s;
+    }
+
+    .incident-marker.medium-impact {
+      background: var(--medium-impact);
+    }
+
+    .incident-marker.low-impact {
+      background: var(--low-impact);
+    }
+
+    .incident-marker.ai-discovered {
+      position: relative;
+    }
+
+    .incident-marker.ai-discovered::before {
+      content: '🤖';
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: var(--ai-accent);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.625rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Incident Popup */
+    .incident-popup {
+      min-width: 280px;
+      padding: var(--space-md);
+    }
+
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: var(--space-sm);
+    }
+
+    .popup-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--surface);
+      line-height: 1.3;
+    }
+
+    .popup-badge {
+      background: var(--verified);
+      color: white;
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--radius-full);
+      font-size: 0.625rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .popup-badge.unverified {
+      background: var(--unverified);
+    }
+
+    .popup-content {
+      font-size: 0.875rem;
+      color: var(--surface-elevated);
+      line-height: 1.5;
+      margin-bottom: var(--space-md);
+    }
+
+    .popup-meta {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--space-sm);
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: var(--space-sm);
+    }
+
+    .popup-btn {
+      flex: 1;
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .popup-btn.primary {
+      background: var(--primary);
+      color: white;
+      border: 1px solid var(--primary);
+    }
+
+    .popup-btn.secondary {
+      background: white;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+
+    .popup-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Loading State */
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--surface-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--glass-border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .text-small {
+      font-size: 0.75rem;
+    }
+
+    .mb-sm {
+      margin-bottom: var(--space-sm);
+    }
+
+    .mb-md {
+      margin-bottom: var(--space-md);
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .gap-sm {
+      gap: var(--space-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <div class="header-brand">
+          <div class="logo">✈️</div>
+          <div class="brand-text">
+            <h1 data-translate="title">DroneWatch</h1>
+            <p class="tagline" data-translate="tagline">Tracking Drone Incidents Across Europe</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <div class="search-container desktop-only">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Search locations, incidents...">
+          </div>
+
+          <button class="header-btn mobile-only" onclick="toggleSearch()">
+            <span>🔍</span>
+          </button>
+
+          <button class="header-btn" onclick="showAbout()">
+            <span>ℹ️</span>
+            <span class="desktop-only" data-translate="about">About</span>
+          </button>
+
+          <button class="header-btn" onclick="shareApp()">
+            <span>📤</span>
+            <span class="desktop-only" data-translate="share">Share</span>
+          </button>
+
+          <button class="header-btn" onclick="showExportOptions()">
+            <span>📥</span>
+            <span class="desktop-only" data-translate="export">Export</span>
+          </button>
+
+          <div class="language-selector">
+            <button class="header-btn" onclick="toggleLanguageMenu()">
+              <span>🌍</span>
+              <span class="desktop-only" data-translate="language">Language</span>
+            </button>
+            <div class="language-menu" id="languageMenu" style="display: none;">
+              <button onclick="changeLanguage('en')">🇬🇧 English</button>
+              <button onclick="changeLanguage('da')">🇩🇰 Dansk</button>
+              <button onclick="changeLanguage('de')">🇩🇪 Deutsch</button>
+              <button onclick="changeLanguage('fr')">🇫🇷 Français</button>
+              <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+              <button onclick="changeLanguage('nl')">🇳🇱 Nederlands</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Map Container -->
+    <div class="map-container">
+      <div id="map"></div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" id="infoPanel">
+        <div class="panel-header" onclick="togglePanel('infoPanel')">
+          <div class="panel-title">
+            <span>📊</span>
+            <span>Understanding the Data</span>
+          </div>
+          <button class="panel-toggle">▼</button>
+        </div>
+
+        <div class="panel-content">
+          <!-- Stats Section -->
+          <div class="panel-section">
+            <div class="section-title" data-translate="currentActivity">Current Activity</div>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value" id="activeCount">0</div>
+                <div class="stat-label">Happening Now</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="todayCount">0</div>
+                <div class="stat-label">Today</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="weekCount">0</div>
+                <div class="stat-label">This Week</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value" id="verifiedCount">0</div>
+                <div class="stat-label">Verified</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend Section -->
+          <div class="panel-section">
+            <div class="section-title">What the Colors Mean</div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--high-impact)"></span>
+              <span>High Impact - Major disruptions</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--medium-impact)"></span>
+              <span>Medium Impact - Some delays</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background: var(--low-impact)"></span>
+              <span>Low Impact - Minor incidents</span>
+            </div>
+            <div class="legend-item">
+              <span>🤖</span>
+              <span>Discovered by AI analysis</span>
+            </div>
+          </div>
+
+          <!-- Filters Section -->
+          <div class="panel-section">
+            <div class="section-title" data-translate="filterExplore">Filter & Explore</div>
+
+            <div class="mb-sm">
+              <div class="text-small text-muted mb-sm" data-translate="timeRange">Time Range</div>
+              <div class="filter-group">
+                <button class="filter-btn active" data-filter="time" data-value="today" data-translate="today">Today</button>
+                <button class="filter-btn" data-filter="time" data-value="week" data-translate="thisWeek">This Week</button>
+                <button class="filter-btn" data-filter="time" data-value="month" data-translate="thisMonth">This Month</button>
+                <button class="filter-btn" data-filter="time" data-value="all" data-translate="allTime">All Time</button>
+              </div>
+            </div>
+
+            <div class="mb-sm">
+              <div class="text-small text-muted mb-sm" data-translate="incidentType">Incident Type</div>
+              <div class="filter-group">
+                <button class="filter-btn active" data-filter="type" data-value="all" data-translate="all">All</button>
+                <button class="filter-btn" data-filter="type" data-value="airport" data-translate="nearAirports">Near Airports</button>
+                <button class="filter-btn" data-filter="type" data-value="port" data-translate="nearPorts">Near Ports</button>
+                <button class="filter-btn" data-filter="type" data-value="other" data-translate="other">Other</button>
+              </div>
+            </div>
+
+            <div>
+              <div class="text-small text-muted mb-sm" data-translate="verification">Verification</div>
+              <div class="filter-group">
+                <button class="filter-btn active" data-filter="verification" data-value="all" data-translate="all">All</button>
+                <button class="filter-btn" data-filter="verification" data-value="verified" data-translate="verifiedOnly">Verified Only</button>
+                <button class="filter-btn" data-filter="verification" data-value="ai" data-translate="aiDiscovered">AI Discovered</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Insights Panel -->
+      <div class="ai-panel" id="aiPanel">
+        <div class="ai-panel-header">
+          <div class="ai-panel-title">
+            <span>🤖</span>
+            <span data-translate="aiNewsIntelligence">AI News Intelligence</span>
+          </div>
+          <div class="ai-status">
+            <span class="ai-status-dot"></span>
+            <span data-translate="live">LIVE</span>
+          </div>
+        </div>
+
+        <div class="ai-panel-content">
+          <!-- Latest AI Discoveries -->
+          <div id="aiDiscoveries">
+            <!-- AI discovery cards will be inserted here -->
+          </div>
+
+          <!-- Trending Patterns -->
+          <div class="trending-section">
+            <div class="trending-header">
+              <span>📈</span>
+              <span>AI-Detected Trends</span>
+            </div>
+            <div id="trendingPatterns">
+              <!-- Trending items will be inserted here -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile AI Trigger -->
+      <button class="mobile-ai-trigger hidden" id="mobileAiTrigger" onclick="toggleAiPanel()">
+        🤖
+      </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize variables
+    let map;
+    let markers;
+    let incidents = [];
+    let filters = {
+      time: 'today',
+      type: 'all',
+      verification: 'all'
+    };
+
+    // Initialize map
+    function initMap() {
+      // Create map centered on Europe
+      map = L.map('map', {
+        center: [54.5, 15.0],
+        zoom: 5,
+        minZoom: 3,
+        maxZoom: 18
+      });
+
+      // Add tile layer with dark theme
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap contributors, © CARTO',
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(map);
+
+      // Initialize marker cluster group
+      markers = L.markerClusterGroup({
+        chunkedLoading: true,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        maxClusterRadius: 80,
+        iconCreateFunction: function(cluster) {
+          const count = cluster.getChildCount();
+          let size = 'small';
+          if (count > 10) size = 'medium';
+          if (count > 25) size = 'large';
+
+          return L.divIcon({
+            html: `<div class="cluster-marker cluster-${size}">
+                     <span>${count}</span>
+                   </div>`,
+            className: 'marker-cluster',
+            iconSize: L.point(40, 40)
+          });
+        }
+      });
+
+      map.addLayer(markers);
+    }
+
+    // Load incidents data
+    async function loadIncidents() {
+      try {
+        const response = await fetch('incidents.json');
+        const data = await response.json();
+        incidents = data.incidents || [];
+
+        updateStats();
+        renderIncidents();
+        loadAiDiscoveries();
+
+        // Hide loading overlay
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      } catch (error) {
+        console.error('Error loading incidents:', error);
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      }
+    }
+
+    // Update statistics
+    function updateStats() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+      const activeIncidents = incidents.filter(i => i.incident?.status === 'active');
+      const todayIncidents = incidents.filter(i => new Date(i.first_seen_utc) >= today);
+      const weekIncidents = incidents.filter(i => new Date(i.first_seen_utc) >= weekAgo);
+      const verifiedIncidents = incidents.filter(i => i.evidence?.strength >= 2);
+
+      document.getElementById('activeCount').textContent = activeIncidents.length;
+      document.getElementById('todayCount').textContent = todayIncidents.length;
+      document.getElementById('weekCount').textContent = weekIncidents.length;
+      document.getElementById('verifiedCount').textContent = verifiedIncidents.length;
+    }
+
+    // Render incidents on map
+    function renderIncidents() {
+      markers.clearLayers();
+
+      const filteredIncidents = filterIncidents(incidents);
+
+      filteredIncidents.forEach(incident => {
+        if (incident.asset?.lat && incident.asset?.lon) {
+          const marker = createIncidentMarker(incident);
+          markers.addLayer(marker);
+        }
+      });
+    }
+
+    // Filter incidents based on current filters
+    function filterIncidents(incidents) {
+      return incidents.filter(incident => {
+        // Time filter
+        if (filters.time !== 'all') {
+          const incidentDate = new Date(incident.first_seen_utc);
+          const now = new Date();
+
+          if (filters.time === 'today') {
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            if (incidentDate < today) return false;
+          } else if (filters.time === 'week') {
+            const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            if (incidentDate < weekAgo) return false;
+          } else if (filters.time === 'month') {
+            const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            if (incidentDate < monthAgo) return false;
+          }
+        }
+
+        // Type filter
+        if (filters.type !== 'all') {
+          if (filters.type === 'airport' && incident.asset?.type !== 'airport') return false;
+          if (filters.type === 'port' && incident.asset?.type !== 'harbour') return false;
+          if (filters.type === 'other' && ['airport', 'harbour'].includes(incident.asset?.type)) return false;
+        }
+
+        // Verification filter
+        if (filters.verification !== 'all') {
+          if (filters.verification === 'verified' && incident.evidence?.strength < 2) return false;
+          if (filters.verification === 'ai' && !incident.ai_discovered) return false;
+        }
+
+        return true;
+      });
+    }
+
+    // Create incident marker
+    function createIncidentMarker(incident) {
+      const severity = incident.scores?.severity || 5;
+      let impactClass = 'low-impact';
+      if (severity >= 7) impactClass = 'high-impact';
+      else if (severity >= 4) impactClass = 'medium-impact';
+
+      const isAiDiscovered = incident.ai_discovered || false;
+
+      const icon = L.divIcon({
+        className: 'incident-marker-wrapper',
+        html: `<div class="incident-marker ${impactClass} ${isAiDiscovered ? 'ai-discovered' : ''}"></div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+
+      const marker = L.marker([incident.asset.lat, incident.asset.lon], { icon });
+
+      // Create popup content
+      const popupContent = createPopupContent(incident);
+      marker.bindPopup(popupContent, {
+        maxWidth: 300,
+        className: 'incident-popup'
+      });
+
+      return marker;
+    }
+
+    // Create popup content
+    function createPopupContent(incident) {
+      const timeAgo = getTimeAgo(new Date(incident.first_seen_utc));
+      const verificationBadge = incident.evidence?.strength >= 2
+        ? '<span class="popup-badge">Verified</span>'
+        : '<span class="popup-badge unverified">Unverified</span>';
+
+      return `
+        <div class="popup-header">
+          <h3 class="popup-title">${incident.asset?.name || 'Unknown Location'}</h3>
+          ${verificationBadge}
+        </div>
+
+        <div class="popup-content">
+          ${incident.incident?.narrative || 'Drone activity reported in this area.'}
+        </div>
+
+        <div class="popup-meta">
+          <span>📍 ${incident.asset?.type || 'Location'}</span>
+          <span>⏰ ${timeAgo}</span>
+          ${incident.ai_discovered ? '<span>🤖 Discovered by AI</span>' : ''}
+        </div>
+
+        <div class="popup-actions">
+          <button class="popup-btn primary" onclick="viewDetails('${incident.id}')">
+            Read More
+          </button>
+          <button class="popup-btn secondary" onclick="shareIncident('${incident.id}')">
+            Share
+          </button>
+        </div>
+      `;
+    }
+
+    // Get human-readable time ago
+    function getTimeAgo(date) {
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+      if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+      if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+
+      return date.toLocaleDateString();
+    }
+
+    // Load AI discoveries
+    function loadAiDiscoveries() {
+      // Sample AI discoveries - in production, these would come from the AI analysis service
+      const aiDiscoveries = [
+        {
+          id: 'ai-001',
+          location: 'Copenhagen Airport',
+          summary: 'Multiple drones spotted near runway causing 30-minute closure. Danish authorities investigating.',
+          confidence: 87,
+          source: 'BBC News',
+          sourceUrl: 'https://example.com/article',
+          time: new Date(Date.now() - 2 * 3600000)
+        },
+        {
+          id: 'ai-002',
+          location: 'Port of Hamburg',
+          summary: 'Unauthorized drone activity disrupted loading operations at container terminal.',
+          confidence: 72,
+          source: 'Reuters',
+          sourceUrl: 'https://example.com/article',
+          time: new Date(Date.now() - 5 * 3600000)
+        },
+        {
+          id: 'ai-003',
+          location: 'Frankfurt Main',
+          summary: 'Drone sighting prompted brief security alert, no flights affected.',
+          confidence: 65,
+          source: 'DW English',
+          sourceUrl: 'https://example.com/article',
+          time: new Date(Date.now() - 8 * 3600000)
+        }
+      ];
+
+      renderAiDiscoveries(aiDiscoveries);
+      renderTrendingPatterns();
+    }
+
+    // Render AI discoveries
+    function renderAiDiscoveries(discoveries) {
+      const container = document.getElementById('aiDiscoveries');
+      container.innerHTML = '';
+
+      discoveries.forEach(discovery => {
+        const confidenceClass = discovery.confidence >= 80 ? 'high' :
+                               discovery.confidence >= 60 ? 'medium' : 'low';
+        const timeAgo = getTimeAgo(discovery.time);
+
+        const card = document.createElement('div');
+        card.className = 'ai-discovery';
+        card.innerHTML = `
+          <div class="discovery-header">
+            <div class="discovery-location">
+              <span>📍</span>
+              <span>${discovery.location}</span>
+            </div>
+            <div class="confidence-badge confidence-${confidenceClass}">
+              <span>${discovery.confidence}%</span>
+            </div>
+          </div>
+
+          <div class="discovery-summary">
+            ${discovery.summary}
+          </div>
+
+          <div class="discovery-footer">
+            <a href="${discovery.sourceUrl}" target="_blank" class="source-link">
+              <span>📰</span>
+              <span>${discovery.source}</span>
+              <span>→</span>
+            </a>
+
+            <div class="discovery-actions">
+              <button class="action-btn" onclick="viewOnMap('${discovery.id}')">
+                🗺️ Map
+              </button>
+              <button class="action-btn" onclick="verifyIncident('${discovery.id}')">
+                ✓ Verify
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    // Render trending patterns
+    function renderTrendingPatterns() {
+      const container = document.getElementById('trendingPatterns');
+      container.innerHTML = `
+        <div class="trend-item">
+          <span class="trend-label">German Airspace</span>
+          <span class="trend-value trend-up">
+            ↑ 40%
+          </span>
+        </div>
+        <div class="trend-item">
+          <span class="trend-label">Morning Rush Hour</span>
+          <span class="trend-value">
+            5 incidents
+          </span>
+        </div>
+        <div class="trend-item">
+          <span class="trend-label">Denmark-Sweden</span>
+          <span class="trend-value">
+            🔥 Hotspot
+          </span>
+        </div>
+      `;
+    }
+
+    // Event handlers
+    function togglePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      panel.classList.toggle('collapsed');
+    }
+
+    function toggleSearch() {
+      const searchContainer = document.querySelector('.search-container');
+      searchContainer.classList.toggle('expanded');
+      if (searchContainer.classList.contains('expanded')) {
+        searchContainer.querySelector('.search-input').focus();
+      }
+    }
+
+    function toggleAiPanel() {
+      const aiPanel = document.getElementById('aiPanel');
+      aiPanel.classList.toggle('mobile-expanded');
+    }
+
+    function showAbout() {
+      window.open('about.html', '_blank');
+    }
+
+    // Export functionality for journalists
+    function showExportOptions() {
+      const modal = document.createElement('div');
+      modal.className = 'export-modal';
+      modal.innerHTML = `
+        <div class="export-modal-content">
+          <div class="export-modal-header">
+            <h2>Export Options for Journalists</h2>
+            <button class="modal-close" onclick="this.closest('.export-modal').remove()">×</button>
+          </div>
+
+          <div class="export-modal-body">
+            <div class="export-option">
+              <div class="export-option-icon">📊</div>
+              <div class="export-option-details">
+                <h3>CSV Data Export</h3>
+                <p>Download incident data in CSV format for analysis</p>
+                <button class="export-btn" onclick="exportToCSV()">Download CSV</button>
+              </div>
+            </div>
+
+            <div class="export-option">
+              <div class="export-option-icon">📰</div>
+              <div class="export-option-details">
+                <h3>RSS Feed</h3>
+                <p>Subscribe to real-time updates via RSS</p>
+                <div class="rss-url-container">
+                  <input type="text" class="rss-url" value="${window.location.origin}/api/rss.xml" readonly>
+                  <button class="copy-btn" onclick="copyRSSUrl()">Copy</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="export-option">
+              <div class="export-option-icon">🔗</div>
+              <div class="export-option-details">
+                <h3>Embed Widget</h3>
+                <p>Embed DroneWatch live feed on your website</p>
+                <button class="export-btn" onclick="showEmbedCode()">Get Embed Code</button>
+              </div>
+            </div>
+
+            <div class="export-option">
+              <div class="export-option-icon">🤖</div>
+              <div class="export-option-details">
+                <h3>API Access</h3>
+                <p>Direct JSON API for programmatic access</p>
+                <code class="api-endpoint">${window.location.origin}/api/incidents.json</code>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function exportToCSV() {
+      // Generate CSV from current filtered incidents
+      const csvRows = [];
+      csvRows.push(['Date', 'Location', 'Type', 'Status', 'Impact', 'Verified', 'Source', 'Description']);
+
+      const filteredIncidents = getFilteredIncidents();
+      filteredIncidents.forEach(incident => {
+        csvRows.push([
+          new Date(incident.first_seen_utc).toISOString(),
+          incident.asset?.name || 'Unknown',
+          incident.asset?.type || 'Unknown',
+          incident.incident?.status || 'Unknown',
+          incident.scores?.severity || 0,
+          incident.evidence?.strength >= 2 ? 'Yes' : 'No',
+          incident.evidence?.sources?.[0]?.name || 'Unknown',
+          (incident.incident?.narrative || '').replace(/,/g, ';')
+        ]);
+      });
+
+      // Convert to CSV string
+      const csvContent = csvRows.map(row => row.join(',')).join('\n');
+
+      // Download
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dronewatch-incidents-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+
+      // Close modal
+      document.querySelector('.export-modal')?.remove();
+    }
+
+    function copyRSSUrl() {
+      const input = document.querySelector('.rss-url');
+      input.select();
+      document.execCommand('copy');
+
+      // Show feedback
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = originalText, 2000);
+    }
+
+    function showEmbedCode() {
+      const embedCode = `<!-- DroneWatch Live Feed Widget -->
+<iframe
+  src="${window.location.origin}/widget.html"
+  width="100%"
+  height="500"
+  frameborder="0"
+  style="border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
+></iframe>`;
+
+      const modal = document.createElement('div');
+      modal.className = 'embed-code-modal';
+      modal.innerHTML = `
+        <div class="export-modal-content">
+          <div class="export-modal-header">
+            <h3>Embed DroneWatch Widget</h3>
+            <button class="modal-close" onclick="this.closest('.embed-code-modal').remove()">×</button>
+          </div>
+          <div class="export-modal-body">
+            <p>Copy this code to embed DroneWatch on your website:</p>
+            <textarea class="embed-code-textarea" readonly>${embedCode}</textarea>
+            <button class="export-btn" onclick="copyEmbedCode()">Copy Code</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+
+      // Close export modal
+      document.querySelector('.export-modal')?.remove();
+    }
+
+    function copyEmbedCode() {
+      const textarea = document.querySelector('.embed-code-textarea');
+      textarea.select();
+      document.execCommand('copy');
+
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        document.querySelector('.embed-code-modal')?.remove();
+      }, 1500);
+    }
+
+    function getFilteredIncidents() {
+      if (!incidents || !incidents.length) return [];
+
+      let filtered = [...incidents];
+
+      // Apply time filter
+      const now = new Date();
+      if (filters.time === 'today') {
+        const todayStart = new Date(now.setHours(0, 0, 0, 0));
+        filtered = filtered.filter(i => new Date(i.first_seen_utc) >= todayStart);
+      } else if (filters.time === 'week') {
+        const weekAgo = new Date(now.setDate(now.getDate() - 7));
+        filtered = filtered.filter(i => new Date(i.first_seen_utc) >= weekAgo);
+      } else if (filters.time === 'month') {
+        const monthAgo = new Date(now.setMonth(now.getMonth() - 1));
+        filtered = filtered.filter(i => new Date(i.first_seen_utc) >= monthAgo);
+      }
+
+      // Apply type filter
+      if (filters.type && filters.type !== 'all') {
+        filtered = filtered.filter(i => i.asset?.type === filters.type.replace('airport', 'airports').replace('port', 'harbours'));
+      }
+
+      // Apply verification filter
+      if (filters.verification === 'verified') {
+        filtered = filtered.filter(i => i.evidence?.strength >= 2);
+      } else if (filters.verification === 'ai') {
+        filtered = filtered.filter(i => i.source?.includes('ai'));
+      }
+
+      return filtered;
+    }
+
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'DroneWatch',
+          text: 'Track drone incidents across Europe in real-time',
+          url: window.location.href
+        });
+      } else {
+        // Fallback for desktop
+        const url = window.location.href;
+        navigator.clipboard.writeText(url);
+        alert('Link copied to clipboard!');
+      }
+    }
+
+    function viewDetails(incidentId) {
+      // In production, this would open a detailed view
+      console.log('View details for incident:', incidentId);
+    }
+
+    function shareIncident(incidentId) {
+      // Share specific incident
+      const incident = incidents.find(i => i.id === incidentId);
+      if (incident && navigator.share) {
+        navigator.share({
+          title: `Drone incident at ${incident.asset?.name}`,
+          text: incident.incident?.narrative || 'Drone activity reported',
+          url: `${window.location.href}#incident=${incidentId}`
+        });
+      }
+    }
+
+    function viewOnMap(discoveryId) {
+      // Center map on AI discovery
+      console.log('View on map:', discoveryId);
+    }
+
+    function verifyIncident(discoveryId) {
+      // Open verification interface
+      console.log('Verify incident:', discoveryId);
+    }
+
+    // Filter event handlers
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('filter-btn')) {
+        const filterType = e.target.dataset.filter;
+        const filterValue = e.target.dataset.value;
+
+        // Update active state
+        document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(btn => {
+          btn.classList.remove('active');
+        });
+        e.target.classList.add('active');
+
+        // Update filters
+        filters[filterType] = filterValue;
+
+        // Re-render incidents
+        renderIncidents();
+      }
+    });
+
+    // Check if mobile
+    function checkMobile() {
+      const isMobile = window.innerWidth < 768;
+      const aiTrigger = document.getElementById('mobileAiTrigger');
+
+      if (isMobile) {
+        aiTrigger.classList.remove('hidden');
+      } else {
+        aiTrigger.classList.add('hidden');
+      }
+    }
+
+    // Language selector functions
+    function toggleLanguageMenu() {
+      const menu = document.getElementById('languageMenu');
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function changeLanguage(lang) {
+      if (window.DroneWatchTranslations) {
+        window.DroneWatchTranslations.setLanguage(lang);
+        // Re-render incidents with new language
+        renderIncidents();
+      }
+      document.getElementById('languageMenu').style.display = 'none';
+    }
+
+    // Close language menu when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.language-selector')) {
+        document.getElementById('languageMenu').style.display = 'none';
+      }
+    });
+
+    // Initialize app
+    window.addEventListener('DOMContentLoaded', function() {
+      initMap();
+      loadIncidents();
+      checkMobile();
+    });
+
+    // Handle resize
+    window.addEventListener('resize', checkMobile);
+
+    // Add custom cluster styles
+    const style = document.createElement('style');
+    style.textContent = `
+      .cluster-marker {
+        background: var(--primary);
+        border: 3px solid white;
+        border-radius: 50%;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        box-shadow: var(--shadow-lg);
+      }
+
+      .cluster-small {
+        background: var(--low-impact);
+        font-size: 0.875rem;
+      }
+
+      .cluster-medium {
+        background: var(--medium-impact);
+        font-size: 1rem;
+      }
+
+      .cluster-large {
+        background: var(--high-impact);
+        font-size: 1.125rem;
+      }
+
+      .leaflet-popup-content-wrapper {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+      }
+
+      .leaflet-popup-tip {
+        background: white;
+      }
+
+      .leaflet-container {
+        background: var(--surface);
+        font-family: 'Inter', sans-serif;
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

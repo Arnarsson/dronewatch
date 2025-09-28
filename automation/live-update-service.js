@@ -10,7 +10,7 @@ import cron from 'node-cron';
 import { RSSNewsScraper } from './scrapers/rss-news-scraper.js';
 import { AIAnalyzer } from './ai-analyzer.js';
 import { GeocodingService } from './geocoding-service.js';
-import { TwitterScraper } from './scrapers/twitter-scraper.js';
+// import { TwitterScraper } from './scrapers/twitter-scraper.js'; // Disabled - not implemented
 import { IncidentValidator } from './incident-validator.js';
 import fetch from 'node-fetch';
 
